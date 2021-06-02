@@ -1,6 +1,6 @@
-package knk.erp.api.shlee.controller;
+package knk.erp.api.shlee.schedule.controller;
 
-import knk.erp.api.shlee.service.ScheduleServiceImpl;
+import knk.erp.api.shlee.schedule.service.ScheduleServiceImpl;
 import org.json.JSONObject;
 import org.springframework.web.bind.annotation.*;
 
