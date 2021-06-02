@@ -1,5 +1,7 @@
 package knk.erp.api.shlee.config;
 
+import knk.erp.api.shlee.account.jwt.TokenProvider;
+import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,9 +17,10 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 @Configuration
 @EnableWebSecurity
+@RequiredArgsConstructor
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
-
-    // 정적 자원에 대해서는 Security 설정을 적용하지 않음.
+    private final TokenProvider tokenProvider;
+     // 정적 자원에 대해서는 Security 설정을 적용하지 않음.
     @Override
     public void configure(WebSecurity web) {
         web.ignoring().requestMatchers(PathRequest.toStaticResources().atCommonLocations());
@@ -25,16 +28,26 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.csrf().disable().authorizeRequests()
-                // 토큰을 활용하는 경우 모든 요청에 대해 접근이 가능하도록 함
-                .anyRequest().permitAll()
+        http
+                .csrf().disable()
+                // form 기반의 로그인에 대해 비활성화
+                .formLogin().disable()
+
+                // 로그인, 회원가입 등의 API 는 권한없이 접근 가능하도록 설정
+                .authorizeRequests()
+                .antMatchers("/account/**").permitAll()
+
+                // 나머지 API 는 권한 인증 필요
+                .anyRequest().authenticated()
                 .and()
-                // 토큰을 활용하면 세션이 필요 없으므로 STATELESS로 설정하여 Session을 사용하지 않는다.
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+
+                // 토큰을 활용하면 세션이 필요 없으므로 STATELESS 로 설정하여 Session 을 사용하지 않는다.
+                .sessionManagement()
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
-                // form 기반의 로그인에 대해 비활성화 한다.
-                .formLogin()
-                .disable();
+
+                // JwtFilter 를 addFilterBefore 로 등록했던 JwtSecurityConfig 클래스를 적용
+                .apply(new knk.erp.api.shlee.config.JwtSecurityConfig(tokenProvider));
     }
 
     @Bean

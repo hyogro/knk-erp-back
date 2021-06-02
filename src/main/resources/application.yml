@@ -27,3 +27,6 @@ logging:
   logback:
     rollingpolicy:
       clean-history-on-start: true
+
+jwt:
+  secret: c3ByaW5nLWJvb3Qtc2VjdXJpdHkta25rLWVycC1zeXN0ZW0tTU9UQ0VOVEVSLUdVSV9BTkRfR0VVTVU=
