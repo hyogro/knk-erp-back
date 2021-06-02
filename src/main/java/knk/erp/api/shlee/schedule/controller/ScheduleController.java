@@ -17,7 +17,7 @@ public class ScheduleController {
 
     @PostMapping("/hello")
     public String hello(){
-        return "gateway schedule hello!!";
+        return "gateway schedule hello!!!";
     }
 
     @PostMapping("/index")
@@ -25,16 +25,6 @@ public class ScheduleController {
         return "this is schedule index!";
     }
 
-    @PostMapping("/isWork")
-    public String callSchedule(){
-        return scheduleService.callSchedule();
-    }
-
-    @PostMapping("/createSchedule")
-    public String createSchedule(@RequestBody HashMap<String, String> requestData){
-        JSONObject jb = new JSONObject(requestData);
-        return scheduleService.createSchedule(jb);
-    }
 
 
 }
