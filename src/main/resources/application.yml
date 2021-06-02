@@ -1,0 +1,29 @@
+server:
+  port: 8000
+
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    password: z4319495!
+    url: jdbc:mysql://gng-erp-db.cm5g8gvdoxau.ap-northeast-2.rds.amazonaws.com:3306/dev_logs
+    username: shlee
+  jpa:
+    database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
+    generate-ddl: false
+    hibernate:
+      ddl-auto: create
+    properties:
+      hibernate:
+        format_sql: true
+        globally_quoted_identifiers: true
+    show-sql: false
+
+logging:
+  file:
+    path: /home/ubuntu/spring-logs/erp-schedule-api-log
+  level:
+    org:
+      hibernate: info
+  logback:
+    rollingpolicy:
+      clean-history-on-start: true
