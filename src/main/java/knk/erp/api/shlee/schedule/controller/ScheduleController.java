@@ -17,7 +17,7 @@ public class ScheduleController {
 
     @PostMapping("/hello")
     public String hello(){
-        return "gateway schedule hello!!!";
+        return "gateway schedule hello!~";
     }
 
     @PostMapping("/index")
