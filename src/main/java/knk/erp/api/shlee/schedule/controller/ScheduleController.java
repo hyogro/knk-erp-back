@@ -2,6 +2,7 @@ package knk.erp.api.shlee.schedule.controller;
 
 import knk.erp.api.shlee.schedule.dto.Schedule.*;
 import knk.erp.api.shlee.schedule.service.ScheduleService;
+import org.springframework.http.HttpRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,6 +20,7 @@ public class ScheduleController {
         return "gateway schedule hello!";
     }
 
+    //
     @PostMapping("/createSchedule")
     public ResponseEntity<RES_createSchedule> createSchedule(@RequestBody ScheduleDTO scheduleDTO){
         return ResponseEntity.ok(scheduleService.createSchedule(scheduleDTO));
@@ -35,7 +37,8 @@ public class ScheduleController {
     }
 
     @PostMapping("/updateSchedule")
-    public ResponseEntity<RES_updateSchedule> updateSchedule(@RequestBody ScheduleDTO scheduleDTO){
+    public ResponseEntity<RES_updateSchedule> updateSchedule(@RequestBody ScheduleDTO scheduleDTO, @RequestHeader(value = "token") String token){
+        System.out.print(token);
         return ResponseEntity.ok(scheduleService.updateSchedule(scheduleDTO));
     }
     @PostMapping("/deleteSchedule")
