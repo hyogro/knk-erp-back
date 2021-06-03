@@ -50,10 +50,16 @@ public class LoginService {
 
         member.setDepartment(department);
 
+        try {
+            memberRepository.save(member);
+        }catch (Exception e){
+            throw new RuntimeException("회원가입 생성중 문제 발생");
+        }
+
         department.getMemberList().add(member);
         departmentRepository.save(department);
 
-        return SignUp_MemberDTO_RES.of(memberRepository.save(member));
+        return SignUp_MemberDTO_RES.of(member);
     }
 
     // 로그인 및 Access Token 발급
