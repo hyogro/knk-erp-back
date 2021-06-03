@@ -1,5 +1,6 @@
 package knk.erp.api.shlee.account.entity;
 
+import knk.erp.api.shlee.schedule.entity.Time;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,7 +13,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 @Table(name = "Member")
 @Entity
-public class Member {
+public class Member extends Time {
     @Id
     @GeneratedValue
     private Long id;
@@ -20,13 +21,16 @@ public class Member {
     @Column
     private String memberId;
 
+    @Column
     private String password;
 
     @Column(length = 11)
     private String phone;
 
+    @Column
     private String memberName;
 
+    @Column
     private float vacation;
 
     @Enumerated(EnumType.STRING)
