@@ -1,17 +1,16 @@
 package knk.erp.api.shlee.schedule.controller;
 
-import knk.erp.api.shlee.schedule.service.ScheduleServiceImpl;
-import org.json.JSONObject;
+import knk.erp.api.shlee.schedule.dto.Schedule.*;
+import knk.erp.api.shlee.schedule.service.ScheduleService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.HashMap;
 
 @RestController
 @RequestMapping("/schedule")
 public class ScheduleController {
-    ScheduleServiceImpl scheduleService;
+    ScheduleService scheduleService;
 
-    ScheduleController(ScheduleServiceImpl scheduleService){
+    ScheduleController(ScheduleService scheduleService){
         this.scheduleService = scheduleService;
     }
 
@@ -20,11 +19,27 @@ public class ScheduleController {
         return "gateway schedule hello!";
     }
 
-    @PostMapping("/index")
-    public String index(){
-        return "this is schedule index!";
+    @PostMapping("/createSchedule")
+    public ResponseEntity<RES_createSchedule> createSchedule(@RequestBody ScheduleDTO scheduleDTO){
+        return ResponseEntity.ok(scheduleService.createSchedule(scheduleDTO));
     }
 
+    @PostMapping("/readScheduleList")
+    public ResponseEntity<RES_readScheduleList> readScheduleList(){
+        return ResponseEntity.ok(scheduleService.readScheduleList());
+    }
 
+    @PostMapping("/readScheduleDetail")
+    public ResponseEntity<RES_readScheduleDetail> readScheduleDetail(@RequestBody ScheduleDTO scheduleDTO){
+        return ResponseEntity.ok(scheduleService.readScheduleDetail(scheduleDTO));
+    }
 
+    @PostMapping("/updateSchedule")
+    public ResponseEntity<RES_updateSchedule> updateSchedule(@RequestBody ScheduleDTO scheduleDTO){
+        return ResponseEntity.ok(scheduleService.updateSchedule(scheduleDTO));
+    }
+    @PostMapping("/deleteSchedule")
+    public ResponseEntity<RES_deleteSchedule> deleteSchedule(@RequestBody ScheduleDTO scheduleDTO){
+        return ResponseEntity.ok(scheduleService.deleteSchedule(scheduleDTO));
+    }
 }

@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @Setter
 @ToString
 @AllArgsConstructor
-public class S0001_REQ_DTO {
+public class ScheduleDTO {
     private Long id;
     private String title;
     private String memo;
@@ -24,5 +24,15 @@ public class S0001_REQ_DTO {
     public Schedule toEntity(){
         return Schedule.builder().title(title).memo(memo).startDate(startDate).endDate(endDate).memberId(memberId)
                 .groupId(groupId).build();
+    }
+
+    public ScheduleDTO(Schedule schedule){
+        this.id = schedule.getId();
+        this.title = schedule.getTitle();
+        this.memo = schedule.getMemo();
+        this.startDate = schedule.getStartDate();
+        this.endDate = schedule.getEndDate();
+        this.memberId = schedule.getMemberId();
+        this.groupId = schedule.getGroupId();
     }
 }
