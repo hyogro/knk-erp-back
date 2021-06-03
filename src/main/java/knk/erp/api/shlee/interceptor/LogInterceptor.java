@@ -27,7 +27,7 @@ public class LogInterceptor extends HandlerInterceptorAdapter {
         }catch (Exception e){
             logger.info("요청 토큰 없음");
         }
-        logger.info("request_host: {}:{}\trequest_url: {}", request.getRemoteHost(), request.getRemotePort(), request.getRemoteAddr());
+        logger.info("request_host: {}:{}", request.getLocalAddr(), request.getRemotePort());
         return super.preHandle(request, response, handler);
     }
 
