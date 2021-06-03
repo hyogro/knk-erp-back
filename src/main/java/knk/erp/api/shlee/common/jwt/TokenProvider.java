@@ -50,7 +50,7 @@ public class TokenProvider {
         Header header = Jwts.header();
         header.setType("JWT");
         String accessToken = Jwts.builder()
-                .setHeader((Map<String, Object>) header)
+                .setHeader((Map<String, Object>)header)
                 .setSubject(authentication.getName())        // payload "sub": "MemberId"
                 .claim(AUTHORITIES_KEY, authorities)         // payload "auth"
                 .setExpiration(accessTokenExpiresIn)         // payload "exp"

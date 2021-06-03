@@ -5,6 +5,7 @@ import knk.erp.api.shlee.account.entity.*;
 import knk.erp.api.shlee.common.dto.TokenDto;
 import knk.erp.api.shlee.common.dto.TokenRequestDto;
 import knk.erp.api.shlee.common.jwt.TokenProvider;
+import knk.erp.api.shlee.schedule.dto.Schedule.RES_createSchedule;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -45,7 +46,7 @@ public class LoginService {
 
         Department department = departmentRepository.getOne(signUpMemberDTOReq.getDepartmentId());
 
-        if(memberRepository.existsByMemberId(signUpMemberDTOReq.getMemberId())){
+        if(memberRepository.existsByMemberId(signUpMemberDTOReq.getMemberId())) {
             throw new RuntimeException("이미 가입되어있는 ID 입니다.");
         }
         Member member = signUpMemberDTOReq.toMember(passwordEncoder);
@@ -54,14 +55,15 @@ public class LoginService {
 
         try {
             memberRepository.save(member);
+            department.getMemberList().add(member);
+            departmentRepository.save(department);
+            return new SignUp_MemberDTO_RES("SU001");
         }catch (Exception e){
-            throw new RuntimeException("회원가입 생성중 문제 발생");
+            return new SignUp_MemberDTO_RES("SU002", e.getMessage());
         }
 
-        department.getMemberList().add(member);
-        departmentRepository.save(department);
 
-        return SignUp_MemberDTO_RES.of(member);
+
     }
 
     // 로그인 및 Access Token 발급
@@ -121,4 +123,5 @@ public class LoginService {
         // 7. 토큰 발급
         return tokenDto;
     }
+
 }

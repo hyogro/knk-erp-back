@@ -1,5 +1,6 @@
 package knk.erp.api.shlee.account.entity;
 
+import knk.erp.api.shlee.schedule.entity.Time;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -12,7 +13,7 @@ import java.util.List;
 @Table(name = "Department")
 @NoArgsConstructor
 @Entity
-public class Department {
+public class Department extends Time {
     @Id
     @GeneratedValue
     private Long id;
