@@ -22,7 +22,11 @@ public class LogInterceptor extends HandlerInterceptorAdapter {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         String token = request.getHeader("token");
         logger.info("==================== START ====================");
-        logger.info("요청 토큰: {}", token.substring(7));
+        try {
+            logger.info("요청 토큰: {}", token.substring(7));
+        }catch (Exception e){
+            logger.info("요청 토큰 없음");
+        }
         logger.info("request_host: {}:{}\trequest_url: {}", request.getRemoteHost(), request.getRemotePort(), request.getRemoteAddr());
         return super.preHandle(request, response, handler);
     }
