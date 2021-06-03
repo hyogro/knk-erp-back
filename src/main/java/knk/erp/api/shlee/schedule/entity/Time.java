@@ -20,4 +20,7 @@ public class Time {
 
     @LastModifiedDate
     private LocalDateTime updateDate;
+
+    @Column
+    private boolean deleted;
 }

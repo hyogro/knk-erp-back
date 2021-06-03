@@ -14,13 +14,21 @@ import java.time.LocalDateTime;
 @Setter
 @ToString
 @AllArgsConstructor
-public class AttendanceDTO extends Time {
+public class AttendanceDTO{
 
     private Long id;
-    private Long memberId;
+    private String memberId;
     private LocalDate attendanceDate;
     private LocalDateTime onWork;
     private LocalDateTime offWork;
+
+    public AttendanceDTO(Attendance attendance){
+        this.id = attendance.getId();
+        this.memberId = attendance.getMemberId();
+        this.attendanceDate = attendance.getAttendanceDate();
+        this.onWork = attendance.getOnWork();
+        this.offWork = attendance.getOffWork();
+    }
 
     public Attendance toEntity(){
         return Attendance.builder().memberId(memberId).attendanceDate(attendanceDate).onWork(onWork).offWork(offWork).build();

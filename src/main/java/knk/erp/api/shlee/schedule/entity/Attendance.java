@@ -21,8 +21,8 @@ public class Attendance extends Time {
     @GeneratedValue
     private Long id;
 
-    @Column(nullable = false)
-    private Long memberId;
+    @Column(nullable = false, length = 30)
+    private String memberId;
 
     @Column(nullable = false)
     private LocalDate attendanceDate;
@@ -35,7 +35,7 @@ public class Attendance extends Time {
     private LocalDateTime offWork;
 
     @Builder
-    public Attendance(Long memberId, LocalDate attendanceDate, LocalDateTime onWork, LocalDateTime offWork) {
+    public Attendance(String memberId, LocalDate attendanceDate, LocalDateTime onWork, LocalDateTime offWork) {
         this.memberId = memberId;
         this.attendanceDate = attendanceDate;
         this.onWork = onWork;

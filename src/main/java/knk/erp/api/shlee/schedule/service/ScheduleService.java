@@ -32,7 +32,7 @@ public class ScheduleService{
 
     public RES_readScheduleList readScheduleList(){
         try {
-            List<Schedule> scheduleList = scheduleRepository.findAll();
+            List<Schedule> scheduleList = scheduleRepository.findAllByDeletedIsFalse();
             return new RES_readScheduleList("RSL001", util.ScheduleListToDTO(scheduleList));
         }
         catch (Exception e){

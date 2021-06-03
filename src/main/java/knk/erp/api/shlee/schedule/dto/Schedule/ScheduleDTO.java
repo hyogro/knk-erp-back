@@ -18,7 +18,7 @@ public class ScheduleDTO {
     private String memo;
     private LocalDateTime startDate;
     private LocalDateTime endDate;
-    private Long memberId;
+    private String memberId;
     private Long groupId;
 
     public Schedule toEntity(){
