@@ -1,5 +1,6 @@
 package knk.erp.api.shlee.schedule.service;
 
+import knk.erp.api.shlee.common.jwt.TokenProvider;
 import knk.erp.api.shlee.schedule.dto.Schedule.*;
 import knk.erp.api.shlee.schedule.entity.Schedule;
 import knk.erp.api.shlee.schedule.repository.ScheduleRepository;
@@ -7,6 +8,7 @@ import knk.erp.api.shlee.schedule.util.ScheduleUtil;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,6 +19,7 @@ public class ScheduleService{
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
     private final ScheduleRepository scheduleRepository;
     private final ScheduleUtil util;
+    private final TokenProvider tokenProvider;
 
     public RES_createSchedule createSchedule(ScheduleDTO scheduleDTO){
         try {
@@ -47,10 +50,12 @@ public class ScheduleService{
         }
     }
 
-    public RES_updateSchedule updateSchedule(ScheduleDTO scheduleDTO){
+    public RES_updateSchedule updateSchedule(ScheduleDTO scheduleDTO, String token){
         try {
             Schedule schedule = scheduleRepository.getOne(scheduleDTO.getId());
             util.DTOTOSchedule(schedule, scheduleDTO);
+
+            System.out.print(tokenProvider.getAuthentication(token).getName());
 
             scheduleRepository.save(schedule);
             return new RES_updateSchedule("US001");
@@ -59,7 +64,7 @@ public class ScheduleService{
         }
     }
 
-    public RES_deleteSchedule deleteSchedule(ScheduleDTO scheduleDTO){
+    public RES_deleteSchedule deleteSchedule(ScheduleDTO scheduleDTO, String token){
         try {
             scheduleRepository.deleteById(scheduleDTO.getId());
             return new RES_deleteSchedule("DS001");
