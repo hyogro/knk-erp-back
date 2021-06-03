@@ -20,7 +20,7 @@ spring:
 
 logging:
   file:
-    path: /home/ubuntu/spring-logs/erp-schedule-api-log
+    path: /home/ubuntu/spring-logs
   level:
     org:
       hibernate: info
