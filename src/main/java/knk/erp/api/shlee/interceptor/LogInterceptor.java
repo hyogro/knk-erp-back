@@ -27,12 +27,14 @@ public class LogInterceptor extends HandlerInterceptorAdapter {
         }catch (Exception e){
             logger.info("요청 토큰 없음");
         }
-        logger.info("request_host: {}:{}", request.getLocalAddr(), request.getRemotePort());
+        logger.info("request_URL: {}", request.getRequestURI());
         return super.preHandle(request, response, handler);
     }
 
     @Override
     public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception {
+
+        logger.info("response_Status: {}", response.getStatus());
         logger.info("===================== END =====================");
         super.postHandle(request, response, handler, modelAndView);
     }
