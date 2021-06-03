@@ -26,7 +26,7 @@ public class ScheduleService{
             scheduleRepository.save(scheduleDTO.toEntity());
             return new RES_createSchedule("CS001");
         }catch (Exception e){
-            return new RES_createSchedule("CS002", e.getCause().toString());
+            return new RES_createSchedule("CS002", e.getMessage());
         }
     }
 
