@@ -66,7 +66,8 @@ public class ScheduleService{
 
     public RES_deleteSchedule deleteSchedule(ScheduleDTO scheduleDTO, String token){
         try {
-            scheduleRepository.deleteById(scheduleDTO.getId());
+            Schedule schedule = scheduleRepository.getOne(scheduleDTO.getId());
+            schedule.setDeleted(true);
             return new RES_deleteSchedule("DS001");
         }catch (Exception e){
             return new RES_deleteSchedule("DS002", e.getMessage());
