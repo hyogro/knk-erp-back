@@ -18,6 +18,7 @@ import java.security.Key;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -25,7 +26,7 @@ import java.util.stream.Collectors;
 public class TokenProvider {
 
     private static final String AUTHORITIES_KEY = "auth";
-    private static final String BEARER_TYPE = "Bearer ";
+    private static final String BEARER_TYPE = "bearer";
     private static final long ACCESS_TOKEN_EXPIRE_TIME = 1000 * 60 * 30;            // 30분
     private static final long REFRESH_TOKEN_EXPIRE_TIME = 1000 * 60 * 60* 24 * 14;   // 14일
 
@@ -46,7 +47,10 @@ public class TokenProvider {
 
         // Access Token 생성
         Date accessTokenExpiresIn = new Date(now + ACCESS_TOKEN_EXPIRE_TIME);
+        Header header = Jwts.header();
+        header.setType("JWT");
         String accessToken = Jwts.builder()
+                .setHeader((Map<String, Object>) header)
                 .setSubject(authentication.getName())        // payload "sub": "MemberId"
                 .claim(AUTHORITIES_KEY, authorities)         // payload "auth"
                 .setExpiration(accessTokenExpiresIn)         // payload "exp"
