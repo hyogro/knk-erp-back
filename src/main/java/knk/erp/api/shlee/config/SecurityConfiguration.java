@@ -1,6 +1,6 @@
 package knk.erp.api.shlee.config;
 
-import knk.erp.api.shlee.account.jwt.TokenProvider;
+import knk.erp.api.shlee.common.jwt.TokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;

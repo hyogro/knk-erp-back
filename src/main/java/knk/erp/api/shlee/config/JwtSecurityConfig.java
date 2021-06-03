@@ -1,7 +1,7 @@
 package knk.erp.api.shlee.config;
 
-import knk.erp.api.shlee.account.jwt.JwtFilter;
-import knk.erp.api.shlee.account.jwt.TokenProvider;
+import knk.erp.api.shlee.common.jwt.JwtFilter;
+import knk.erp.api.shlee.common.jwt.TokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.config.annotation.SecurityConfigurerAdapter;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;

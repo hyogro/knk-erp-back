@@ -1,4 +1,4 @@
-package knk.erp.api.shlee.account.jwt;
+package knk.erp.api.shlee.common.jwt;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;

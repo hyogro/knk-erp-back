@@ -1,4 +1,4 @@
-package knk.erp.api.shlee.account.dto;
+package knk.erp.api.shlee.common.dto;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

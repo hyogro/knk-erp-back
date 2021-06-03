@@ -1,9 +1,9 @@
-package knk.erp.api.shlee.account.jwt;
+package knk.erp.api.shlee.common.jwt;
 
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
-import knk.erp.api.shlee.account.dto.TokenDto;
+import knk.erp.api.shlee.common.dto.TokenDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;

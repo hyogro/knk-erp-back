@@ -2,7 +2,9 @@ package knk.erp.api.shlee.account.service;
 
 import knk.erp.api.shlee.account.dto.*;
 import knk.erp.api.shlee.account.entity.*;
-import knk.erp.api.shlee.account.jwt.TokenProvider;
+import knk.erp.api.shlee.common.dto.TokenDto;
+import knk.erp.api.shlee.common.dto.TokenRequestDto;
+import knk.erp.api.shlee.common.jwt.TokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
