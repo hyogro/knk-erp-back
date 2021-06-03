@@ -50,7 +50,7 @@ public class TokenProvider {
                 .setSubject(authentication.getName())        // payload "sub": "MemberId"
                 .claim(AUTHORITIES_KEY, authorities)         // payload "auth"
                 .setExpiration(accessTokenExpiresIn)         // payload "exp"
-                .signWith(key, SignatureAlgorithm.HS512)     // header "alg": "HS512"
+                .signWith(key, SignatureAlgorithm.HS512)     // header  "alg": "HS512"
                 .compact();
 
         // Refresh Token 생성

@@ -15,7 +15,7 @@ public class SignUp_MemberDTO_REQ {
 
     private String memberId;
     private String password;
-    private Long phone;
+    private String phone;
     private String memberName;
     private float vacation;
     private Long departmentId;

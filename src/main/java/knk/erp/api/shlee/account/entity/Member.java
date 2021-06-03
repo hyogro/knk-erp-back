@@ -22,7 +22,8 @@ public class Member {
 
     private String password;
 
-    private Long phone;
+    @Column(length = 11)
+    private String phone;
 
     private String memberName;
 
@@ -36,7 +37,7 @@ public class Member {
     private Department department;
 
     @Builder
-    public Member(String memberId, Long phone, String memberName, String password, float vacation, Authority authority){
+    public Member(String memberId, String phone, String memberName, String password, float vacation, Authority authority){
         this.memberId = memberId;
         this.phone = phone;
         this.memberName = memberName;
