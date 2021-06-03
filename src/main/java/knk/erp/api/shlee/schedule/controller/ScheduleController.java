@@ -43,7 +43,7 @@ public class ScheduleController {
      **/
     @PostMapping("/updateSchedule")
     public ResponseEntity<RES_updateSchedule> updateSchedule(@RequestBody ScheduleDTO scheduleDTO, @RequestHeader(value = "token") String token){
-        return ResponseEntity.ok(scheduleService.updateSchedule(scheduleDTO, token));
+        return ResponseEntity.ok(scheduleService.updateSchedule(scheduleDTO, token.substring(7)));
     }
 
     /**
