@@ -68,6 +68,7 @@ public class ScheduleService{
         try {
             Schedule schedule = scheduleRepository.getOne(scheduleDTO.getId());
             schedule.setDeleted(true);
+            scheduleRepository.save(schedule);
             return new RES_deleteSchedule("DS001");
         }catch (Exception e){
             return new RES_deleteSchedule("DS002", e.getMessage());
