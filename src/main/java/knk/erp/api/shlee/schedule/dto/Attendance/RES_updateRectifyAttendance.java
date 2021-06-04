@@ -15,8 +15,9 @@ public class RES_updateRectifyAttendance {
     private LinkedHashMap<String, String> help_codeList = new LinkedHashMap<>();
 
     private void createCodeList(){
-        this.help_codeList.put("URA001", "퇴근 기록 정정요청 성공");
-        this.help_codeList.put("URA002", "퇴근 기록 정정요청 실패");
+        this.help_codeList.put("URA001", "퇴근기록 정정요청 성공");
+        this.help_codeList.put("URA002", "퇴근기록 정정요청 실패");
+        this.help_codeList.put("URA003", "퇴근기록 정정요청 실패(권한없음)");
     }
 
     //error

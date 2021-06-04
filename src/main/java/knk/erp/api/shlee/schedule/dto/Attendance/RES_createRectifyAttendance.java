@@ -17,6 +17,7 @@ public class RES_createRectifyAttendance {
     private void createCodeList(){
         this.help_codeList.put("CRA001", "출,퇴근 정정요청 성공");
         this.help_codeList.put("CRA002", "출,퇴근 정정요청 실패");
+        this.help_codeList.put("CRA003", "출,퇴근 정정요청 실패(권한 없음)");
     }
 
     //error

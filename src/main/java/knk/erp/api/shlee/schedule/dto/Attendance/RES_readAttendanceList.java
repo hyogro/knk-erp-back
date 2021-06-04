@@ -20,6 +20,12 @@ public class RES_readAttendanceList {
     private void createCodeList(){
         this.help_codeList.put("RAL001", "출근기록목록 조회 성공");
         this.help_codeList.put("RAL002", "출근기록목록 조회 실패");
+        this.help_codeList.put("RAL003", "출근기록목록 조회 실패(권한 없음)");
+    }
+    //error
+    public RES_readAttendanceList(String code) {
+        createCodeList();
+        this.code = code;
     }
 
     //error
