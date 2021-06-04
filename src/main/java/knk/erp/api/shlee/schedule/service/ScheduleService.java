@@ -55,7 +55,6 @@ public class ScheduleService{
         try {
             Schedule schedule = scheduleRepository.getOne(scheduleDTO.getId());
 
-
             //실패 - 본인이 아니면 삭제불가
             boolean isOwner = tokenProvider.getAuthentication(token).getName().equals(schedule.getMemberId());
             if(!isOwner) return new RES_updateSchedule("US003");
