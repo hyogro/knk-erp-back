@@ -32,5 +32,16 @@ public class RectifyAttendanceDTO extends Time {
         return RectifyAttendance.builder().memberId(memberId).attendanceDate(attendanceDate).onWork(onWork).offWork(offWork).memo(memo).build();
     }
 
+    public RectifyAttendanceDTO(RectifyAttendance rectifyAttendance){
+        this.id = rectifyAttendance.getId();
+        this.memberId = rectifyAttendance.getMemberId();
+        this.attendanceDate = rectifyAttendance.getAttendanceDate();
+        this.onWork = rectifyAttendance.getOnWork();
+        this.offWork = rectifyAttendance.getOffWork();
+        this.approval_1 = rectifyAttendance.isApproval_1();
+        this.approval_2 = rectifyAttendance.isApproval_2();
+        this.memo = rectifyAttendance.getMemo();
+    }
+
 
 }

@@ -27,7 +27,6 @@ public class RectifyAttendance extends Time {
     @Column(nullable = false)
     private LocalDate attendanceDate;
 
-    @CreatedDate
     @Column(nullable = false)
     private LocalDateTime onWork;
 
@@ -40,7 +39,7 @@ public class RectifyAttendance extends Time {
     @Column
     private boolean approval_2;
 
-    @Column
+    @Column(length = 100)
     private String memo;
 
 

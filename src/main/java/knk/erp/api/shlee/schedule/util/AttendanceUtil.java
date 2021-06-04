@@ -1,8 +1,10 @@
 package knk.erp.api.shlee.schedule.util;
 
 import knk.erp.api.shlee.schedule.dto.Attendance.AttendanceDTO;
+import knk.erp.api.shlee.schedule.dto.Attendance.RectifyAttendanceDTO;
 import knk.erp.api.shlee.schedule.dto.Schedule.ScheduleDTO;
 import knk.erp.api.shlee.schedule.entity.Attendance;
+import knk.erp.api.shlee.schedule.entity.RectifyAttendance;
 import knk.erp.api.shlee.schedule.entity.Schedule;
 import org.springframework.stereotype.Component;
 
@@ -18,5 +20,15 @@ public class AttendanceUtil {
         }
         return attendanceDTOList;
     }
+
+    public List<RectifyAttendanceDTO> RectifyAttendanceListToDTO(List<RectifyAttendance> rectifyAttendanceList){
+        List<RectifyAttendanceDTO> rectifyAttendanceDTOList = new ArrayList<>();
+        for(RectifyAttendance rectifyAttendance : rectifyAttendanceList){
+            rectifyAttendanceDTOList.add(new RectifyAttendanceDTO(rectifyAttendance));
+        }
+        return rectifyAttendanceDTOList;
+    }
+
+
 
 }

@@ -7,4 +7,5 @@ import java.time.LocalDate;
 import java.util.List;
 
 public interface RectifyAttendanceRepository extends JpaRepository<RectifyAttendance, Long> {
+    List<RectifyAttendance> findAllByMemberIdAndDeletedIsFalse(String memberId);
 }
