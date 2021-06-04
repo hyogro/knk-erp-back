@@ -36,7 +36,7 @@ public class TokenProvider {
         this.key = Keys.hmacShaKeyFor(keyBytes);
     }
 
-    // 유저 정보를 넘겨받아서 Access Token 과 Refresh Token 을 생성
+    // 유저 정보를 넘겨받아서 Access Token 생성
     public TokenDto generateTokenDto(Authentication authentication){
         String authorities = authentication.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
