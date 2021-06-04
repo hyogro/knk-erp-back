@@ -27,7 +27,6 @@ public class Attendance extends Time {
     @Column(nullable = false)
     private LocalDate attendanceDate;
 
-    @CreatedDate
     @Column(nullable = false)
     private LocalDateTime onWork;
 

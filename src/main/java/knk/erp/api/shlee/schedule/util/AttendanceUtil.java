@@ -29,6 +29,16 @@ public class AttendanceUtil {
         return rectifyAttendanceDTOList;
     }
 
+    public Attendance RectifyToAttendance(RectifyAttendance rectifyAttendance){
+        return Attendance.builder().memberId(rectifyAttendance.getMemberId()).attendanceDate(rectifyAttendance.getAttendanceDate()).
+                onWork(rectifyAttendance.getOnWork()).offWork(rectifyAttendance.getOffWork()).build();
+    }
+
+    public RectifyAttendance AttendanceToRectify(Attendance attendance, RectifyAttendanceDTO rectifyAttendanceDTO){
+        return RectifyAttendance.builder().memberId(attendance.getMemberId()).attendanceDate(attendance.getAttendanceDate()).
+                onWork(rectifyAttendanceDTO.getOnWork()).offWork(rectifyAttendanceDTO.getOffWork()).memo(rectifyAttendanceDTO.getMemo()).targetId(attendance.getId()).build();
+    }
+
 
 
 }
