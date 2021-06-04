@@ -23,4 +23,8 @@ public class Department extends Time {
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "department_id")
     private List<Member> memberList;
+
+    @OneToOne
+    @JoinColumn(name = "leader_id")
+    private Member leader;
 }
