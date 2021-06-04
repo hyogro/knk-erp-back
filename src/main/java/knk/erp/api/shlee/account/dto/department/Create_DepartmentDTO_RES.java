@@ -1,6 +1,5 @@
-package knk.erp.api.shlee.account.dto;
+package knk.erp.api.shlee.account.dto.department;
 
-import knk.erp.api.shlee.common.dto.TokenDto;
 import lombok.*;
 
 import java.util.LinkedHashMap;
@@ -10,28 +9,26 @@ import java.util.LinkedHashMap;
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
-public class Login_TokenDTO_RES {
+public class Create_DepartmentDTO_RES {
     private String code;
     private String message;
-    private TokenDto tokenDto;
     private LinkedHashMap<String, String> help_codeList = new LinkedHashMap<>();
 
     private void createCodeList(){
-        this.help_codeList.put("LI001", "로그인 성공");
-        this.help_codeList.put("LI002", "로그인 실패");
+        this.help_codeList.put("CD001", "부서 생성 성공");
+        this.help_codeList.put("CD002", "부서 생성 실패");
     }
 
     //error
-    public Login_TokenDTO_RES(String code, String message) {
+    public Create_DepartmentDTO_RES(String code, String message) {
         createCodeList();
         this.code = code;
         this.message = message;
     }
 
     //ok
-    public Login_TokenDTO_RES(String code, TokenDto tokenDto) {
+    public Create_DepartmentDTO_RES(String code) {
         createCodeList();
         this.code = code;
-        this.tokenDto = tokenDto;
     }
 }

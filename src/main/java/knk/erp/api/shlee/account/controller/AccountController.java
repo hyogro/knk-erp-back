@@ -1,8 +1,8 @@
 package knk.erp.api.shlee.account.controller;
 
-import knk.erp.api.shlee.account.dto.Login_TokenDTO_RES;
-import knk.erp.api.shlee.account.dto.SignUp_MemberDTO_REQ;
-import knk.erp.api.shlee.account.dto.SignUp_MemberDTO_RES;
+import knk.erp.api.shlee.account.dto.login.Login_TokenDTO_RES;
+import knk.erp.api.shlee.account.dto.member.MemberDTO_REQ;
+import knk.erp.api.shlee.account.dto.signup.SignUp_MemberDTO_RES;
 import knk.erp.api.shlee.account.service.LoginService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -22,14 +22,14 @@ public class AccountController {
 
     // 회원가입
     @PostMapping("/signup")
-    public ResponseEntity<SignUp_MemberDTO_RES> signup(@RequestBody SignUp_MemberDTO_REQ signUpMemberDTOReq){
-        return ResponseEntity.ok(loginService.signup(signUpMemberDTOReq));
+    public ResponseEntity<SignUp_MemberDTO_RES> signup(@RequestBody MemberDTO_REQ MemberDTOReq){
+        return ResponseEntity.ok(loginService.signup(MemberDTOReq));
     }
 
     // 로그인
     @PostMapping("/login")
-    public ResponseEntity<Login_TokenDTO_RES> login(@RequestBody SignUp_MemberDTO_REQ signUpMemberDTOReq){
-        return ResponseEntity.ok(loginService.login(signUpMemberDTOReq));
+    public ResponseEntity<Login_TokenDTO_RES> login(@RequestBody MemberDTO_REQ MemberDTOReq){
+        return ResponseEntity.ok(loginService.login(MemberDTOReq));
     }
 
 }

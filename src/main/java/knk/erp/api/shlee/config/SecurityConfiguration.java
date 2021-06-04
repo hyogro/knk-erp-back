@@ -37,6 +37,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers("/account/signup", "/account/login").permitAll()
                 .antMatchers("/account/hello").hasAnyRole("LVL2")
+                .antMatchers("/department/**").hasAnyRole("ADMIN")
 
                 // 나머지 API 는 권한 인증 필요
                 .anyRequest().authenticated()
