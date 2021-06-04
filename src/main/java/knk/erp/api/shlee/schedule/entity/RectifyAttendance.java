@@ -39,18 +39,25 @@ public class RectifyAttendance extends Time {
     @Column
     private boolean approval_2;
 
+    @Column(length = 30)
+    private String approver_1;
+
+    @Column(length = 30)
+    private String approver_2;
+
     @Column(length = 100)
     private String memo;
 
-
-
+    @Column
+    private Long targetId;
 
     @Builder
-    public RectifyAttendance(String memberId, LocalDate attendanceDate, LocalDateTime onWork, LocalDateTime offWork, String memo) {
+    public RectifyAttendance(String memberId, LocalDate attendanceDate, LocalDateTime onWork, LocalDateTime offWork, String memo, Long targetId) {
         this.memberId = memberId;
         this.attendanceDate = attendanceDate;
         this.onWork = onWork;
         this.offWork = offWork;
         this.memo = memo;
+        this.targetId = targetId;
     }
 }

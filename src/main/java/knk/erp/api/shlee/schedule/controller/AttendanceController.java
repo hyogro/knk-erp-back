@@ -57,4 +57,10 @@ public class AttendanceController {
         return ResponseEntity.ok(attendanceService.deleteRectifyAttendance(rectifyAttendanceDTO, token.substring(7)));
     }
 
+    /** 출,퇴근 기록 정정요청 승인 **/
+    @PostMapping("approveRectifyAttendance")
+    public ResponseEntity<RES_approveRectifyAttendance> approveRectifyAttendance(@RequestBody RectifyAttendanceDTO rectifyAttendanceDTO, @RequestHeader(value = "token") String token){
+        return ResponseEntity.ok(attendanceService.approveRectifyAttendance(rectifyAttendanceDTO, token.substring(7)));
+    }
+
 }
