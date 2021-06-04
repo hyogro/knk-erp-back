@@ -18,8 +18,8 @@ public class DepartmentService {
 
     @Transactional
     public Create_DepartmentDTO_RES create(DepartmentDTO_REQ departmentDTOReq){
-        Department department = departmentDTOReq.toDepartment();
         try{
+            Department department = departmentDTOReq.toDepartment();
             departmentRepository.save(department);
             return new Create_DepartmentDTO_RES("CD001");
         }catch(Exception e){
