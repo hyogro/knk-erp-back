@@ -28,12 +28,12 @@ public class LogFilter implements Filter {
         chain.doFilter(requestWrapper, responseWrapper);
         long end = System.currentTimeMillis();
 
-        log.info("==================== START ====================");
-        log.info("[REQUEST] {} - {} {} - {}", ((HttpServletRequest) request).getMethod(), ((HttpServletRequest) request).getRequestURI(), responseWrapper.getStatus(), (end - start) / 1000.0);
+        log.info("==================== [REQUEST START] ====================");
+        log.info("[REQUEST] {}-{}\tstatus: {}\tprocess time: {}s", ((HttpServletRequest) request).getMethod(), ((HttpServletRequest) request).getRequestURI(), responseWrapper.getStatus(), (end - start) / 1000.0);
         log.info("Headers : {}", getHeaders((HttpServletRequest) request));
         log.info("Request : \n{}", getRequestBody(requestWrapper));
         log.info("Response : \n{}", getResponseBody(responseWrapper));
-        log.info("===================== END =====================");
+        log.info("===================== [REQUEST END] =====================");
 
     }
 
