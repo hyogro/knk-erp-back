@@ -26,6 +26,8 @@ public class RectifyAttendanceDTO extends Time {
     private LocalDateTime offWork;
     private boolean approval_1;
     private boolean approval_2;
+    private String approver_1;
+    private String approver_2;
     private String memo;
 
     public RectifyAttendance toEntity(){
@@ -40,6 +42,8 @@ public class RectifyAttendanceDTO extends Time {
         this.offWork = rectifyAttendance.getOffWork();
         this.approval_1 = rectifyAttendance.isApproval_1();
         this.approval_2 = rectifyAttendance.isApproval_2();
+        this.approver_1 = rectifyAttendance.getApprover_1();
+        this.approver_2 = rectifyAttendance.getApprover_2();
         this.memo = rectifyAttendance.getMemo();
     }
 

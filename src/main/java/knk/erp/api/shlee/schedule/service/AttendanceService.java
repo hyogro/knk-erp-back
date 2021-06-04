@@ -1,8 +1,6 @@
 package knk.erp.api.shlee.schedule.service;
 
-import knk.erp.api.shlee.account.entity.Authority;
-import knk.erp.api.shlee.account.entity.DepartmentRepository;
-import knk.erp.api.shlee.account.entity.MemberRepository;
+import knk.erp.api.shlee.account.entity.*;
 import knk.erp.api.shlee.common.jwt.TokenProvider;
 import knk.erp.api.shlee.common.util.CommonUtil;
 import knk.erp.api.shlee.schedule.dto.Attendance.*;
@@ -25,6 +23,7 @@ import javax.persistence.EntityNotFoundException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -49,7 +48,7 @@ public class AttendanceService {
 
             //실패 - 기존 출근기록 있으면 리턴
             boolean isOnWorked = attendanceRepository.countByAttendanceDateAndMemberIdAndDeletedIsFalse(now.toLocalDate(), memberId) != 0;
-            if (isOnWorked) return new RES_onWork("ON002");
+            if (isOnWorked) return new RES_onWork("ON003");
 
             //실패 - 본인이 아니면 생성불가
             boolean isOwner = tokenProvider.getAuthentication(token).getName().equals(memberId);
@@ -63,7 +62,7 @@ public class AttendanceService {
 
         } catch (Exception e) {
             //실패 - Exception 발생
-            return new RES_onWork("ON003", e.getMessage());
+            return new RES_onWork("ON002", e.getMessage());
         }
     }
 
@@ -107,7 +106,7 @@ public class AttendanceService {
         }
     }
 
-    //출,퇴근기록 정정 요청 -> 신규 생성
+    //출,퇴근기록 정정 요청 -> 정정요청 신규 생성
     public RES_createRectifyAttendance createRectifyAttendance(RectifyAttendanceDTO rectifyAttendanceDTO, String token) {
         try {
             //실패 - 본인이 아니면 수정불가
@@ -131,7 +130,7 @@ public class AttendanceService {
         }
     }
 
-    //출,퇴근기록 정정 요청 -> 출퇴근 기록 정정요청 생성
+    //출,퇴근기록 정정 요청 -> 출퇴근 기록으로 정정요청 생성
     public RES_updateRectifyAttendance updateRectifyAttendance(RectifyAttendanceDTO rectifyAttendanceDTO, String token) {
         try {
             //실패 - 본인이 아니면 수정불가
@@ -178,22 +177,32 @@ public class AttendanceService {
     }
 
     //요청 시 권한에 따라서 1, 2차 승인 여부 변경
-    private void rectifyApproved(String token, RectifyAttendance rectifyAttendance) {
+    private boolean rectifyApproved(String token, RectifyAttendance rectifyAttendance) {
         Authentication authentication = tokenProvider.getAuthentication(token);
         String lvl = authentication.getAuthorities().toString().replace("[ROLE_", "").replace("]", "");
         String leaderId = authentication.getName();
         String memberId = rectifyAttendance.getMemberId();
 
-        //departmentRepository.fin
-
-        if (lvl.equals("LVL2") || lvl.equals("LVL3")) {
+        //LVL2(부서장) 인 경우 승인하려는 맴버가 부서원인지 확인 후 승인 진행
+        if (lvl.equals("LVL2")) {
+            Optional<Member> member = memberRepository.findByMemberId(memberId);
+            Optional<Department> department_l = departmentRepository.findByLeader_MemberId(leaderId);
+            if(member.isPresent() && department_l.isPresent()){
+                if(member.get().getDepartment().getId().equals(department_l.get().getId())){
+                    rectifyAttendance.setApproval_1(true);
+                    rectifyAttendance.setApprover_1(leaderId);
+                    return true;
+                }
+            }
+        }
+        else if (lvl.equals("LVL3")) {
             rectifyAttendance.setApproval_1(true);
             rectifyAttendance.setApprover_1(leaderId);
-        }
-        if (lvl.equals("LVL3")) {
             rectifyAttendance.setApproval_2(true);
             rectifyAttendance.setApprover_2(leaderId);
+            return true;
         }
+        return false;
     }
 
     //출,퇴근 정정요청목록 조회
@@ -236,7 +245,7 @@ public class AttendanceService {
     public RES_approveRectifyAttendance approveRectifyAttendance(RectifyAttendanceDTO rectifyAttendanceDTO, String token){
         try {
             RectifyAttendance rectifyAttendance = rectifyAttendanceRepository.getOne(rectifyAttendanceDTO.getId());
-            rectifyApproved(token, rectifyAttendance);
+            if(!rectifyApproved(token, rectifyAttendance)) return new RES_approveRectifyAttendance("ARA003");
             RectifyAttendance done = rectifyAttendanceRepository.save(rectifyAttendance);
             rectifyToAttendance(done.getId());
             return new RES_approveRectifyAttendance("ARA001");
