@@ -16,9 +16,9 @@ public class AccountController {
 
     private final LoginService loginService;
 
-    @GetMapping("/hello")
+    @PostMapping("/hello")
     public String hi(){
-        return "HI";
+        return "hi";
     }
 
     // 회원가입
@@ -33,9 +33,4 @@ public class AccountController {
         return ResponseEntity.ok(loginService.login(signUpMemberDTOReq));
     }
 
-    // Token 재발급
-    @PostMapping("/reissue")
-    public ResponseEntity<TokenDto> reissue(@RequestBody TokenRequestDto tokenRequestDto){
-        return ResponseEntity.ok(loginService.reissue(tokenRequestDto));
-    }
 }
