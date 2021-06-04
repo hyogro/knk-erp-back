@@ -104,7 +104,8 @@ public class AttendanceService {
             if(!isOwner) return new RES_createRectifyAttendance("CRA003");
 
             //성공 - 생성 후 응답
-            rectifyAttendanceRepository.save(rectifyAttendanceDTO.toEntity());
+            RectifyAttendance rectifyAttendance = rectifyAttendanceDTO.toEntity();
+            rectifyAttendanceRepository.save(rectifyAttendance);
             return new RES_createRectifyAttendance("CRA001");
         }catch (Exception e){
             //실패 - Exception 발생
@@ -133,6 +134,7 @@ public class AttendanceService {
     //출,퇴근 정정요청목록 조회
     public RES_readRectifyAttendanceList readRectifyAttendanceList(RectifyAttendanceDTO rectifyAttendanceDTO, String token){
         try {
+
             //실패 - 본인이 아니면 조회불가
             boolean isOwner = tokenProvider.getAuthentication(token).getName().equals(rectifyAttendanceDTO.getMemberId());
             if(!isOwner) return new RES_readRectifyAttendanceList("RRAL003");
