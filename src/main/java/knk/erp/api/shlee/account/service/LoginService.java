@@ -44,7 +44,7 @@ public class LoginService {
         Department department = departmentRepository.getOne(signUpMemberDTOReq.getDepartmentId());
 
         if(memberRepository.existsByMemberId(signUpMemberDTOReq.getMemberId())) {
-            throw new RuntimeException("이미 가입되어있는 ID 입니다.");
+            return new SignUp_MemberDTO_RES("SU003", "이미 가입된 ID 입니다.");
         }
         Member member = signUpMemberDTOReq.toMember(passwordEncoder);
 
@@ -62,19 +62,23 @@ public class LoginService {
 
     // 로그인 및 Access Token 발급
     @Transactional
-    public TokenDto login(SignUp_MemberDTO_REQ signUpMemberDTOReq){
+    public Login_TokenDTO_RES login(SignUp_MemberDTO_REQ signUpMemberDTOReq){
 
         // 1. Login ID/PW 를 기반으로 AuthenticationToken 생성
         UsernamePasswordAuthenticationToken authenticationToken = signUpMemberDTOReq.toAuthentication();
 
-        // 2. 실제로 검증 (사용자 비밀번호 체크) 이 이루어지는 부분
-        //    authenticate 메서드가 실행이 될 때 CustomUserDetailsService 에서 만들었던 loadUserByMemberId 메서드가 실행됨
-        Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
+        try{
+            // 2. 실제로 검증 (사용자 비밀번호 체크) 이 이루어지는 부분
+            //    authenticate 메서드가 실행이 될 때 CustomUserDetailsService 에서 만들었던 loadUserByMemberId 메서드가 실행됨
+            Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
 
-        // 3. 인증 정보를 기반으로 JWT 토큰 생성
-        TokenDto tokenDto = tokenProvider.generateTokenDto(authentication);
+            // 3. 인증 정보를 기반으로 JWT 토큰 생성
+            TokenDto tokenDto = tokenProvider.generateTokenDto(authentication);
 
-        // 5. 토큰 발급
-        return tokenDto;
+            // 4. 토큰 발급
+            return new Login_TokenDTO_RES("LI001", tokenDto);
+        }catch(Exception e){
+            return new Login_TokenDTO_RES("LI002", e.getMessage());
+        }
     }
 }

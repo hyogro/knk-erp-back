@@ -1,5 +1,6 @@
 package knk.erp.api.shlee.account.controller;
 
+import knk.erp.api.shlee.account.dto.Login_TokenDTO_RES;
 import knk.erp.api.shlee.account.dto.SignUp_MemberDTO_REQ;
 import knk.erp.api.shlee.account.dto.SignUp_MemberDTO_RES;
 import knk.erp.api.shlee.common.dto.TokenDto;
@@ -28,7 +29,7 @@ public class AccountController {
 
     // 로그인
     @PostMapping("/login")
-    public ResponseEntity<TokenDto> login(@RequestBody SignUp_MemberDTO_REQ signUpMemberDTOReq){
+    public ResponseEntity<Login_TokenDTO_RES> login(@RequestBody SignUp_MemberDTO_REQ signUpMemberDTOReq){
         return ResponseEntity.ok(loginService.login(signUpMemberDTOReq));
     }
 
