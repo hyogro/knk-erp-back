@@ -3,7 +3,6 @@ package knk.erp.api.shlee.account.controller;
 import knk.erp.api.shlee.account.dto.SignUp_MemberDTO_REQ;
 import knk.erp.api.shlee.account.dto.SignUp_MemberDTO_RES;
 import knk.erp.api.shlee.common.dto.TokenDto;
-import knk.erp.api.shlee.common.dto.TokenRequestDto;
 import knk.erp.api.shlee.account.service.LoginService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

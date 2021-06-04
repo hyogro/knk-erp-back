@@ -35,7 +35,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
                 // 로그인, 회원가입 등의 API 는 권한없이 접근 가능하도록 설정
                 .authorizeRequests()
-                .antMatchers("/account/**").permitAll()
+                .antMatchers("/account/signup", "/account/login").permitAll()
+                .antMatchers("/account/hello").hasAnyRole("LVL1")
 
                 // 나머지 API 는 권한 인증 필요
                 .anyRequest().authenticated()
