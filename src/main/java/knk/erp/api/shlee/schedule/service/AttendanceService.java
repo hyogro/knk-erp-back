@@ -69,6 +69,7 @@ public class AttendanceService {
         }
     }
 
+    //출, 퇴근기록 조회
     public RES_readAttendanceList readAttendanceList(AttendanceDTO attendanceDTO){
         try {
             String memberId = attendanceDTO.getMemberId();
@@ -78,6 +79,14 @@ public class AttendanceService {
             return new RES_readAttendanceList("RAL002", e.getMessage());
         }
     }
+
+    //출근기록 정정 요청 -> 신규 생성 요청
+
+    //퇴근기록 정정 요청 -> 기존
+
+    //출근을 못찍은 경우
+    //퇴근을 못찍은 경우
+    //출,퇴근을 못찍은 경우
 
 
 }
