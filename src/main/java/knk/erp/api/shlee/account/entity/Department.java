@@ -1,6 +1,7 @@
 package knk.erp.api.shlee.account.entity;
 
 import knk.erp.api.shlee.schedule.entity.Time;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -27,4 +28,9 @@ public class Department extends Time {
     @OneToOne
     @JoinColumn(name = "leader_id")
     private Member leader;
+
+    @Builder
+    public Department(String departmentName){
+        this.departmentName = departmentName;
+    }
 }

@@ -1,7 +1,11 @@
 package knk.erp.api.shlee.account.service;
 
-import knk.erp.api.shlee.account.dto.*;
+import knk.erp.api.shlee.account.dto.department.DepartmentDTO_REQ;
+import knk.erp.api.shlee.account.dto.member.MemberDTO_REQ;
+import knk.erp.api.shlee.account.dto.signup.SignUp_MemberDTO_RES;
+import knk.erp.api.shlee.account.dto.login.Login_TokenDTO_RES;
 import knk.erp.api.shlee.account.entity.*;
+import knk.erp.api.shlee.account.util.DepartmentUtil;
 import knk.erp.api.shlee.common.dto.TokenDto;
 import knk.erp.api.shlee.common.jwt.TokenProvider;
 import lombok.RequiredArgsConstructor;
@@ -24,29 +28,19 @@ public class LoginService {
     private final BCryptPasswordEncoder passwordEncoder;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final TokenProvider tokenProvider;
+    private final DepartmentUtil departmentUtil;
 
-    @Transactional
-    public List<SignUp_DepartmentDTO> getDepartmentList(){
-        List<SignUp_DepartmentDTO> responseData = new ArrayList<>();
-        List<Department> departmentList = departmentRepository.findAll();
-
-        for(Department d : departmentList){
-            responseData.add(new SignUp_DepartmentDTO(d.getId(), d.getDepartmentName()));
-
-        }
-        return responseData;
-    }
 
     // 회원 가입
     @Transactional
-    public SignUp_MemberDTO_RES signup(SignUp_MemberDTO_REQ signUpMemberDTOReq){
+    public SignUp_MemberDTO_RES signup(MemberDTO_REQ MemberDTOReq){
 
-        Department department = departmentRepository.getOne(signUpMemberDTOReq.getDepartmentId());
+        Department department = departmentRepository.getOne(MemberDTOReq.getDepartmentId());
 
-        if(memberRepository.existsByMemberId(signUpMemberDTOReq.getMemberId())) {
+        if(memberRepository.existsByMemberId(MemberDTOReq.getMemberId())) {
             return new SignUp_MemberDTO_RES("SU003", "이미 가입된 ID 입니다.");
         }
-        Member member = signUpMemberDTOReq.toMember(passwordEncoder);
+        Member member = MemberDTOReq.toMember(passwordEncoder);
 
         member.setDepartment(department);
 
@@ -62,10 +56,10 @@ public class LoginService {
 
     // 로그인 및 Access Token 발급
     @Transactional
-    public Login_TokenDTO_RES login(SignUp_MemberDTO_REQ signUpMemberDTOReq){
+    public Login_TokenDTO_RES login(MemberDTO_REQ MemberDTOReq){
 
         // 1. Login ID/PW 를 기반으로 AuthenticationToken 생성
-        UsernamePasswordAuthenticationToken authenticationToken = signUpMemberDTOReq.toAuthentication();
+        UsernamePasswordAuthenticationToken authenticationToken = MemberDTOReq.toAuthentication();
 
         try{
             // 2. 실제로 검증 (사용자 비밀번호 체크) 이 이루어지는 부분

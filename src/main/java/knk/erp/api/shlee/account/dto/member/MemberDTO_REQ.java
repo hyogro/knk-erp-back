@@ -1,4 +1,4 @@
-package knk.erp.api.shlee.account.dto;
+package knk.erp.api.shlee.account.dto.member;
 
 import knk.erp.api.shlee.account.entity.Authority;
 import knk.erp.api.shlee.account.entity.Member;
@@ -11,7 +11,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
-public class SignUp_MemberDTO_REQ {
+public class MemberDTO_REQ {
 
     private String memberId;
     private String password;
