@@ -1,6 +1,5 @@
 package knk.erp.api.shlee.config;
 
-import knk.erp.api.shlee.interceptor.LogInterceptor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
@@ -17,6 +16,5 @@ public class WebConfiguration implements WebMvcConfigurer {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(new LogInterceptor()).addPathPatterns("/**");
     }
 }
