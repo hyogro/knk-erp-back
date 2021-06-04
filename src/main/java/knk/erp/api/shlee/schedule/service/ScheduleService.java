@@ -55,8 +55,6 @@ public class ScheduleService{
             Schedule schedule = scheduleRepository.getOne(scheduleDTO.getId());
             util.DTOTOSchedule(schedule, scheduleDTO);
 
-            System.out.print(tokenProvider.getAuthentication(token).getName());
-
             scheduleRepository.save(schedule);
             return new RES_updateSchedule("US001");
         }catch (Exception e){

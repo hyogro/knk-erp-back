@@ -52,6 +52,6 @@ public class ScheduleController {
      **/
     @PostMapping("/deleteSchedule")
     public ResponseEntity<RES_deleteSchedule> deleteSchedule(@RequestBody ScheduleDTO scheduleDTO, @RequestHeader(value = "token") String token){
-        return ResponseEntity.ok(scheduleService.deleteSchedule(scheduleDTO, token));
+        return ResponseEntity.ok(scheduleService.deleteSchedule(scheduleDTO, token.substring(7)));
     }
 }
