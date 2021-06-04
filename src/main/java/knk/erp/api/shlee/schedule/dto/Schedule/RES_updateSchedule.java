@@ -17,6 +17,7 @@ public class RES_updateSchedule {
     private void createCodeList(){
         this.help_codeList.put("US001", "일정수정 성공");
         this.help_codeList.put("US002", "일정수정 실패");
+        this.help_codeList.put("US003", "일정수정 실패(권한 없음)");
     }
 
     //error

@@ -17,6 +17,7 @@ public class RES_deleteSchedule {
     private void createCodeList(){
         this.help_codeList.put("DS001", "일정삭제 성공");
         this.help_codeList.put("DS002", "일정삭제 실패");
+        this.help_codeList.put("DS003", "일정삭제 실패(권한 없음)");
     }
 
     //error

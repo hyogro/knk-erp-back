@@ -1,6 +1,7 @@
 package knk.erp.api.shlee.schedule.service;
 
 import knk.erp.api.shlee.common.jwt.TokenProvider;
+import knk.erp.api.shlee.schedule.dto.Attendance.RES_createRectifyAttendance;
 import knk.erp.api.shlee.schedule.dto.Schedule.*;
 import knk.erp.api.shlee.schedule.entity.Schedule;
 import knk.erp.api.shlee.schedule.repository.ScheduleRepository;
@@ -53,6 +54,12 @@ public class ScheduleService{
     public RES_updateSchedule updateSchedule(ScheduleDTO scheduleDTO, String token){
         try {
             Schedule schedule = scheduleRepository.getOne(scheduleDTO.getId());
+
+
+            //실패 - 본인이 아니면 삭제불가
+            boolean isOwner = tokenProvider.getAuthentication(token).getName().equals(schedule.getMemberId());
+            if(!isOwner) return new RES_updateSchedule("US003");
+
             util.DTOTOSchedule(schedule, scheduleDTO);
 
             scheduleRepository.save(schedule);
@@ -65,9 +72,15 @@ public class ScheduleService{
     public RES_deleteSchedule deleteSchedule(ScheduleDTO scheduleDTO, String token){
         try {
             Schedule schedule = scheduleRepository.getOne(scheduleDTO.getId());
+
+            //실패 - 본인이 아니면 삭제불가
+            boolean isOwner = tokenProvider.getAuthentication(token).getName().equals(schedule.getMemberId());
+            if(!isOwner) return new RES_deleteSchedule("DS003");
+
             schedule.setDeleted(true);
             scheduleRepository.save(schedule);
             return new RES_deleteSchedule("DS001");
+
         }catch (Exception e){
             return new RES_deleteSchedule("DS002", e.getMessage());
         }
