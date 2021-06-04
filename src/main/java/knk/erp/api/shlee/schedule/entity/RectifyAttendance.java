@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 @ToString
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class WaitAttendance extends Time {
+public class RectifyAttendance extends Time {
 
     @Id
     @GeneratedValue
@@ -34,12 +34,24 @@ public class WaitAttendance extends Time {
     @Column
     private LocalDateTime offWork;
 
+    @Column
+    private boolean approval_1;
+
+    @Column
+    private boolean approval_2;
+
+    @Column
+    private String memo;
+
+
+
 
     @Builder
-    public WaitAttendance(String memberId, LocalDate attendanceDate, LocalDateTime onWork, LocalDateTime offWork) {
+    public RectifyAttendance(String memberId, LocalDate attendanceDate, LocalDateTime onWork, LocalDateTime offWork, String memo) {
         this.memberId = memberId;
         this.attendanceDate = attendanceDate;
         this.onWork = onWork;
         this.offWork = offWork;
+        this.memo = memo;
     }
 }

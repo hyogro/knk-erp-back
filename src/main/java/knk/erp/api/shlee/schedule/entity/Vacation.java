@@ -26,10 +26,10 @@ public class Vacation extends Time {
     private String memo;
 
     @Column
-    private boolean lvl2Approve;
+    boolean approval_1;
 
     @Column
-    private boolean lvl3Approve;
+    boolean approval_2;
 
     @Column(length = 100)
     private String approveMemo;
@@ -47,11 +47,11 @@ public class Vacation extends Time {
     private Long groupId;
 
     @Builder
-    public Vacation(String title, String memo, boolean lvl2Approve, boolean lvl3Approve, String approveMemo, LocalDateTime startDate, LocalDateTime endDate, Long memberId, Long groupId) {
+    public Vacation(String title, String memo, boolean approval_1, boolean approval_2, String approveMemo, LocalDateTime startDate, LocalDateTime endDate, Long memberId, Long groupId) {
         this.title = title;
         this.memo = memo;
-        this.lvl2Approve = lvl2Approve;
-        this.lvl3Approve = lvl3Approve;
+        this.approval_1 = approval_1;
+        this.approval_2 = approval_2;
         this.approveMemo = approveMemo;
         this.startDate = startDate;
         this.endDate = endDate;

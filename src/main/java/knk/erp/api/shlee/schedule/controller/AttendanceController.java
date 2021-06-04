@@ -35,4 +35,6 @@ public class AttendanceController {
     public ResponseEntity<RES_readAttendanceList> readAttendanceList(@RequestBody AttendanceDTO attendanceDTO){
         return ResponseEntity.ok(attendanceService.readAttendanceList(attendanceDTO));
     }
+
+    /** 출,퇴근 기록 정정 요청**/
 }

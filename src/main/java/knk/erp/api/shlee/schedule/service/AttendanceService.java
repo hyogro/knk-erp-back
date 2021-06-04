@@ -1,14 +1,13 @@
 package knk.erp.api.shlee.schedule.service;
 
 import knk.erp.api.shlee.common.jwt.TokenProvider;
-import knk.erp.api.shlee.schedule.dto.Attendance.AttendanceDTO;
-import knk.erp.api.shlee.schedule.dto.Attendance.RES_offWork;
-import knk.erp.api.shlee.schedule.dto.Attendance.RES_onWork;
-import knk.erp.api.shlee.schedule.dto.Attendance.RES_readAttendanceList;
+import knk.erp.api.shlee.schedule.dto.Attendance.*;
 import knk.erp.api.shlee.schedule.dto.Schedule.*;
 import knk.erp.api.shlee.schedule.entity.Attendance;
+import knk.erp.api.shlee.schedule.entity.RectifyAttendance;
 import knk.erp.api.shlee.schedule.entity.Schedule;
 import knk.erp.api.shlee.schedule.repository.AttendanceRepository;
+import knk.erp.api.shlee.schedule.repository.RectifyAttendanceRepository;
 import knk.erp.api.shlee.schedule.repository.ScheduleRepository;
 import knk.erp.api.shlee.schedule.util.AttendanceUtil;
 import knk.erp.api.shlee.schedule.util.ScheduleUtil;
@@ -27,6 +26,7 @@ import java.util.List;
 public class AttendanceService {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
     private final AttendanceRepository attendanceRepository;
+    private final RectifyAttendanceRepository rectifyAttendanceRepository;
     private final TokenProvider tokenProvider;
     private final AttendanceUtil util;
 
@@ -81,8 +81,26 @@ public class AttendanceService {
     }
 
     //출근기록 정정 요청 -> 신규 생성 요청
+    public RES_createRectifyAttendance createRectifyAttendance(RectifyAttendanceDTO rectifyAttendanceDTO){
+        try {
+            rectifyAttendanceRepository.save(rectifyAttendanceDTO.toEntity());
+            return new RES_createRectifyAttendance("CRA001");
+        }catch (Exception e){
+            return new RES_createRectifyAttendance("CRA002", e.getMessage());
+        }
+    }
 
     //퇴근기록 정정 요청 -> 기존
+    public RES_updateRectifyAttendance updateRectifyAttendance(RectifyAttendanceDTO rectifyAttendanceDTO){
+        try {
+            RectifyAttendance rectifyAttendance = rectifyAttendanceRepository.getOne(rectifyAttendanceDTO.getId());
+            rectifyAttendance.setOffWork(rectifyAttendanceDTO.getOffWork());
+            rectifyAttendanceRepository.save(rectifyAttendance);
+            return new RES_updateRectifyAttendance("URA001");
+        }catch (Exception e){
+            return new RES_updateRectifyAttendance("URA002", e.getMessage());
+        }
+    }
 
     //출근을 못찍은 경우
     //퇴근을 못찍은 경우

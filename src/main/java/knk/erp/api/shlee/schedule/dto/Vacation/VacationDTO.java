@@ -16,8 +16,8 @@ public class VacationDTO {
     private Long id;
     private String title;
     private String memo;
-    private boolean lvl2Approve;
-    private boolean lvl3Approve;
+    private boolean approval_1;
+    private boolean approval_2;
     private String approveMemo;
     private LocalDateTime startDate;
     private LocalDateTime endDate;
@@ -25,7 +25,7 @@ public class VacationDTO {
     private Long groupId;
 
     public Vacation toEntity(){
-        return Vacation.builder().title(title).memo(memo).lvl2Approve(lvl2Approve).lvl3Approve(lvl3Approve)
+        return Vacation.builder().title(title).memo(memo).approval_1(approval_1).approval_2(approval_2)
                 .approveMemo(approveMemo).startDate(startDate).endDate(endDate).memberId(memberId)
                 .groupId(groupId).build();
     }
