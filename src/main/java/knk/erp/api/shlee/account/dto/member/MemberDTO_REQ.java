@@ -19,6 +19,8 @@ public class MemberDTO_REQ {
     private String memberName;
     private float vacation;
     private Long departmentId;
+    private String departmentName;
+    private Authority authority;
 
     public Member toMember(BCryptPasswordEncoder passwordEncoder){
         return Member.builder()
