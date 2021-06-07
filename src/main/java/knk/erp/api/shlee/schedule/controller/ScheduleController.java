@@ -37,21 +37,21 @@ public class ScheduleController {
         return ResponseEntity.ok(scheduleService.readScheduleDetail(scheduleDTO));
     }
 
-    /**
-     * 일정 수정
-     * 권한 체크
-     **/
+    /**일정 수정**/
     @PostMapping("/updateSchedule")
     public ResponseEntity<RES_updateSchedule> updateSchedule(@RequestBody ScheduleDTO scheduleDTO, @RequestHeader(value = "token") String token){
         return ResponseEntity.ok(scheduleService.updateSchedule(scheduleDTO, token.substring(7)));
     }
 
-    /**
-     * 일정 삭제
-     * 권한 체크
-     **/
+    /**일정 삭제**/
     @PostMapping("/deleteSchedule")
     public ResponseEntity<RES_deleteSchedule> deleteSchedule(@RequestBody ScheduleDTO scheduleDTO, @RequestHeader(value = "token") String token){
         return ResponseEntity.ok(scheduleService.deleteSchedule(scheduleDTO, token.substring(7)));
+    }
+
+    /**메인화면 일정 목록 읽기**/
+    @PostMapping("/readIndexScheduleList")
+    public ResponseEntity<RES_readScheduleList> readIndexScheduleList(@RequestHeader(value = "token") String token){
+        return ResponseEntity.ok(scheduleService.readIndexScheduleList( token.substring(7)));
     }
 }
