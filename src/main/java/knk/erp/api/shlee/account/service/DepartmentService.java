@@ -29,12 +29,10 @@ public class DepartmentService {
     }
 
     // 부서 목록 읽어오기
-    @Transactional
+    @Transactional(readOnly = true)
     public Read_DepartmentDTO_RES readDepartment(){
         try{
-            System.out.println("123123");
             List<Department> departmentList = departmentRepository.findAllByDeletedIsFalse();
-            System.out.println("123123");
             return new Read_DepartmentDTO_RES("RD001", departmentUtil.getDepartmentList(departmentList));
         }catch(Exception e){
             return new Read_DepartmentDTO_RES("RD002", e.getMessage());

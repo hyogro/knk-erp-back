@@ -1,9 +1,8 @@
 package knk.erp.api.shlee.account.controller;
 
-import knk.erp.api.shlee.account.dto.login.Login_TokenDTO_RES;
+import knk.erp.api.shlee.account.dto.account.*;
 import knk.erp.api.shlee.account.dto.member.MemberDTO_REQ;
-import knk.erp.api.shlee.account.dto.signup.SignUp_MemberDTO_RES;
-import knk.erp.api.shlee.account.service.LoginService;
+import knk.erp.api.shlee.account.service.AccountService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,23 +12,35 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/account")
 public class AccountController {
 
-    private final LoginService loginService;
-
-    @PostMapping("/hello")
-    public String hi(){
-        return "hi";
-    }
+    private final AccountService accountService;
 
     // 회원가입
     @PostMapping("/signup")
-    public ResponseEntity<SignUp_MemberDTO_RES> signup(@RequestBody MemberDTO_REQ MemberDTOReq){
-        return ResponseEntity.ok(loginService.signup(MemberDTOReq));
+    public ResponseEntity<SignUp_MemberDTO_RES> signup(@RequestBody MemberDTO_REQ memberDTOReq){
+        return ResponseEntity.ok(accountService.signup(memberDTOReq));
     }
 
     // 로그인
     @PostMapping("/login")
-    public ResponseEntity<Login_TokenDTO_RES> login(@RequestBody MemberDTO_REQ MemberDTOReq){
-        return ResponseEntity.ok(loginService.login(MemberDTOReq));
+    public ResponseEntity<Login_TokenDTO_RES> login(@RequestBody MemberDTO_REQ memberDTOReq){
+        return ResponseEntity.ok(accountService.login(memberDTOReq));
     }
 
+    @PostMapping("/readMember")
+    public ResponseEntity<Read_AccountDTO_RES> readMember(){
+        return ResponseEntity.ok(accountService.readMember());
+    }
+
+    /*
+    @PostMapping("/{memberId}")
+    public ResponseEntity<Update_AccountDTO_RES> updateMember(@PathVariable String memberId,
+                                                              @RequestBody MemberDTO_REQ memberDTOReq){
+        return ResponseEntity.ok(accountService.updateMember(memberDTOReq));
+    }
+
+    @PostMapping("/deleteMember")
+    public ResponseEntity<Delete_AccountDTO_RES> deleteMember(@RequestBody MemberDTO_REQ memberDTOReq){
+        return ResponseEntity.ok(accountService.deleteMember(memberDTOReq));
+    }
+    */
 }

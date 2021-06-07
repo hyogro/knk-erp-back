@@ -35,11 +35,17 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
                 // 로그인, 회원가입 API 는 권한없이 접근 가능하도록 설정
                 .authorizeRequests()
-                .antMatchers("/account/**").permitAll()
+                .antMatchers("/account/login", "/account/signup").permitAll()
 
-                // 권한 검증 test API
+                // 회원 정보 목록 읽어오기, 회원 삭제는 관리자만 가능하도록 설정
+                .antMatchers("/account/readMember", "/account/deleteMember").hasAnyRole("ADMIN")
+
+                // 부서 생성, 수정, 삭제는 관리자만 가능하도록 설정
                 .antMatchers("/department/createDepartment", "department/updateDepartment",
                         "/department/deleteDepartment").hasAnyRole("ADMIN")
+
+                //부서 목록 읽어오기는 회원가입 때도 써야하므로 권한 없이 접근 가능하도록 설정
+                .antMatchers("/department/readDepartment").permitAll()
 
                 // 나머지 API 는 권한 인증 필요
                 .anyRequest().authenticated()
@@ -71,6 +77,4 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     public BCryptPasswordEncoder bCryptPasswordEncoder() {
         return new BCryptPasswordEncoder();
     }
-
-
 }

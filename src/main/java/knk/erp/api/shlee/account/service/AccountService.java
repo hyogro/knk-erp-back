@@ -1,11 +1,12 @@
 package knk.erp.api.shlee.account.service;
 
-import knk.erp.api.shlee.account.dto.department.DepartmentDTO_REQ;
+import knk.erp.api.shlee.account.dto.account.Read_AccountDTO_RES;
 import knk.erp.api.shlee.account.dto.member.MemberDTO_REQ;
-import knk.erp.api.shlee.account.dto.signup.SignUp_MemberDTO_RES;
-import knk.erp.api.shlee.account.dto.login.Login_TokenDTO_RES;
+import knk.erp.api.shlee.account.dto.account.SignUp_MemberDTO_RES;
+import knk.erp.api.shlee.account.dto.account.Login_TokenDTO_RES;
+import knk.erp.api.shlee.account.dto.member.Read_MemberDTO_REQ;
 import knk.erp.api.shlee.account.entity.*;
-import knk.erp.api.shlee.account.util.DepartmentUtil;
+import knk.erp.api.shlee.account.util.AccountUtil;
 import knk.erp.api.shlee.common.dto.TokenDto;
 import knk.erp.api.shlee.common.jwt.TokenProvider;
 import lombok.RequiredArgsConstructor;
@@ -16,18 +17,18 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class LoginService {
+public class AccountService {
 
     private final MemberRepository memberRepository;
     private final DepartmentRepository departmentRepository;
     private final BCryptPasswordEncoder passwordEncoder;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final TokenProvider tokenProvider;
+    private final AccountUtil accountUtil;
 
     // 회원 가입
     @Transactional
@@ -71,6 +72,16 @@ public class LoginService {
             return new Login_TokenDTO_RES("LI001", tokenDto);
         }catch(Exception e){
             return new Login_TokenDTO_RES("LI002", e.getMessage());
+        }
+    }
+
+    @Transactional(readOnly = true)
+    public Read_AccountDTO_RES readMember(){
+        try{
+            List<Member> memberList = memberRepository.findAllByDeletedIsFalse();
+            return new Read_AccountDTO_RES("RA001", accountUtil.getMemberList(memberList));
+        }catch(Exception e){
+            return new Read_AccountDTO_RES("RA002", e.getMessage());
         }
     }
 }
