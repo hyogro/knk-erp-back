@@ -17,7 +17,7 @@ public class RES_approveRectifyAttendance {
     private void createCodeList(){
         this.help_codeList.put("ARA001", "출,퇴근기록 정정승인 성공");
         this.help_codeList.put("ARA002", "출,퇴근기록 정정승인 실패");
-        this.help_codeList.put("ARA003", "출,퇴근기록 정정요청 실패(이미 정정승인 되었거나 삭제된 기록임)");
+        this.help_codeList.put("ARA003", "출,퇴근기록 정정요청 실패(권한 없음)");
     }
 
     //error

@@ -29,8 +29,8 @@ public class AttendanceController {
 
     /** 출,퇴근 기록목록 조회 **/
     @PostMapping("/readAttendanceList")
-    public ResponseEntity<RES_readAttendanceList> readAttendanceList(@RequestBody AttendanceDTO attendanceDTO, @RequestHeader(value = "token") String token){
-        return ResponseEntity.ok(attendanceService.readAttendanceList(attendanceDTO, token.substring(7)));
+    public ResponseEntity<RES_readAttendanceList> readAttendanceList(@RequestHeader(value = "token") String token){
+        return ResponseEntity.ok(attendanceService.readAttendanceList(token.substring(7)));
     }
 
     /** 출,퇴근 기록 정정 요청**/
