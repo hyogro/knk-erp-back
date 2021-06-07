@@ -1,6 +1,5 @@
 package knk.erp.api.shlee.account.dto.signup;
 
-import knk.erp.api.shlee.account.entity.Member;
 import lombok.*;
 
 import java.util.LinkedHashMap;

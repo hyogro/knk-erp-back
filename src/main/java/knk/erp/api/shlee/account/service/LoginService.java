@@ -28,8 +28,6 @@ public class LoginService {
     private final BCryptPasswordEncoder passwordEncoder;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final TokenProvider tokenProvider;
-    private final DepartmentUtil departmentUtil;
-
 
     // 회원 가입
     @Transactional

@@ -16,25 +16,28 @@ public class DepartmentController {
 
     private final DepartmentService departmentService;
 
-    @PostMapping("/create")
-    public ResponseEntity<Create_DepartmentDTO_RES> create(@RequestBody DepartmentDTO_REQ departmentDTOReq){
-        return ResponseEntity.ok(departmentService.create(departmentDTOReq));
+    // 부서 목록에 새로운 부서 추가
+    @PostMapping("/createDepartment")
+    public ResponseEntity<Create_DepartmentDTO_RES> createDepartment(@RequestBody DepartmentDTO_REQ departmentDTOReq){
+        return ResponseEntity.ok(departmentService.createDepartment(departmentDTOReq));
     }
 
-    @PostMapping("/read")
-    public ResponseEntity<Read_DepartmentDTO_RES> read(){
+    // 부서 목록 읽어오기
+    @PostMapping("/readDepartment")
+    public ResponseEntity<Read_DepartmentDTO_RES> readDepartment(){
         System.out.println("123123");
-        return ResponseEntity.ok(departmentService.read());
-    }
-    /*
-    @PostMapping("/update")
-    public ResponseEntity<Update_DepartmentDTO_RES> update(@RequestBody DepartmentDTO_REQ departmentDTOReq){
-        return ResponseEntity.ok(departmentService.update(departmentDTOReq));
+        return ResponseEntity.ok(departmentService.readDepartment());
     }
 
-    @PostMapping("/delete")
-    public ResponseEntity<Delete_DepartmentDTO_RES> delete(@RequestBody DepartmentDTO_REQ departmentDTOReq){
-        return ResponseEntity.ok(departmentService.delete(departmentDTOReq));
+    // 부서 목록 수정
+    @PostMapping("/updateDepartment")
+    public ResponseEntity<Update_DepartmentDTO_RES> updateDepartment(@RequestBody DepartmentDTO_REQ departmentDTOReq){
+        return ResponseEntity.ok(departmentService.updateDepartment(departmentDTOReq));
     }
-    */
+
+    // 부서 목록에서 부서 삭제
+    @PostMapping("/deleteDepartment")
+    public ResponseEntity<Delete_DepartmentDTO_RES> deleteDepartment(@RequestBody DepartmentDTO_REQ departmentDTOReq){
+        return ResponseEntity.ok(departmentService.deleteDepartment(departmentDTOReq));
+    }
 }
