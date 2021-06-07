@@ -9,9 +9,13 @@ import knk.erp.api.shlee.schedule.util.ScheduleUtil;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 
 @Service
@@ -84,6 +88,20 @@ public class ScheduleService{
             return new RES_deleteSchedule("DS002", e.getMessage());
         }
     }
+
+    public RES_readScheduleList readIndexScheduleList(String token){
+        try {
+            Authentication authentication = tokenProvider.getAuthentication(token);
+            LocalDateTime today = LocalDateTime.of(LocalDate.now(), LocalTime.of(0,0,0));
+            List<Schedule> scheduleList = scheduleRepository.findAllByDeletedIsFalseAndMemberIdAndEndDateAfter(authentication.getName(), today, PageRequest.of(0, 5)).toList();
+            return new RES_readScheduleList("RSL001", util.ScheduleListToDTO(scheduleList));
+        }
+        catch (Exception e){
+            return new RES_readScheduleList("RSL002", e.getMessage());
+        }
+    }
+
+
 
 
 }
