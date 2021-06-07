@@ -90,14 +90,12 @@ public class AttendanceService {
     }
 
     //출, 퇴근기록 조회
-    public RES_readAttendanceList readAttendanceList(AttendanceDTO attendanceDTO, String token) {
+    public RES_readAttendanceList readAttendanceList(String token) {
         try {
-            //실패 - 본인이 아니면 조회불가
-            boolean isOwner = tokenProvider.getAuthentication(token).getName().equals(attendanceDTO.getMemberId());
-            if (!isOwner) return new RES_readAttendanceList("RAL003");
+            Authentication authentication = tokenProvider.getAuthentication(token);
+            String memberId = authentication.getName();
 
             //성공 - 삭제되지 않은 기록 중 본인의 것만 조회
-            String memberId = attendanceDTO.getMemberId();
             List<Attendance> attendanceList = attendanceRepository.findAllByMemberIdAndDeletedIsFalse(memberId);
             return new RES_readAttendanceList("RAL001", util.AttendanceListToDTO(attendanceList));
         } catch (Exception e) {
@@ -109,9 +107,10 @@ public class AttendanceService {
     //출,퇴근기록 정정 요청 -> 정정요청 신규 생성
     public RES_createRectifyAttendance createRectifyAttendance(RectifyAttendanceDTO rectifyAttendanceDTO, String token) {
         try {
-            //실패 - 본인이 아니면 수정불가
-            boolean isOwner = tokenProvider.getAuthentication(token).getName().equals(rectifyAttendanceDTO.getMemberId());
-            if (!isOwner) return new RES_createRectifyAttendance("CRA003");
+            Authentication authentication = tokenProvider.getAuthentication(token);
+            String memberId = authentication.getName();
+
+            rectifyAttendanceDTO.setMemberId(memberId);
 
             //성공 - 생성 후 응답
             RectifyAttendance rectifyAttendance = rectifyAttendanceDTO.toEntity();
@@ -133,13 +132,15 @@ public class AttendanceService {
     //출,퇴근기록 정정 요청 -> 출퇴근 기록으로 정정요청 생성
     public RES_updateRectifyAttendance updateRectifyAttendance(RectifyAttendanceDTO rectifyAttendanceDTO, String token) {
         try {
-            //실패 - 본인이 아니면 수정불가
-            boolean isOwner = tokenProvider.getAuthentication(token).getName().equals(rectifyAttendanceDTO.getMemberId());
-            if (!isOwner) return new RES_updateRectifyAttendance("URA003");
+            Authentication authentication = tokenProvider.getAuthentication(token);
+            String memberId = authentication.getName();
 
-            //성공 - 수정 후 응답
             Attendance attendance = attendanceRepository.getOne(rectifyAttendanceDTO.getId());
-            if(attendance.isDeleted()) return new RES_updateRectifyAttendance("URA004");
+
+            //실패 - 본인이 아니면 수정불가
+            if (!attendance.getMemberId().equals(memberId)) return new RES_updateRectifyAttendance("URA003");
+            //실패 - 삭제된경우 수정 불가
+            if (attendance.isDeleted()) return new RES_updateRectifyAttendance("URA004");
 
             RectifyAttendance rectifyAttendance = util.AttendanceToRectify(attendance, rectifyAttendanceDTO);
 
@@ -166,8 +167,6 @@ public class AttendanceService {
 
         if (rectifyAttendance.isApproval_1() && rectifyAttendance.isApproval_2()) {
             Attendance attendance = util.RectifyToAttendance(rectifyAttendance);
-            System.out.println(rectifyAttendance.toString());
-            System.out.println(attendance.toString());
 
             attendanceRepository.save(attendance);
 
@@ -195,6 +194,7 @@ public class AttendanceService {
                 }
             }
         }
+        //LVL3(부장) 인 경우 모두 승인
         else if (lvl.equals("LVL3")) {
             rectifyAttendance.setApproval_1(true);
             rectifyAttendance.setApprover_1(leaderId);
@@ -209,12 +209,8 @@ public class AttendanceService {
     public RES_readRectifyAttendanceList readRectifyAttendanceList(RectifyAttendanceDTO rectifyAttendanceDTO, String token) {
         try {
             String memberId = tokenProvider.getAuthentication(token).getName();
-            //실패 - 본인이 아니면 수정불가
-            boolean isOwner = memberId.equals(rectifyAttendanceDTO.getMemberId());
-            if (!isOwner) return new RES_readRectifyAttendanceList("RRAL003");
 
-            //성공 - 삭제되지 않은 기록 중 본인의 것만 조회
-            List<RectifyAttendance> rectifyAttendanceList = rectifyAttendanceRepository.findAllByMemberIdAndDeletedIsFalse(rectifyAttendanceDTO.getMemberId());
+            List<RectifyAttendance> rectifyAttendanceList = rectifyAttendanceRepository.findAllByMemberIdAndDeletedIsFalse(memberId);
             return new RES_readRectifyAttendanceList("RRAL001", util.RectifyAttendanceListToDTO(rectifyAttendanceList));
         } catch (Exception e) {
             //실패 - Exception 발생
@@ -226,12 +222,11 @@ public class AttendanceService {
     public RES_deleteRectifyAttendance deleteRectifyAttendance(RectifyAttendanceDTO rectifyAttendanceDTO, String token) {
         try {
             String memberId = tokenProvider.getAuthentication(token).getName();
-            //실패 - 본인이 아니면 수정불가
-            boolean isOwner = memberId.equals(rectifyAttendanceDTO.getMemberId());
-            if (!isOwner) return new RES_deleteRectifyAttendance("DRA003");
 
-            //성공 - 삭제
             RectifyAttendance rectifyAttendance = rectifyAttendanceRepository.getOne(rectifyAttendanceDTO.getId());
+
+            if(!rectifyAttendance.getMemberId().equals(memberId)) return new RES_deleteRectifyAttendance("DRA003");
+
             rectifyAttendance.setDeleted(true);
             rectifyAttendanceRepository.save(rectifyAttendance);
             return new RES_deleteRectifyAttendance("DRA001");
