@@ -8,17 +8,20 @@ import knk.erp.api.shlee.account.dto.account.Login_TokenDTO_RES;
 import knk.erp.api.shlee.account.dto.member.Update_AccountDTO_REQ;
 import knk.erp.api.shlee.account.entity.*;
 import knk.erp.api.shlee.account.util.AccountUtil;
+import knk.erp.api.shlee.account.util.SecurityUtil;
 import knk.erp.api.shlee.common.dto.TokenDto;
 import knk.erp.api.shlee.common.jwt.TokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -30,6 +33,7 @@ public class AccountService {
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final TokenProvider tokenProvider;
     private final AccountUtil accountUtil;
+    private final SecurityUtil securityUtil;
 
     // 회원 가입
     @Transactional
@@ -76,6 +80,7 @@ public class AccountService {
         }
     }
 
+    // 회원 목록 읽어오기
     @Transactional(readOnly = true)
     public Read_AccountDTO_RES readMember(){
         try{
@@ -86,13 +91,23 @@ public class AccountService {
         }
     }
 
+    // 회원 정보 수정
     @Transactional
-    public Update_AccountDTO_RES updateMember(Update_AccountDTO_REQ updateAccountDTOReq){
+    public Update_AccountDTO_RES updateMember(Update_AccountDTO_REQ updateAccountDTOReq, String token){
+        Authentication authentication = tokenProvider.getAuthentication(token);
+        String level = authentication.getAuthorities().toString().replace("[ROLE_", "").replace("]",
+                "");
+        Member target = memberRepository.getOne(updateAccountDTOReq.getId());
         try{
-            Member member = memberRepository.getOne(updateAccountDTOReq.getId());
-            Department department = departmentRepository.getOne(updateAccountDTOReq.getDep_id());
-            accountUtil.updateSetMember(member, department, updateAccountDTOReq, passwordEncoder);
-            return new Update_AccountDTO_RES("UA001");
+            if(securityUtil.checkUpdateTargetAuthority(updateAccountDTOReq, level, target)){
+                if(securityUtil.checkAuthority(updateAccountDTOReq, level)){
+                    Department department = departmentRepository.getOne(updateAccountDTOReq.getDep_id());
+                    accountUtil.updateSetMember(target, department, updateAccountDTOReq, passwordEncoder);
+                    memberRepository.save(target);
+                    return new Update_AccountDTO_RES("UA001");
+                }
+            }
+            return new Update_AccountDTO_RES("UA003", "해당 정보를 수정할 권한이 없습니다.");
         }catch(Exception e){
             return new Update_AccountDTO_RES("UA002", e.getMessage());
         }

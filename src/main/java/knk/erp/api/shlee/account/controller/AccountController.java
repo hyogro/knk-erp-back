@@ -33,8 +33,9 @@ public class AccountController {
     }
 
     @PostMapping("/updateMember")
-    public ResponseEntity<Update_AccountDTO_RES> updateMember(@RequestBody Update_AccountDTO_REQ updateAccountDTOReq){
-        return ResponseEntity.ok(accountService.updateMember(updateAccountDTOReq));
+    public ResponseEntity<Update_AccountDTO_RES> updateMember(@RequestBody Update_AccountDTO_REQ updateAccountDTOReq,
+                                                              @RequestHeader(value = "token") String token){
+        return ResponseEntity.ok(accountService.updateMember(updateAccountDTOReq, token.substring(7)));
     }
 
     /*

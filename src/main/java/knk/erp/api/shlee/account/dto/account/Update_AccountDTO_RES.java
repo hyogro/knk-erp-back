@@ -18,6 +18,7 @@ public class Update_AccountDTO_RES {
     private void createCodeList(){
         this.help_codeList.put("UA001", "회원정보 수정 성공");
         this.help_codeList.put("UA002", "회원정보 수정 실패");
+        this.help_codeList.put("UA003", "회원정보 수정 실패 - 권한 부족");
     }
 
     //error

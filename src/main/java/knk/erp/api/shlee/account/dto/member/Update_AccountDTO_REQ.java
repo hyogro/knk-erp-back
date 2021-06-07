@@ -1,7 +1,5 @@
 package knk.erp.api.shlee.account.dto.member;
 
-import knk.erp.api.shlee.account.entity.Authority;
-import knk.erp.api.shlee.account.entity.Department;
 import lombok.*;
 
 @Getter
@@ -12,8 +10,9 @@ import lombok.*;
 public class Update_AccountDTO_REQ {
     private Long id;
     private String password;
-    private Authority authority;
+    private String authority;
     private String phone;
     private float vacation;
     private Long dep_id;
+
 }

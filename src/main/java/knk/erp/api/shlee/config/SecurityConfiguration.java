@@ -37,12 +37,13 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers("/account/login", "/account/signup").permitAll()
 
-                // 회원 정보 목록 읽어오기, 회원 삭제는 관리자만 가능하도록 설정
-                .antMatchers("/account/readMember", "/account/deleteMember").hasAnyRole("ADMIN")
+                // 회원 정보 목록 읽어오기, 회원 정보 수정, 회원 삭제는 관리자 이상만 가능하도록 설정
+                .antMatchers("/account/readMember", "/account/updateMember","/account/deleteMember").hasAnyRole(
+                        "LVL3", "LVL4","ADMIN")
 
-                // 부서 생성, 수정, 삭제는 관리자만 가능하도록 설정
+                // 부서 생성, 수정, 삭제는 관리자 이상만 가능하도록 설정
                 .antMatchers("/department/createDepartment", "department/updateDepartment",
-                        "/department/deleteDepartment").hasAnyRole("ADMIN")
+                        "/department/deleteDepartment").hasAnyRole("LVL3", "LVL4","ADMIN")
 
                 //부서 목록 읽어오기는 회원가입 때도 써야하므로 권한 없이 접근 가능하도록 설정
                 .antMatchers("/department/readDepartment").permitAll()
