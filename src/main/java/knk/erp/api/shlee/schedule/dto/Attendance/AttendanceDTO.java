@@ -18,6 +18,7 @@ public class AttendanceDTO{
 
     private Long id;
     private String memberId;
+    private Long departmentId;
     private LocalDate attendanceDate;
     private LocalDateTime onWork;
     private LocalDateTime offWork;
@@ -31,6 +32,6 @@ public class AttendanceDTO{
     }
 
     public Attendance toEntity(){
-        return Attendance.builder().memberId(memberId).attendanceDate(attendanceDate).onWork(onWork).offWork(offWork).build();
+        return Attendance.builder().memberId(memberId).departmentId(departmentId).attendanceDate(attendanceDate).onWork(onWork).offWork(offWork).build();
     }
 }

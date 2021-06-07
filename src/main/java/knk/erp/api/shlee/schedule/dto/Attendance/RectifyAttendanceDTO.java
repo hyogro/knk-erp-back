@@ -21,6 +21,7 @@ public class RectifyAttendanceDTO extends Time {
 
     private Long id;
     private String memberId;
+    private Long departmentId;
     private LocalDate attendanceDate;
     private LocalDateTime onWork;
     private LocalDateTime offWork;
@@ -31,12 +32,13 @@ public class RectifyAttendanceDTO extends Time {
     private String memo;
 
     public RectifyAttendance toEntity(){
-        return RectifyAttendance.builder().memberId(memberId).attendanceDate(attendanceDate).onWork(onWork).offWork(offWork).memo(memo).build();
+        return RectifyAttendance.builder().memberId(memberId).departmentId(departmentId).attendanceDate(attendanceDate).onWork(onWork).offWork(offWork).memo(memo).build();
     }
 
     public RectifyAttendanceDTO(RectifyAttendance rectifyAttendance){
         this.id = rectifyAttendance.getId();
         this.memberId = rectifyAttendance.getMemberId();
+        this.departmentId = rectifyAttendance.getDepartmentId();
         this.attendanceDate = rectifyAttendance.getAttendanceDate();
         this.onWork = rectifyAttendance.getOnWork();
         this.offWork = rectifyAttendance.getOffWork();
