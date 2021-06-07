@@ -30,7 +30,7 @@ public class AttendanceUtil {
     }
 
     public Attendance RectifyToAttendance(RectifyAttendance rectifyAttendance){
-        return Attendance.builder().memberId(rectifyAttendance.getMemberId()).attendanceDate(rectifyAttendance.getAttendanceDate()).
+        return Attendance.builder().memberId(rectifyAttendance.getMemberId()).departmentId(rectifyAttendance.getDepartmentId()).attendanceDate(rectifyAttendance.getAttendanceDate()).
                 onWork(rectifyAttendance.getOnWork()).offWork(rectifyAttendance.getOffWork()).build();
     }
 
