@@ -4,10 +4,7 @@ import knk.erp.api.shlee.account.dto.department.*;
 import knk.erp.api.shlee.account.service.DepartmentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -39,5 +36,12 @@ public class DepartmentController {
     @PostMapping("/deleteDepartment")
     public ResponseEntity<Delete_DepartmentDTO_RES> deleteDepartment(@RequestBody DepartmentDTO_REQ departmentDTOReq){
         return ResponseEntity.ok(departmentService.deleteDepartment(departmentDTOReq));
+    }
+
+    /**2021-06-07 15:07 이상훈 추가
+    토큰 받아 해당 직원의 부서 명과 부서인원 리턴**/
+    @PostMapping("readDepartmentNameAndMemberCount")
+    public ResponseEntity<RES_DepNameAndMemCount> readDepartmentNameAndMemberCount(@RequestHeader(value = "token") String token){
+        return ResponseEntity.ok(departmentService.readDepartmentNameAndMemberCount(token));
     }
 }

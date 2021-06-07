@@ -1,6 +1,5 @@
 package knk.erp.api.shlee.schedule.dto.Attendance;
 
-import knk.erp.api.shlee.schedule.entity.Attendance;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;

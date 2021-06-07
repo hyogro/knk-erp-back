@@ -3,18 +3,27 @@ package knk.erp.api.shlee.account.service;
 import knk.erp.api.shlee.account.dto.department.*;
 import knk.erp.api.shlee.account.entity.Department;
 import knk.erp.api.shlee.account.entity.DepartmentRepository;
+import knk.erp.api.shlee.account.entity.Member;
+import knk.erp.api.shlee.account.entity.MemberRepository;
 import knk.erp.api.shlee.account.util.DepartmentUtil;
+import knk.erp.api.shlee.common.jwt.TokenProvider;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class DepartmentService {
     private final DepartmentRepository departmentRepository;
     private final DepartmentUtil departmentUtil;
+
+    //2021-06-07 15:07 이상훈 추가
+    private final TokenProvider tokenProvider;
+    private final MemberRepository memberRepository;
 
     // 부서 목록에 새로운 부서 추가
     @Transactional
@@ -61,6 +70,28 @@ public class DepartmentService {
             return new Delete_DepartmentDTO_RES("DD001");
         }catch(Exception e){
             return new Delete_DepartmentDTO_RES("DD002", e.getMessage());
+        }
+    }
+
+    /**2021-06-07 15:07 이상훈 추가
+     토큰 받아 해당 직원의 부서 명과 부서인원 리턴**/
+    @Transactional
+    public RES_DepNameAndMemCount readDepartmentNameAndMemberCount(String token){
+        try {
+            Authentication authentication = tokenProvider.getAuthentication(token);
+            String memberId = authentication.getName();
+
+            Optional<Member> member = memberRepository.findByMemberId(memberId);
+
+            if(member.isPresent()){
+                Department department = member.get().getDepartment();
+                String depName = department.getDepartmentName();
+                int countOfMember = department.getMemberList().size();
+                return new RES_DepNameAndMemCount("RDAM001", new DepartmentNameAndMemberCountDTO(depName, countOfMember));
+            }
+            else return new RES_DepNameAndMemCount("RDAM003", "부서정보가 조회되지 않는 직원");
+        }catch (Exception e){
+            return new RES_DepNameAndMemCount("RDAM002", e.getMessage());
         }
     }
 }
