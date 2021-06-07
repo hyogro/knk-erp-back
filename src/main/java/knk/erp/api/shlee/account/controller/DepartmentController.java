@@ -42,6 +42,6 @@ public class DepartmentController {
     토큰 받아 해당 직원의 부서 명과 부서인원 리턴**/
     @PostMapping("readDepartmentNameAndMemberCount")
     public ResponseEntity<RES_DepNameAndMemCount> readDepartmentNameAndMemberCount(@RequestHeader(value = "token") String token){
-        return ResponseEntity.ok(departmentService.readDepartmentNameAndMemberCount(token));
+        return ResponseEntity.ok(departmentService.readDepartmentNameAndMemberCount(token.substring(7)));
     }
 }

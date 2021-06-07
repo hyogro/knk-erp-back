@@ -79,8 +79,12 @@ public class DepartmentService {
     public RES_DepNameAndMemCount readDepartmentNameAndMemberCount(String token){
         try {
             Authentication authentication = tokenProvider.getAuthentication(token);
-            String memberId = authentication.getName();
 
+            if(checkMaster(authentication)){
+                return new RES_DepNameAndMemCount("RDAM001", new DepartmentNameAndMemberCountDTO("구이앤금우통신", (int) memberRepository.count()));
+            }
+
+            String memberId = authentication.getName();
             Optional<Member> member = memberRepository.findByMemberId(memberId);
 
             if(member.isPresent()){
@@ -89,9 +93,13 @@ public class DepartmentService {
                 int countOfMember = department.getMemberList().size();
                 return new RES_DepNameAndMemCount("RDAM001", new DepartmentNameAndMemberCountDTO(depName, countOfMember));
             }
-            else return new RES_DepNameAndMemCount("RDAM003", "부서정보가 조회되지 않는 직원");
         }catch (Exception e){
             return new RES_DepNameAndMemCount("RDAM002", e.getMessage());
         }
+        return new RES_DepNameAndMemCount("RDAM002", "");
+    }
+    private boolean checkMaster(Authentication authentication){
+        String lvl = authentication.getAuthorities().toString().replace("[ROLE_", "").replace("]", "");
+        return lvl.equals("LVL3") || lvl.equals("LVL4") || lvl.equals("ADMIN");
     }
 }

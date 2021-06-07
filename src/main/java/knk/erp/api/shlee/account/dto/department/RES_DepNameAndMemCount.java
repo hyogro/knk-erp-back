@@ -23,9 +23,13 @@ public class RES_DepNameAndMemCount {
 
     public RES_DepNameAndMemCount(String code, DepartmentNameAndMemberCountDTO data){
         createCodeList();
+        this.code = code;
+        this.data = data;
     }
     public RES_DepNameAndMemCount(String code, String message){
         createCodeList();
+        this.code = code;
+        this.message = message;
     }
 
 }
