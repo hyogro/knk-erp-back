@@ -2,6 +2,7 @@ package knk.erp.api.shlee.account.controller;
 
 import knk.erp.api.shlee.account.dto.account.*;
 import knk.erp.api.shlee.account.dto.member.MemberDTO_REQ;
+import knk.erp.api.shlee.account.dto.member.Update_AccountDTO_REQ;
 import knk.erp.api.shlee.account.service.AccountService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -31,13 +32,12 @@ public class AccountController {
         return ResponseEntity.ok(accountService.readMember());
     }
 
-    /*
-    @PostMapping("/{memberId}")
-    public ResponseEntity<Update_AccountDTO_RES> updateMember(@PathVariable String memberId,
-                                                              @RequestBody MemberDTO_REQ memberDTOReq){
-        return ResponseEntity.ok(accountService.updateMember(memberDTOReq));
+    @PostMapping("/updateMember")
+    public ResponseEntity<Update_AccountDTO_RES> updateMember(@RequestBody Update_AccountDTO_REQ updateAccountDTOReq){
+        return ResponseEntity.ok(accountService.updateMember(updateAccountDTOReq));
     }
 
+    /*
     @PostMapping("/deleteMember")
     public ResponseEntity<Delete_AccountDTO_RES> deleteMember(@RequestBody MemberDTO_REQ memberDTOReq){
         return ResponseEntity.ok(accountService.deleteMember(memberDTOReq));

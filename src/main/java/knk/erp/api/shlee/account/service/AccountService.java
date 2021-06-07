@@ -1,9 +1,11 @@
 package knk.erp.api.shlee.account.service;
 
 import knk.erp.api.shlee.account.dto.account.Read_AccountDTO_RES;
+import knk.erp.api.shlee.account.dto.account.Update_AccountDTO_RES;
 import knk.erp.api.shlee.account.dto.member.MemberDTO_REQ;
 import knk.erp.api.shlee.account.dto.account.SignUp_MemberDTO_RES;
 import knk.erp.api.shlee.account.dto.account.Login_TokenDTO_RES;
+import knk.erp.api.shlee.account.dto.member.Update_AccountDTO_REQ;
 import knk.erp.api.shlee.account.entity.*;
 import knk.erp.api.shlee.account.util.AccountUtil;
 import knk.erp.api.shlee.common.dto.TokenDto;
@@ -81,6 +83,18 @@ public class AccountService {
             return new Read_AccountDTO_RES("RA001", accountUtil.getMemberList(memberList));
         }catch(Exception e){
             return new Read_AccountDTO_RES("RA002", e.getMessage());
+        }
+    }
+
+    @Transactional
+    public Update_AccountDTO_RES updateMember(Update_AccountDTO_REQ updateAccountDTOReq){
+        try{
+            Member member = memberRepository.getOne(updateAccountDTOReq.getId());
+            Department department = departmentRepository.getOne(updateAccountDTOReq.getDep_id());
+            accountUtil.updateSetMember(member, department, updateAccountDTOReq, passwordEncoder);
+            return new Update_AccountDTO_RES("UA001");
+        }catch(Exception e){
+            return new Update_AccountDTO_RES("UA002", e.getMessage());
         }
     }
 }

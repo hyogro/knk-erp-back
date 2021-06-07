@@ -12,7 +12,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 @AllArgsConstructor
 @NoArgsConstructor
 public class MemberDTO_REQ {
-
+    private Long id;
     private String memberId;
     private String password;
     private String phone;
