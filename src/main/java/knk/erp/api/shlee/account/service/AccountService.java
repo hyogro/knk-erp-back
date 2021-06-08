@@ -91,7 +91,7 @@ public class AccountService {
     public Update_AccountDTO_RES updateMember(Update_AccountDTO_REQ updateAccountDTOReq, String token){
         Authentication authentication = tokenProvider.getAuthentication(token);
         String level = authentication.getAuthorities().toString();
-        Member target = memberRepository.getOne(updateAccountDTOReq.getId());
+        Member target = memberRepository.findAllByMemberIdAndDeletedIsFalse(updateAccountDTOReq.getMemberId());
         try{
             if(securityUtil.checkAuthority(updateAccountDTOReq, level, target)){
                 Department department = departmentRepository.getOne(updateAccountDTOReq.getDep_id());
@@ -110,7 +110,7 @@ public class AccountService {
     public Delete_AccountDTO_RES deleteMember(MemberDTO_REQ memberDTOReq, String token){
         Authentication authentication = tokenProvider.getAuthentication(token);
         String level = authentication.getAuthorities().toString();
-        Member target = memberRepository.getOne(memberDTOReq.getId());
+        Member target = memberRepository.findAllByMemberIdAndDeletedIsFalse(memberDTOReq.getMemberId());
         try{
             if(securityUtil.checkTargetAuthority(level, target)){
                 target.setDeleted(true);
