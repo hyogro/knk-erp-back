@@ -1,10 +1,7 @@
 package knk.erp.api.shlee.schedule.dto.Schedule;
 
 import knk.erp.api.shlee.schedule.entity.Schedule;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
