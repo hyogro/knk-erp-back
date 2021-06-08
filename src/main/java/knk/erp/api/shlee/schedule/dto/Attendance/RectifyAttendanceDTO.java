@@ -1,30 +1,24 @@
 package knk.erp.api.shlee.schedule.dto.Attendance;
 
 import knk.erp.api.shlee.schedule.entity.RectifyAttendance;
-import knk.erp.api.shlee.schedule.entity.Time;
 import lombok.*;
-import org.springframework.data.annotation.CreatedDate;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 @Getter
 @Setter
 @ToString
 @AllArgsConstructor
 @RequiredArgsConstructor
-public class RectifyAttendanceDTO extends Time {
+public class RectifyAttendanceDTO {
 
     private Long id;
     private String memberId;
     private Long departmentId;
     private LocalDate attendanceDate;
-    private LocalDateTime onWork;
-    private LocalDateTime offWork;
+    private LocalTime onWork;
+    private LocalTime offWork;
     private boolean approval_1;
     private boolean approval_2;
     private String approver_1;

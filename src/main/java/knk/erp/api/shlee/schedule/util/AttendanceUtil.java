@@ -35,7 +35,7 @@ public class AttendanceUtil {
     }
 
     public RectifyAttendance AttendanceToRectify(Attendance attendance, RectifyAttendanceDTO rectifyAttendanceDTO){
-        return RectifyAttendance.builder().memberId(attendance.getMemberId()).attendanceDate(attendance.getAttendanceDate()).
+        return RectifyAttendance.builder().memberId(attendance.getMemberId()).departmentId(attendance.getDepartmentId()).attendanceDate(attendance.getAttendanceDate()).
                 onWork(rectifyAttendanceDTO.getOnWork()).offWork(rectifyAttendanceDTO.getOffWork()).memo(rectifyAttendanceDTO.getMemo()).targetId(attendance.getId()).build();
     }
 

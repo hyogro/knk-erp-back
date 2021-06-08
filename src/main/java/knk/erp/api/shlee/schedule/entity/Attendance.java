@@ -8,7 +8,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 @Getter
 @Setter
@@ -31,13 +31,13 @@ public class Attendance extends Time {
     private LocalDate attendanceDate;
 
     @Column(nullable = false)
-    private LocalDateTime onWork;
+    private LocalTime onWork;
 
     @Column
-    private LocalDateTime offWork;
+    private LocalTime offWork;
 
     @Builder
-    public Attendance(String memberId, Long departmentId, LocalDate attendanceDate, LocalDateTime onWork, LocalDateTime offWork) {
+    public Attendance(String memberId, Long departmentId, LocalDate attendanceDate, LocalTime onWork, LocalTime offWork) {
         this.memberId = memberId;
         this.departmentId = departmentId;
         this.attendanceDate = attendanceDate;
