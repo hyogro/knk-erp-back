@@ -14,11 +14,6 @@ public class ScheduleController {
         this.scheduleService = scheduleService;
     }
 
-    @PostMapping("/hello")
-    public String hello(){
-        return "gateway schedule hello!";
-    }
-
     /** 일정 생성 **/
     @PostMapping("/createSchedule")
     public ResponseEntity<RES_createSchedule> createSchedule(@RequestBody ScheduleDTO scheduleDTO){
@@ -51,7 +46,7 @@ public class ScheduleController {
 
     /**메인화면 일정 목록 읽기**/
     @PostMapping("/readIndexScheduleList")
-    public ResponseEntity<RES_readScheduleList> readIndexScheduleList(@RequestHeader(value = "token") String token){
-        return ResponseEntity.ok(scheduleService.readIndexScheduleList( token.substring(7)));
+    public ResponseEntity<RES_readScheduleList> readIndexScheduleList(){
+        return ResponseEntity.ok(scheduleService.readIndexScheduleList());
     }
 }

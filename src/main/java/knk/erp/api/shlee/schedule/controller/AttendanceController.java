@@ -18,19 +18,19 @@ public class AttendanceController {
 
     /** 출근 기록 **/
     @PostMapping("/onWork")
-    public ResponseEntity<RES_onWork> onWork(@RequestBody AttendanceDTO attendanceDTO){
-        return ResponseEntity.ok(attendanceService.onWork(attendanceDTO));
+    public ResponseEntity<RES_onWork> onWork(){
+        return ResponseEntity.ok(attendanceService.onWork());
     }
     /** 퇴근 기록 **/
     @PostMapping("/offWork")
-    public ResponseEntity<RES_offWork> offWork(@RequestBody AttendanceDTO attendanceDTO){
-        return ResponseEntity.ok(attendanceService.offWork(attendanceDTO));
+    public ResponseEntity<RES_offWork> offWork(){
+        return ResponseEntity.ok(attendanceService.offWork());
     }
 
     /** 출,퇴근 기록목록 조회 **/
     @PostMapping("/readAttendanceList")
-    public ResponseEntity<RES_readAttendanceList> readAttendanceList(@RequestHeader(value = "token") String token){
-        return ResponseEntity.ok(attendanceService.readAttendanceList(token.substring(7)));
+    public ResponseEntity<RES_readAttendanceList> readAttendanceList(){
+        return ResponseEntity.ok(attendanceService.readAttendanceList());
     }
 
     /** 출,퇴근 기록 정정 요청**/
@@ -47,8 +47,8 @@ public class AttendanceController {
 
     /** 출,퇴근 기록 정정요청목록 조회 **/
     @PostMapping("readRectifyAttendanceList")
-    public ResponseEntity<RES_readRectifyAttendanceList> readRectifyAttendanceList(@RequestBody RectifyAttendanceDTO rectifyAttendanceDTO){
-        return ResponseEntity.ok(attendanceService.readRectifyAttendanceList(rectifyAttendanceDTO));
+    public ResponseEntity<RES_readRectifyAttendanceList> readRectifyAttendanceList(){
+        return ResponseEntity.ok(attendanceService.readRectifyAttendanceList());
     }
 
     /** 출,퇴근 기록 정정요청 삭제 **/
@@ -65,8 +65,8 @@ public class AttendanceController {
 
     /** 출,퇴근 기록 요약정보 조회 **/
     @PostMapping("readAttendanceSummary")
-    public ResponseEntity<RES_readAttendanceSummary> readAttendanceSummary(@RequestHeader(value = "token") String token){
-        return ResponseEntity.ok(attendanceService.readAttendanceSummary(token.substring(7)));
+    public ResponseEntity<RES_readAttendanceSummary> readAttendanceSummary(){
+        return ResponseEntity.ok(attendanceService.readAttendanceSummary());
     }
 
 }
