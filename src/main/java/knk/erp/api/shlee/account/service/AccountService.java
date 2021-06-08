@@ -36,16 +36,15 @@ public class AccountService {
     public SignUp_MemberDTO_RES signup(MemberDTO_REQ memberDTOReq){
         try {
             if(memberRepository.existsByMemberId(memberDTOReq.getMemberId())) {
-                return new SignUp_MemberDTO_RES("SU003", "이미 가입된 ID 입니다.");
+                return new SignUp_MemberDTO_RES("SU003", "이미 가입된 ID");
             }
             Member member = memberDTOReq.toMember(passwordEncoder);
-
-            if(memberDTOReq.getDepartmentId() != null) {
-                Department department = departmentRepository.getOne(memberDTOReq.getDepartmentId());
-                member.setDepartment(department);
-                department.getMemberList().add(member);
-                departmentRepository.save(department);
-            }
+            Department department;
+            if(memberDTOReq.getDepartmentId() != null) department = departmentRepository.getOne(memberDTOReq.getDepartmentId());
+            else department = departmentRepository.findByDepartmentName("부서미지정");
+            member.setDepartment(department);
+            department.getMemberList().add(member);
+            departmentRepository.save(department);
             memberRepository.save(member);
             return new SignUp_MemberDTO_RES("SU001");
         }catch (Exception e){
