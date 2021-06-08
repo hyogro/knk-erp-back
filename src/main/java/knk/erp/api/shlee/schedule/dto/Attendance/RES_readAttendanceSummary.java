@@ -23,6 +23,12 @@ public class RES_readAttendanceSummary {
     }
 
     //error
+    public RES_readAttendanceSummary(String code) {
+        createCodeList();
+        this.code = code;
+    }
+
+    //error
     public RES_readAttendanceSummary(String code, String message) {
         createCodeList();
         this.code = code;

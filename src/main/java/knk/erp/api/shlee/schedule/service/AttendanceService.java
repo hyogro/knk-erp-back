@@ -190,7 +190,7 @@ public class AttendanceService {
     }
 
     //인증 정보를 통해 권한 텍스트 출력
-    public String getRoleByAuthentication(Authentication authentication) {
+    private String getRoleByAuthentication(Authentication authentication) {
         return authentication.getAuthorities().toString().replace("[ROLE_", "").replace("]", "");
     }
 
@@ -272,27 +272,31 @@ public class AttendanceService {
             Authentication authentication = tokenProvider.getAuthentication(token);
             String lvl = getRoleByAuthentication(authentication);
             String memberId = authentication.getName();
-            int onWork = 0;
-            int yetWork = 0;
-            int lateWork = 0;
-            int vacation = 0;
+            int onWork;//출근
+            int yetWork;//미출근
+            int lateWork;//지각
+            int vacation;//휴가
+            LocalDate today = LocalDate.now();
             LocalTime nine = LocalTime.of(9, 0, 0);
 
-            if (lvl.equals("LVL1")) {
-                return new RES_readAttendanceSummary("RSS002", "");
-            } else if (lvl.equals("LVL2")) {
+            if (lvl.equals("LVL2")) {
                 Member member = memberRepository.findAllByMemberIdAndDeletedIsFalse(memberId);
                 Department department = member.getDepartment();
                 int countOfMember = department.getMemberList().size();
                 long departmentId = department.getId();
-                LocalDate today = LocalDate.now();
                 onWork = attendanceRepository.countByAttendanceDateAndDepartmentIdAndDeletedIsFalse(today, departmentId);
                 lateWork = attendanceRepository.countByAttendanceDateAndDepartmentIdAndOnWorkAfterAndDeletedIsFalse(today, departmentId, LocalDateTime.of(today, nine));
                 vacation = 0;
                 yetWork = countOfMember - onWork - lateWork - vacation;
             } else if (lvl.equals("LVL3")) {
-                
-
+                int countOfMember = (int) memberRepository.count();
+                onWork = attendanceRepository.countByAttendanceDateAndDeletedIsFalse(today);
+                lateWork = attendanceRepository.countByAttendanceDateAndOnWorkAfterAndDeletedIsFalse(today, LocalDateTime.of(today, nine));
+                vacation = 0;
+                yetWork = countOfMember - onWork - lateWork - vacation;
+            }
+            else {
+                return new RES_readAttendanceSummary("RSS003");
             }
             return new RES_readAttendanceSummary("RSS001", new AttendanceSummaryDTO(onWork, yetWork, lateWork, vacation));
         } catch (Exception e) {
