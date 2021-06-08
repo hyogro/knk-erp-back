@@ -18,7 +18,6 @@ import org.springframework.test.context.TestPropertySource;
 import java.time.LocalDateTime;
 
 @SpringBootTest
-@TestPropertySource("classpath:application_test.yml")
 class ShleeApplicationTests {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
     @Autowired
@@ -29,7 +28,6 @@ class ShleeApplicationTests {
 
     @Test
     @Order(1)
-    @DisplayName("Member CRUD 통합테스트")
     public void contextLoads() {
         signUpTest();
         String accessToken = loginTest();
@@ -41,39 +39,38 @@ class ShleeApplicationTests {
         MemberDTO_REQ memberDTOReq = new MemberDTO_REQ(null, "suTest_memberId_1", "1234"
                 , "010-6828-3435", "테스트_1", 0, 0L, "", null);
         SignUp_MemberDTO_RES signUp_memberDTO_res = accountService.signup(memberDTOReq);
-        logger.info("signUpTest result: {}", signUp_memberDTO_res);
+        logger.info("맴버생성 테스트 result: {}", signUp_memberDTO_res);
     }
 
     private String loginTest(){
         MemberDTO_REQ memberDTOReq = new MemberDTO_REQ(null, "suTest_memberId_1", "1234"
                 , null, null, 0, null, null, null);
         Login_TokenDTO_RES login_tokenDTO_res = accountService.login(memberDTOReq);
-        logger.info("signUpTest result: {}", login_tokenDTO_res);
+        logger.info("맴버로그인 테스트 result: {}", login_tokenDTO_res);
         return "Bearer " + login_tokenDTO_res.getTokenDto().getAccessToken();
     }
 
     private void readMemberTest(){
-        logger.info("readMemberTest result: {}", accountService.readMember());
+        logger.info("맴버읽기 테스트 result: {}", accountService.readMember());
     }
 
     private void updateMemberTest(String accessToken){
-        logger.info("updateMemberTest result: {}", accountService.readMember());
+        logger.info("맴버수정 테스트 result: {}", accountService.readMember());
     }
 
     private void deleteMemberTest(String accessToken){
-        logger.info("deleteMemberTest result: {}", accountService.readMember());
+        logger.info("맴버삭제 테스트 result: {}", accountService.readMember());
     }
 
     @Test
     @Order(2)
-    @DisplayName("일정생성 단위테스트")
     public void createScheduleTest(){
         String memberId = "test1";
         Long departmentId = 0L;
         ScheduleDTO scheduleDTO = new ScheduleDTO(null, "csTest_title_1", "csTest_memo_1"
                 , LocalDateTime.now(), LocalDateTime.now(), memberId, departmentId);
 
-        logger.info("createScheduleTest result: {}", scheduleService.createSchedule(scheduleDTO));
+        logger.info("일정생성 테스트 result: {}", scheduleService.createSchedule(scheduleDTO));
     }
 
 
