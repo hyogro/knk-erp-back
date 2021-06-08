@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -46,23 +47,23 @@ public class ScheduleService{
         try {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             String memberId = authentication.getName();
-            LinkedHashSet<Schedule> scheduleSet = new LinkedHashSet<>();
+            List<Schedule> scheduleList = new ArrayList<>();
+            Sort sort = Sort.by(Sort.Direction.DESC, "startDate");
 
             if(option.getViewOption().contains("all")){
-                scheduleSet.addAll(scheduleRepository.findAllByViewOptionAndDeletedIsFalse("all"
-                        , PageRequest.of(option.getPage(), option.getSize())).toSet());
+                scheduleList.addAll(scheduleRepository.findAllByViewOptionAndDeletedIsFalse("all"
+                        , PageRequest.of(option.getPage(), option.getSize(), sort)).toSet());
             }
             if(option.getViewOption().contains("dep")){
                 Long departmentId = getDepartmentIdByMemberId(memberId);
-                scheduleSet.addAll(scheduleRepository.findAllByViewOptionAndDepartmentIdAndDeletedIsFalse("dep"
-                        , departmentId, PageRequest.of(option.getPage(), option.getSize())).toList());
+                scheduleList.addAll(scheduleRepository.findAllByViewOptionAndDepartmentIdAndDeletedIsFalse("dep"
+                        , departmentId, PageRequest.of(option.getPage(), option.getSize(), sort)).toList());
             }
             if(option.getViewOption().contains("own")){
-                scheduleSet.addAll(scheduleRepository.findAllByViewOptionAndMemberIdAndDeletedIsFalse("own"
-                        , memberId, PageRequest.of(option.getPage(), option.getSize())).toList());
+                scheduleList.addAll(scheduleRepository.findAllByViewOptionAndMemberIdAndDeletedIsFalse("own"
+                        , memberId, PageRequest.of(option.getPage(), option.getSize(), sort)).toList());
             }
 
-            List<Schedule> scheduleList = new ArrayList<>(scheduleSet);
             return new RES_readScheduleList("RSL001", util.ScheduleListToDTO(scheduleList));
         }
         catch (Exception e){
