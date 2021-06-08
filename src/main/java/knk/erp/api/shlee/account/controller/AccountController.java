@@ -35,16 +35,14 @@ public class AccountController {
 
     // 회원 정보 수정
     @PostMapping("/updateMember")
-    public ResponseEntity<Update_AccountDTO_RES> updateMember(@RequestBody Update_AccountDTO_REQ updateAccountDTOReq,
-                                                              @RequestHeader(value = "token") String token){
-        return ResponseEntity.ok(accountService.updateMember(updateAccountDTOReq, token.substring(7)));
+    public ResponseEntity<Update_AccountDTO_RES> updateMember(@RequestBody Update_AccountDTO_REQ updateAccountDTOReq){
+        return ResponseEntity.ok(accountService.updateMember(updateAccountDTOReq));
     }
 
     // 회원 정보 삭제
     @PostMapping("/deleteMember")
-    public ResponseEntity<Delete_AccountDTO_RES> deleteMember(@RequestBody MemberDTO_REQ memberDTOReq,
-                                                              @RequestHeader(value = "token") String token){
-        return ResponseEntity.ok(accountService.deleteMember(memberDTOReq, token.substring(7)));
+    public ResponseEntity<Delete_AccountDTO_RES> deleteMember(@RequestBody MemberDTO_REQ memberDTOReq){
+        return ResponseEntity.ok(accountService.deleteMember(memberDTOReq));
     }
 
 }

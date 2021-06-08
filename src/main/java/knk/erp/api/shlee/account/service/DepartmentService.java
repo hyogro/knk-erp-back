@@ -10,11 +10,11 @@ import knk.erp.api.shlee.common.jwt.TokenProvider;
 import knk.erp.api.shlee.common.util.CommonUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -81,9 +81,9 @@ public class DepartmentService {
      * 토큰 받아 해당 직원의 부서 명과 부서인원 리턴
      **/
     @Transactional
-    public RES_DepNameAndMemCount readDepartmentNameAndMemberCount(String token) {
+    public RES_DepNameAndMemCount readDepartmentNameAndMemberCount() {
         try {
-            Authentication authentication = tokenProvider.getAuthentication(token);
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
             if (3 <= commonUtil.checkMaster(authentication)) {
                 return new RES_DepNameAndMemCount("RDAM001", new DepartmentNameAndMemberCountDTO("구이앤금우통신", (int) memberRepository.count()));

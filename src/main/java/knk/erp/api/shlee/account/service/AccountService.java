@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -88,8 +89,8 @@ public class AccountService {
 
     // 회원 정보 수정
     @Transactional
-    public Update_AccountDTO_RES updateMember(Update_AccountDTO_REQ updateAccountDTOReq, String token){
-        Authentication authentication = tokenProvider.getAuthentication(token);
+    public Update_AccountDTO_RES updateMember(Update_AccountDTO_REQ updateAccountDTOReq){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String level = authentication.getAuthorities().toString();
         Member target = memberRepository.findAllByMemberIdAndDeletedIsFalse(updateAccountDTOReq.getMemberId());
         try{
@@ -107,8 +108,8 @@ public class AccountService {
 
     // 회원 정보 삭제
     @Transactional
-    public Delete_AccountDTO_RES deleteMember(MemberDTO_REQ memberDTOReq, String token){
-        Authentication authentication = tokenProvider.getAuthentication(token);
+    public Delete_AccountDTO_RES deleteMember(MemberDTO_REQ memberDTOReq){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String level = authentication.getAuthorities().toString();
         Member target = memberRepository.findAllByMemberIdAndDeletedIsFalse(memberDTOReq.getMemberId());
         try{
