@@ -13,10 +13,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.TestPropertySource;
 
 import java.time.LocalDateTime;
 
 @SpringBootTest
+@TestPropertySource("classpath:application_test.yml")
 class ShleeApplicationTests {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
     @Autowired
