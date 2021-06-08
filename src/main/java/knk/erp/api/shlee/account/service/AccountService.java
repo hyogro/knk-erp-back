@@ -93,7 +93,7 @@ public class AccountService {
             String level = authentication.getAuthorities().toString();
             Member target = memberRepository.findAllByMemberIdAndDeletedIsFalse(updateAccountDTOReq.getMemberId());
             if(securityUtil.checkAuthority(updateAccountDTOReq, level, target)){
-                Department department = departmentRepository.getOne(target.getDepartment().getId());
+                Department department = departmentRepository.findByDepartmentName(updateAccountDTOReq.getDepartmentName());
                 accountUtil.updateSetMember(target, department, updateAccountDTOReq, passwordEncoder);
                 memberRepository.save(target);
                 return new Update_AccountDTO_RES("UA001");

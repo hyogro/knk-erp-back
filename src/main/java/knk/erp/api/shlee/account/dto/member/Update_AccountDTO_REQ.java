@@ -13,4 +13,5 @@ public class Update_AccountDTO_REQ {
     private String authority;
     private String phone;
     private float vacation;
+    private String departmentName;
 }
