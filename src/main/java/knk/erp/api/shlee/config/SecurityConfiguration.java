@@ -36,14 +36,14 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 //2021-06-08 15:36 이상훈 추가 Cors 세팅
                 .httpBasic().disable()
                 .cors().configurationSource(corsConfigurationSource())
+
                 .and()
                 .csrf().disable()
                 // form 기반의 로그인에 대해 비활성화
                 .formLogin().disable()
 
-                .authorizeRequests()
-
                 // 로그인, 회원가입 API 는 권한없이 접근 가능하도록 설정
+                .authorizeRequests()
                 .antMatchers("/account/login", "/account/signup").permitAll()
 
                 // 회원 정보 목록 읽어오기, 회원 정보 수정, 회원 삭제는 관리자 이상만 가능하도록 설정
