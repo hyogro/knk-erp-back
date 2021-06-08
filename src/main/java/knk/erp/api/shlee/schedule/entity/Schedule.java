@@ -25,6 +25,9 @@ public class Schedule extends Time {
     @Column
     private String memo;
 
+    @Column(length = 10)
+    private String viewOption="all";
+
     @Column(nullable = false)
     private LocalDateTime startDate;
 
@@ -38,9 +41,10 @@ public class Schedule extends Time {
     private Long groupId;
 
     @Builder
-    public Schedule(String title, String memo, LocalDateTime startDate, LocalDateTime endDate, String memberId, Long groupId) {
+    public Schedule(String title, String memo, String viewOption, LocalDateTime startDate, LocalDateTime endDate, String memberId, Long groupId) {
         this.title = title;
         this.memo = memo;
+        this.viewOption = viewOption;
         this.startDate = startDate;
         this.endDate = endDate;
         this.memberId = memberId;
