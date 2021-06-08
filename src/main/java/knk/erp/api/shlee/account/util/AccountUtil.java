@@ -20,6 +20,7 @@ public class AccountUtil {
             member_List.add(new Read_MemberDTO(member.getMemberId(), null, member.getPhone(),
                     member.getMemberName(), member.getVacation(), member.getDepartment().getDepartmentName(), member.getAuthority()));
         }
+
         return member_List;
     }
 
@@ -46,9 +47,9 @@ public class AccountUtil {
         if(updateAccountDTOReq.getPassword()!=null){
             my.setPassword(passwordEncoder.encode(updateAccountDTOReq.getPassword()));
         }
-       if(updateAccountDTOReq.getPhone()!=null){
+        if(updateAccountDTOReq.getPhone()!=null){
            my.setPhone(updateAccountDTOReq.getPhone());
-       }
+        }
     }
 
     public Authority toAuthority(Update_AccountDTO_REQ updateAccountDTOReq){
@@ -68,6 +69,7 @@ public class AccountUtil {
         else{
             authority = Authority.ROLE_LVL1;
         }
+
         return authority;
     }
 }

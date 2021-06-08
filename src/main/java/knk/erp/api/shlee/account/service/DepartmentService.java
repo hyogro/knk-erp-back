@@ -33,8 +33,10 @@ public class DepartmentService {
             if(departmentRepository.existsByDepartmentNameAndDeletedIsFalse(departmentDTOReq.getDepartmentName())) {
                 return new Create_DepartmentDTO_RES("CD003", "이미 존재하는 부서입니다.");
             }
+
             Department department = departmentDTOReq.toDepartment();
             departmentRepository.save(department);
+
             return new Create_DepartmentDTO_RES("CD001");
         } catch (Exception e) {
             return new Create_DepartmentDTO_RES("CD002", e.getMessage());
@@ -46,6 +48,7 @@ public class DepartmentService {
     public Read_DepartmentDTO_RES readDepartment() {
         try {
             List<Department> departmentList = departmentRepository.findAllByDeletedIsFalse();
+
             return new Read_DepartmentDTO_RES("RD001", departmentUtil.getDepartmentList(departmentList));
         } catch (Exception e) {
             return new Read_DepartmentDTO_RES("RD002", e.getMessage());
@@ -59,12 +62,54 @@ public class DepartmentService {
             if(departmentRepository.existsByDepartmentNameAndDeletedIsFalse(departmentDTOReq.getDepartmentName())){
                 return new Update_DepartmentDTO_RES("UD003", "이미 존재하는 부서입니다.");
             }
+
             Department department = departmentRepository.getOne(departmentDTOReq.getDep_id());
             department.setDepartmentName(departmentDTOReq.getDepartmentName());
             departmentRepository.save(department);
+
             return new Update_DepartmentDTO_RES("UD001");
         } catch (Exception e) {
             return new Update_DepartmentDTO_RES("UD002", e.getMessage());
+        }
+    }
+
+    // 부서 리더 수정
+    @Transactional
+    public UpdateLeader_DepartmentDTO_RES updateLeader(Update_DepartmentLeaderDTO_REQ updateDepartmentLeaderDTOReq){
+        try{
+            Department department = departmentRepository.getOne(updateDepartmentLeaderDTOReq.getDep_id());
+            Member leader;
+
+            if(memberRepository.existsByMemberId(updateDepartmentLeaderDTOReq.getMemberId())){
+                leader = memberRepository.findAllByMemberIdAndDeletedIsFalse(updateDepartmentLeaderDTOReq.getMemberId());
+            }
+            else return new UpdateLeader_DepartmentDTO_RES("ULD004", "입력한 멤버가 존재하지 않음");
+
+            if(department.getLeader() != null){
+                Member previous_leader = department.getLeader();
+
+                if(previous_leader.getAuthority().equals(Authority.ROLE_LVL2)){
+                    previous_leader.setAuthority(Authority.ROLE_LVL1);
+                    memberRepository.save(previous_leader);
+                }
+            }
+
+            if(leader.getDepartment() == department){
+                department.setLeader(leader);
+
+                if(leader.getAuthority().equals(Authority.ROLE_LVL1)){
+                    leader.setAuthority(Authority.ROLE_LVL2);
+                    memberRepository.save(leader);
+                }
+
+                departmentRepository.save(department);
+
+                return new UpdateLeader_DepartmentDTO_RES("ULD001");
+            }
+
+            else return new UpdateLeader_DepartmentDTO_RES("ULD003", "리더로 지정하려는 멤버가 해당 부서의 멤버가 아닙니다.");
+        }catch (Exception e){
+            return new UpdateLeader_DepartmentDTO_RES("ULD002", e.getMessage());
         }
     }
 
@@ -74,39 +119,11 @@ public class DepartmentService {
         try {
             Department department = departmentRepository.getOne(departmentDTOReq.getDep_id());
             department.setDeleted(true);
+            departmentRepository.save(department);
+
             return new Delete_DepartmentDTO_RES("DD001");
         } catch (Exception e) {
             return new Delete_DepartmentDTO_RES("DD002", e.getMessage());
-        }
-    }
-
-    // 부서 리더 수정
-    @Transactional
-    public UpdateLeader_DepartmentDTO_RES updateLeader(Update_DepartmentLeaderDTO_REQ updateDepartmentLeaderDTOReq){
-        try{
-            Department department = departmentRepository.getOne(updateDepartmentLeaderDTOReq.getDep_id());
-            Member leader = memberRepository.findAllByMemberIdAndDeletedIsFalse(updateDepartmentLeaderDTOReq.getMemberId());
-
-            if(department.getLeader() != null){
-                Member previous_leader = department.getLeader();
-                if(previous_leader.getAuthority().equals(Authority.ROLE_LVL2)){
-                    previous_leader.setAuthority(Authority.ROLE_LVL1);
-                }
-                memberRepository.save(previous_leader);
-            }
-
-            if(leader.getDepartment() == department){
-                department.setLeader(leader);
-                if(leader.getAuthority().equals(Authority.ROLE_LVL1)){
-                    leader.setAuthority(Authority.ROLE_LVL2);
-                    memberRepository.save(leader);
-                }
-                departmentRepository.save(department);
-                return new UpdateLeader_DepartmentDTO_RES("ULD001");
-            }
-            else return new UpdateLeader_DepartmentDTO_RES("ULD003", "리더로 지정하려는 멤버가 해당 부서의 멤버가 아닙니다.");
-        }catch (Exception e){
-            return new UpdateLeader_DepartmentDTO_RES("ULD002", e.getMessage());
         }
     }
 
@@ -128,12 +145,14 @@ public class DepartmentService {
             Member member = memberRepository.findAllByMemberIdAndDeletedIsFalse(memberId);
 
             Department department = member.getDepartment();
+
             if(department.getDepartmentName() == null) {
                 return new RES_DepNameAndMemCount("RDAM003", "부서에 속해있지않습니다.");
             }
 
             String depName = department.getDepartmentName();
             int countOfMember = department.getMemberList().size();
+
             return new RES_DepNameAndMemCount("RDAM001", new DepartmentNameAndMemberCountDTO(depName, countOfMember));
         } catch (Exception e) {
             return new RES_DepNameAndMemCount("RDAM002", e.getMessage());

@@ -38,14 +38,18 @@ public class AccountService {
             if(memberRepository.existsByMemberId(memberDTOReq.getMemberId())) {
                 return new SignUp_MemberDTO_RES("SU003", "이미 가입된 ID");
             }
+
             Member member = memberDTOReq.toMember(passwordEncoder);
             Department department;
+
             if(memberDTOReq.getDepartmentId() != null) department = departmentRepository.getOne(memberDTOReq.getDepartmentId());
             else department = departmentRepository.findByDepartmentName("부서미지정");
+
             member.setDepartment(department);
             department.getMemberList().add(member);
             departmentRepository.save(department);
             memberRepository.save(member);
+
             return new SignUp_MemberDTO_RES("SU001");
         }catch (Exception e){
             return new SignUp_MemberDTO_RES("SU002", e.getMessage());
@@ -79,6 +83,7 @@ public class AccountService {
     public Read_AccountDTO_RES readMember(){
         try{
             List<Member> memberList = memberRepository.findAllByDeletedIsFalse();
+
             return new Read_AccountDTO_RES("RA001", accountUtil.getMemberList(memberList));
         }catch(Exception e){
             return new Read_AccountDTO_RES("RA002", e.getMessage());
@@ -91,13 +96,29 @@ public class AccountService {
         try{
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             String level = authentication.getAuthorities().toString();
-            Member target = memberRepository.findAllByMemberIdAndDeletedIsFalse(updateAccountDTOReq.getMemberId());
+            Member target;
+
+            if(memberRepository.existsByMemberId(updateAccountDTOReq.getMemberId())) {
+                target = memberRepository.findAllByMemberIdAndDeletedIsFalse(updateAccountDTOReq.getMemberId());
+            }
+            else return new Update_AccountDTO_RES("UA004", "정보를 수정할 멤버가 존재하지 않습니다.");
+
             if(securityUtil.checkAuthority(updateAccountDTOReq, level, target)){
-                Department department = departmentRepository.findByDepartmentName(updateAccountDTOReq.getDepartmentName());
+                Department department = null;
+
+                if(departmentRepository.existsByDepartmentNameAndDeletedIsFalse(updateAccountDTOReq.getDepartmentName())){
+                    if(departmentRepository.getOne(target.getDepartment().getId()).getLeader() == target){
+                        return new Update_AccountDTO_RES("UA005", "수정할 대상이 부서의 리더입니다.");
+                    }
+                    department = departmentRepository.findByDepartmentName(updateAccountDTOReq.getDepartmentName());
+                }
+
                 accountUtil.updateSetMember(target, department, updateAccountDTOReq, passwordEncoder);
                 memberRepository.save(target);
+
                 return new Update_AccountDTO_RES("UA001");
             }
+
             else return new Update_AccountDTO_RES("UA003", "해당 정보를 수정할 권한이 없습니다.");
         }catch(Exception e){
             return new Update_AccountDTO_RES("UA002", e.getMessage());
@@ -110,11 +131,28 @@ public class AccountService {
         try{
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             String level = authentication.getAuthorities().toString();
-            Member target = memberRepository.findAllByMemberIdAndDeletedIsFalse(memberDTOReq.getMemberId());
+            Member target;
+
+            if(memberRepository.existsByMemberId(memberDTOReq.getMemberId())) {
+                target = memberRepository.findAllByMemberIdAndDeletedIsFalse(memberDTOReq.getMemberId());
+            }
+            else return new Delete_AccountDTO_RES("DA004", "대상 회원이 존재하지 않습니다.");
+
             if(securityUtil.checkTargetAuthority(level, target)){
+                if(target.getDepartment().getLeader() != null){
+                    if(target.getDepartment().getLeader() == target){
+                        Department department = departmentRepository.getOne(target.getDepartment().getId());
+                        department.setLeader(null);
+                        departmentRepository.save(department);
+                    }
+                }
+
                 target.setDeleted(true);
+                memberRepository.save(target);
+
                 return new Delete_AccountDTO_RES("DA001");
             }
+
             else return new Delete_AccountDTO_RES("DA003", "해당 회원을 삭제할 권한이 없습니다.");
         }catch(Exception e){
             return new Delete_AccountDTO_RES("DA002", e.getMessage());

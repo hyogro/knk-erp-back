@@ -4,11 +4,9 @@ import knk.erp.api.shlee.account.dto.member.Read_MemberDTO;
 import knk.erp.api.shlee.account.dto.member.Update_AccountDTO_REQ;
 import knk.erp.api.shlee.account.dto.my.GetMyInfo_MyPageDTO_RES;
 import knk.erp.api.shlee.account.dto.my.UpdateSelf_MyPageDTO_RES;
-import knk.erp.api.shlee.account.entity.DepartmentRepository;
 import knk.erp.api.shlee.account.entity.Member;
 import knk.erp.api.shlee.account.entity.MemberRepository;
 import knk.erp.api.shlee.account.util.AccountUtil;
-import knk.erp.api.shlee.common.jwt.TokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -29,6 +27,7 @@ public class MyPageService {
         try{
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             Member my = memberRepository.findAllByMemberIdAndDeletedIsFalse(authentication.getName());
+
             return new GetMyInfo_MyPageDTO_RES("GMI001", new Read_MemberDTO(my.getMemberId(), null, my.getPhone(),
                     my.getMemberName(), my.getVacation(), my.getDepartment().getDepartmentName(), my.getAuthority()));
         }catch(Exception e){
@@ -44,6 +43,7 @@ public class MyPageService {
             Member my = memberRepository.findAllByMemberIdAndDeletedIsFalse(authentication.getName());
             accountUtil.updateSelfMember(my, updateAccountDTOReq, passwordEncoder);
             memberRepository.save(my);
+
             return new UpdateSelf_MyPageDTO_RES("USM001");
         }catch (Exception e){
             return new UpdateSelf_MyPageDTO_RES("USM002", e.getMessage());
