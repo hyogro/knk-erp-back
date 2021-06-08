@@ -17,11 +17,11 @@ public class ScheduleDTO {
     private LocalDateTime startDate;
     private LocalDateTime endDate;
     private String memberId;
-    private Long groupId;
+    private Long departmentId;
 
     public Schedule toEntity(){
         return Schedule.builder().title(title).memo(memo).viewOption(viewOption).startDate(startDate).endDate(endDate).memberId(memberId)
-                .groupId(groupId).build();
+                .departmentId(departmentId).build();
     }
 
     public ScheduleDTO(Schedule schedule){
@@ -32,6 +32,6 @@ public class ScheduleDTO {
         this.startDate = schedule.getStartDate();
         this.endDate = schedule.getEndDate();
         this.memberId = schedule.getMemberId();
-        this.groupId = schedule.getGroupId();
+        this.departmentId = schedule.getDepartmentId();
     }
 }

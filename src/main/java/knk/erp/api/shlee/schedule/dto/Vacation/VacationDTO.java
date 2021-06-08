@@ -22,11 +22,11 @@ public class VacationDTO {
     private LocalDateTime startDate;
     private LocalDateTime endDate;
     private Long memberId;
-    private Long groupId;
+    private Long departmentId;
 
     public Vacation toEntity(){
         return Vacation.builder().title(title).memo(memo).approval_1(approval_1).approval_2(approval_2)
                 .approveMemo(approveMemo).startDate(startDate).endDate(endDate).memberId(memberId)
-                .groupId(groupId).build();
+                .departmentId(departmentId).build();
     }
 }

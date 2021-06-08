@@ -23,10 +23,11 @@ public class ScheduleUtil {
     public void DTOTOSchedule(Schedule schedule, ScheduleDTO scheduleDTO){
         schedule.setTitle(scheduleDTO.getTitle());
         schedule.setMemo(scheduleDTO.getMemo());
+        schedule.setViewOption(scheduleDTO.getViewOption());
         schedule.setStartDate(scheduleDTO.getStartDate());
         schedule.setEndDate(scheduleDTO.getEndDate());
         schedule.setMemberId(scheduleDTO.getMemberId());
-        schedule.setGroupId(scheduleDTO.getGroupId());
+        schedule.setDepartmentId(scheduleDTO.getDepartmentId());
     }
 
 }

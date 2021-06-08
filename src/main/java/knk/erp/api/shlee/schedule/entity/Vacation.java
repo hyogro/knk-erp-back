@@ -44,10 +44,10 @@ public class Vacation extends Time {
     private Long memberId;
 
     @Column(nullable = false)
-    private Long groupId;
+    private Long departmentId;
 
     @Builder
-    public Vacation(String title, String memo, boolean approval_1, boolean approval_2, String approveMemo, LocalDateTime startDate, LocalDateTime endDate, Long memberId, Long groupId) {
+    public Vacation(String title, String memo, boolean approval_1, boolean approval_2, String approveMemo, LocalDateTime startDate, LocalDateTime endDate, Long memberId, Long departmentId) {
         this.title = title;
         this.memo = memo;
         this.approval_1 = approval_1;
@@ -56,6 +56,6 @@ public class Vacation extends Time {
         this.startDate = startDate;
         this.endDate = endDate;
         this.memberId = memberId;
-        this.groupId = groupId;
+        this.departmentId = departmentId;
     }
 }

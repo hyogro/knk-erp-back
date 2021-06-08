@@ -38,16 +38,16 @@ public class Schedule extends Time {
     private String memberId;
 
     @Column
-    private Long groupId;
+    private Long departmentId;
 
     @Builder
-    public Schedule(String title, String memo, String viewOption, LocalDateTime startDate, LocalDateTime endDate, String memberId, Long groupId) {
+    public Schedule(String title, String memo, String viewOption, LocalDateTime startDate, LocalDateTime endDate, String memberId, Long departmentId) {
         this.title = title;
         this.memo = memo;
         this.viewOption = viewOption;
         this.startDate = startDate;
         this.endDate = endDate;
         this.memberId = memberId;
-        this.groupId = groupId;
+        this.departmentId = departmentId;
     }
 }
