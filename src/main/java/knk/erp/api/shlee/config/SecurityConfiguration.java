@@ -35,8 +35,12 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 // form 기반의 로그인에 대해 비활성화
                 .formLogin().disable()
 
-                // 로그인, 회원가입 API 는 권한없이 접근 가능하도록 설정
                 .authorizeRequests()
+
+                //2021-06-08 15:24 이상훈 추가 Cors 세팅
+                .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
+
+                // 로그인, 회원가입 API 는 권한없이 접근 가능하도록 설정
                 .antMatchers("/account/login", "/account/signup").permitAll()
 
                 // 회원 정보 목록 읽어오기, 회원 정보 수정, 회원 삭제는 관리자 이상만 가능하도록 설정
