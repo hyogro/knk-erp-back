@@ -8,7 +8,7 @@ import lombok.*;
 @ToString
 @AllArgsConstructor
 @RequiredArgsConstructor
-public class AttendanceSummaryDTO extends Time {
+public class AttendanceSummaryDTO{
 
     public int onWork;
     public int yetWork;
