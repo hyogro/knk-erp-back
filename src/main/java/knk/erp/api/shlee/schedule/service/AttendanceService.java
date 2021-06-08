@@ -196,12 +196,11 @@ public class AttendanceService {
 
     //요청 시 권한에 따라서 1, 2차 승인 여부 변경
     private boolean rectifyApproved(Authentication authentication, RectifyAttendance rectifyAttendance) {
-        String lvl = getRoleByAuthentication(authentication);
         String leaderId = authentication.getName();
         String memberId = rectifyAttendance.getMemberId();
 
         //LVL2(부서장) 인 경우 승인하려는 맴버가 부서원인지 확인 후 승인 진행
-        if (lvl.equals("LVL2")) {
+        if (commonUtil.checkMaster(authentication) == 2) {
             Member member = memberRepository.findAllByMemberIdAndDeletedIsFalse(memberId);
             Department department_l = departmentRepository.findByLeader_MemberId(leaderId);
             if (member.getDepartment().getId().equals(department_l.getId())) {
@@ -211,7 +210,7 @@ public class AttendanceService {
             }
         }
         //LVL3(부장) 인 경우 모두 승인
-        else if (lvl.equals("LVL3")) {
+        else if (3 <= commonUtil.checkMaster(authentication)) {
             rectifyAttendance.setApproval_1(true);
             rectifyAttendance.setApprover_1(leaderId);
             rectifyAttendance.setApproval_2(true);
@@ -270,7 +269,6 @@ public class AttendanceService {
     public RES_readAttendanceSummary readAttendanceSummary(String token) {
         try {
             Authentication authentication = tokenProvider.getAuthentication(token);
-            String lvl = getRoleByAuthentication(authentication);
             String memberId = authentication.getName();
             int onWork;//출근
             int yetWork;//미출근
@@ -279,7 +277,7 @@ public class AttendanceService {
             LocalDate today = LocalDate.now();
             LocalTime nine = LocalTime.of(9, 0, 0);
 
-            if (lvl.equals("LVL2")) {
+            if (commonUtil.checkMaster(authentication) == 2) {
                 Member member = memberRepository.findAllByMemberIdAndDeletedIsFalse(memberId);
                 Department department = member.getDepartment();
                 int countOfMember = department.getMemberList().size();
@@ -288,14 +286,13 @@ public class AttendanceService {
                 lateWork = attendanceRepository.countByAttendanceDateAndDepartmentIdAndOnWorkAfterAndDeletedIsFalse(today, departmentId, LocalDateTime.of(today, nine));
                 vacation = 0;
                 yetWork = countOfMember - onWork - lateWork - vacation;
-            } else if (lvl.equals("LVL3")) {
+            } else if (3 <= commonUtil.checkMaster(authentication)) {
                 int countOfMember = (int) memberRepository.count();
                 onWork = attendanceRepository.countByAttendanceDateAndDeletedIsFalse(today);
                 lateWork = attendanceRepository.countByAttendanceDateAndOnWorkAfterAndDeletedIsFalse(today, LocalDateTime.of(today, nine));
                 vacation = 0;
                 yetWork = countOfMember - onWork - lateWork - vacation;
-            }
-            else {
+            } else {
                 return new RES_readAttendanceSummary("RSS003");
             }
             return new RES_readAttendanceSummary("RSS001", new AttendanceSummaryDTO(onWork, yetWork, lateWork, vacation));

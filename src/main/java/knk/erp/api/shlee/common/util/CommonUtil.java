@@ -6,10 +6,12 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class CommonUtil {
-    public boolean isAuth(Authentication authentication, Authority targetAuthority){
-        authentication.getAuthorities().contains(targetAuthority);
-        String auth_1 = authentication.getAuthorities().toString().replace("[","").replace("]", "");
-        return auth_1.equals(targetAuthority.toString());
+
+    //레벨 3 이상인지 여부 체크
+    public int checkMaster(Authentication authentication) {
+        String lvl = authentication.getAuthorities().toString().replace("[ROLE_", "").replace("]", "");
+        return lvl.equals("LVL2") ? 2 :lvl.equals("LVL3") ? 3 : lvl.equals("LVL4") ? 4 : lvl.equals("ADMIN") ? 5 : 0;
     }
+
 
 }

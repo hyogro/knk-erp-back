@@ -7,6 +7,7 @@ import knk.erp.api.shlee.account.entity.Member;
 import knk.erp.api.shlee.account.entity.MemberRepository;
 import knk.erp.api.shlee.account.util.DepartmentUtil;
 import knk.erp.api.shlee.common.jwt.TokenProvider;
+import knk.erp.api.shlee.common.util.CommonUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
@@ -24,6 +25,8 @@ public class DepartmentService {
     //2021-06-07 15:07 이상훈 추가
     private final TokenProvider tokenProvider;
     private final MemberRepository memberRepository;
+    //2021-06-08 09:10 이상훈 추가
+    private final CommonUtil commonUtil;
 
     // 부서 목록에 새로운 부서 추가
     @Transactional
@@ -82,7 +85,7 @@ public class DepartmentService {
         try {
             Authentication authentication = tokenProvider.getAuthentication(token);
 
-            if (checkMaster(authentication)) {
+            if (3 <= commonUtil.checkMaster(authentication)) {
                 return new RES_DepNameAndMemCount("RDAM001", new DepartmentNameAndMemberCountDTO("구이앤금우통신", (int) memberRepository.count()));
             }
 
@@ -96,10 +99,5 @@ public class DepartmentService {
         } catch (Exception e) {
             return new RES_DepNameAndMemCount("RDAM002", e.getMessage());
         }
-    }
-
-    private boolean checkMaster(Authentication authentication) {
-        String lvl = authentication.getAuthorities().toString().replace("[ROLE_", "").replace("]", "");
-        return lvl.equals("LVL3") || lvl.equals("LVL4") || lvl.equals("ADMIN");
     }
 }
