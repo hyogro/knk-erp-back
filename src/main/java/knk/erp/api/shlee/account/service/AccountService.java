@@ -91,9 +91,18 @@ public class AccountService {
         try{
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             String level = authentication.getAuthorities().toString();
-            Member target = memberRepository.findAllByMemberIdAndDeletedIsFalse(updateAccountDTOReq.getMemberId());
+            Member target;
+
+            if(memberRepository.existsByMemberId(updateAccountDTOReq.getMemberId())) {
+                target = memberRepository.findAllByMemberIdAndDeletedIsFalse(updateAccountDTOReq.getMemberId());
+            }
+            else return new Update_AccountDTO_RES("UA004", "정보를 수정할 멤버가 존재하지 않습니다.");
+
             if(securityUtil.checkAuthority(updateAccountDTOReq, level, target)){
-                Department department = departmentRepository.findByDepartmentName(updateAccountDTOReq.getDepartmentName());
+                Department department = null;
+                if(departmentRepository.existsByDepartmentNameAndDeletedIsFalse(updateAccountDTOReq.getDepartmentName())){
+                    department = departmentRepository.findByDepartmentName(updateAccountDTOReq.getDepartmentName());
+                }
                 accountUtil.updateSetMember(target, department, updateAccountDTOReq, passwordEncoder);
                 memberRepository.save(target);
                 return new Update_AccountDTO_RES("UA001");
@@ -110,7 +119,13 @@ public class AccountService {
         try{
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             String level = authentication.getAuthorities().toString();
-            Member target = memberRepository.findAllByMemberIdAndDeletedIsFalse(memberDTOReq.getMemberId());
+            Member target;
+
+            if(memberRepository.existsByMemberId(memberDTOReq.getMemberId())) {
+                target = memberRepository.findAllByMemberIdAndDeletedIsFalse(memberDTOReq.getMemberId());
+            }
+            else return new Delete_AccountDTO_RES("DA004", "대상 회원이 존재하지 않습니다.");
+
             if(securityUtil.checkTargetAuthority(level, target)){
                 target.setDeleted(true);
                 return new Delete_AccountDTO_RES("DA001");

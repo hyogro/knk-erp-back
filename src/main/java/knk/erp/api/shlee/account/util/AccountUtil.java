@@ -46,9 +46,9 @@ public class AccountUtil {
         if(updateAccountDTOReq.getPassword()!=null){
             my.setPassword(passwordEncoder.encode(updateAccountDTOReq.getPassword()));
         }
-       if(updateAccountDTOReq.getPhone()!=null){
+        if(updateAccountDTOReq.getPhone()!=null){
            my.setPhone(updateAccountDTOReq.getPhone());
-       }
+        }
     }
 
     public Authority toAuthority(Update_AccountDTO_REQ updateAccountDTOReq){

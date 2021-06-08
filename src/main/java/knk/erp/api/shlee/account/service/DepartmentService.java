@@ -85,14 +85,18 @@ public class DepartmentService {
     public UpdateLeader_DepartmentDTO_RES updateLeader(Update_DepartmentLeaderDTO_REQ updateDepartmentLeaderDTOReq){
         try{
             Department department = departmentRepository.getOne(updateDepartmentLeaderDTOReq.getDep_id());
-            Member leader = memberRepository.findAllByMemberIdAndDeletedIsFalse(updateDepartmentLeaderDTOReq.getMemberId());
+            Member leader;
+            if(memberRepository.existsByMemberId(updateDepartmentLeaderDTOReq.getMemberId())){
+                leader = memberRepository.findAllByMemberIdAndDeletedIsFalse(updateDepartmentLeaderDTOReq.getMemberId());
+            }
+            else return new UpdateLeader_DepartmentDTO_RES("ULD004", "입력한 멤버가 존재하지 않음");
 
             if(department.getLeader() != null){
                 Member previous_leader = department.getLeader();
                 if(previous_leader.getAuthority().equals(Authority.ROLE_LVL2)){
                     previous_leader.setAuthority(Authority.ROLE_LVL1);
+                    memberRepository.save(previous_leader);
                 }
-                memberRepository.save(previous_leader);
             }
 
             if(leader.getDepartment() == department){
