@@ -90,19 +90,16 @@ public class AccountService {
     @Transactional
     public Update_AccountDTO_RES updateMember(Update_AccountDTO_REQ updateAccountDTOReq, String token){
         Authentication authentication = tokenProvider.getAuthentication(token);
-        String level = authentication.getAuthorities().toString().replace("[ROLE_", "").replace("]",
-                "");
+        String level = authentication.getAuthorities().toString();
         Member target = memberRepository.getOne(updateAccountDTOReq.getId());
         try{
-            if(securityUtil.checkTargetAuthority(level, target)){
-                if(securityUtil.checkAuthority(updateAccountDTOReq, level)){
-                    Department department = departmentRepository.getOne(updateAccountDTOReq.getDep_id());
-                    accountUtil.updateSetMember(target, department, updateAccountDTOReq, passwordEncoder);
-                    memberRepository.save(target);
-                    return new Update_AccountDTO_RES("UA001");
-                }
+            if(securityUtil.checkAuthority(updateAccountDTOReq, level, target)){
+                Department department = departmentRepository.getOne(updateAccountDTOReq.getDep_id());
+                accountUtil.updateSetMember(target, department, updateAccountDTOReq, passwordEncoder);
+                memberRepository.save(target);
+                return new Update_AccountDTO_RES("UA001");
             }
-            return new Update_AccountDTO_RES("UA003", "해당 정보를 수정할 권한이 없습니다.");
+            else return new Update_AccountDTO_RES("UA003", "해당 정보를 수정할 권한이 없습니다.");
         }catch(Exception e){
             return new Update_AccountDTO_RES("UA002", e.getMessage());
         }
@@ -112,8 +109,7 @@ public class AccountService {
     @Transactional
     public Delete_AccountDTO_RES deleteMember(MemberDTO_REQ memberDTOReq, String token){
         Authentication authentication = tokenProvider.getAuthentication(token);
-        String level = authentication.getAuthorities().toString().replace("[ROLE_", "").replace("]",
-                "");
+        String level = authentication.getAuthorities().toString();
         Member target = memberRepository.getOne(memberDTOReq.getId());
         try{
             if(securityUtil.checkTargetAuthority(level, target)){
