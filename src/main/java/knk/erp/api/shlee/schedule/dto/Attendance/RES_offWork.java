@@ -17,8 +17,9 @@ public class RES_offWork {
     private void createCodeList(){
         this.help_codeList.put("OFF001", "퇴근기록 성공");
         this.help_codeList.put("OFF002", "퇴근기록 실패");
-        this.help_codeList.put("OFF003", "퇴근기록 실패(이미 퇴근기록 있음)");
+        this.help_codeList.put("OFF003", "퇴근기록 실패(기존 퇴근기록 존재)");
         this.help_codeList.put("OFF004", "퇴근기록 실패(권한 없음)");
+        this.help_codeList.put("OFF005", "퇴근기록 실패(출근기록 존재하지 않음)");
     }
 
     //error
