@@ -1,6 +1,7 @@
 package knk.erp.api.shlee.account.dto.account;
 
 import knk.erp.api.shlee.account.dto.member.MemberDTO_REQ;
+import knk.erp.api.shlee.account.dto.member.Read_MemberListDTO;
 import lombok.*;
 
 import java.util.LinkedHashMap;
@@ -15,7 +16,7 @@ public class Read_AccountDTO_RES {
     private String code;
     private String message;
     private LinkedHashMap<String, String> help_codeList = new LinkedHashMap<>();
-    List<MemberDTO_REQ> memberList;
+    List<Read_MemberListDTO> memberList;
 
     private void createCodeList(){
         this.help_codeList.put("RA001", "회원정보 목록 읽어오기 성공");
@@ -30,7 +31,7 @@ public class Read_AccountDTO_RES {
     }
 
     //ok
-    public Read_AccountDTO_RES(String code, List<MemberDTO_REQ> memberList) {
+    public Read_AccountDTO_RES(String code, List<Read_MemberListDTO> memberList) {
         createCodeList();
         this.code = code;
         this.memberList = memberList;

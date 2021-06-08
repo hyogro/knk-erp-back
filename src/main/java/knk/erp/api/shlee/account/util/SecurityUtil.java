@@ -34,6 +34,7 @@ public class SecurityUtil {
 
         if(target.getAuthority().toString().equals("ROLE_ADMIN")) target_level = 5;
         else target_level = Integer.parseInt(target.getAuthority().toString().replace("ROLE_LVL",""));
-       return my_level > target_level;
+        return my_level > target_level;
     }
+
 }

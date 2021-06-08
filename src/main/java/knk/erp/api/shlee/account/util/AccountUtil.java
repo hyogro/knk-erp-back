@@ -1,6 +1,7 @@
 package knk.erp.api.shlee.account.util;
 
 import knk.erp.api.shlee.account.dto.member.MemberDTO_REQ;
+import knk.erp.api.shlee.account.dto.member.Read_MemberListDTO;
 import knk.erp.api.shlee.account.dto.member.Update_AccountDTO_REQ;
 import knk.erp.api.shlee.account.entity.Authority;
 import knk.erp.api.shlee.account.entity.Department;
@@ -14,10 +15,10 @@ import java.util.List;
 @Component
 public class AccountUtil {
 
-    public List<MemberDTO_REQ> getMemberList(List<Member> memberList){
-        List<MemberDTO_REQ> member_List = new ArrayList<>();
+    public List<Read_MemberListDTO> getMemberList(List<Member> memberList){
+        List<Read_MemberListDTO> member_List = new ArrayList<>();
         for(Member member : memberList){
-            member_List.add(new MemberDTO_REQ(member.getId(), member.getMemberId(), null, member.getPhone(),
+            member_List.add(new Read_MemberListDTO(member.getId(), member.getMemberId(), null, member.getPhone(),
                     member.getMemberName(), member.getVacation(), member.getDepartment().getId(),
                     member.getDepartment().getDepartmentName(), member.getAuthority()));
         }
