@@ -1,14 +1,12 @@
 package knk.erp.api.shlee.account.service;
 
 import knk.erp.api.shlee.account.dto.department.*;
-import knk.erp.api.shlee.account.entity.Department;
-import knk.erp.api.shlee.account.entity.DepartmentRepository;
-import knk.erp.api.shlee.account.entity.Member;
-import knk.erp.api.shlee.account.entity.MemberRepository;
+import knk.erp.api.shlee.account.entity.*;
 import knk.erp.api.shlee.account.util.DepartmentUtil;
-import knk.erp.api.shlee.common.jwt.TokenProvider;
 import knk.erp.api.shlee.common.util.CommonUtil;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -23,10 +21,10 @@ public class DepartmentService {
     private final DepartmentUtil departmentUtil;
 
     //2021-06-07 15:07 이상훈 추가
-    private final TokenProvider tokenProvider;
     private final MemberRepository memberRepository;
     //2021-06-08 09:10 이상훈 추가
     private final CommonUtil commonUtil;
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     // 부서 목록에 새로운 부서 추가
     @Transactional
@@ -76,6 +74,36 @@ public class DepartmentService {
         }
     }
 
+    // 부서 리더 수정
+    @Transactional
+    public UpdateLeader_DepartmentDTO_RES updateLeader(Update_DepartmentLeaderDTO_REQ updateDepartmentLeaderDTOReq){
+        try{
+            Department department = departmentRepository.getOne(updateDepartmentLeaderDTOReq.getDep_id());
+            Member leader = memberRepository.findAllByMemberIdAndDeletedIsFalse(updateDepartmentLeaderDTOReq.getMemberId());
+
+            if(department.getLeader() != null){
+                Member previous_leader = department.getLeader();
+                if(previous_leader.getAuthority().equals(Authority.ROLE_LVL2)){
+                    previous_leader.setAuthority(Authority.ROLE_LVL1);
+                }
+                memberRepository.save(previous_leader);
+            }
+
+            if(leader.getDepartment() == department){
+                department.setLeader(leader);
+                if(leader.getAuthority().equals(Authority.ROLE_LVL1)){
+                    leader.setAuthority(Authority.ROLE_LVL2);
+                    memberRepository.save(leader);
+                }
+                departmentRepository.save(department);
+                return new UpdateLeader_DepartmentDTO_RES("ULD001");
+            }
+            else return new UpdateLeader_DepartmentDTO_RES("ULD003", "리더로 지정하려는 멤버가 해당 부서의 멤버가 아닙니다.");
+        }catch (Exception e){
+            return new UpdateLeader_DepartmentDTO_RES("ULD002", e.getMessage());
+        }
+    }
+
     /**
      * 2021-06-07 15:07 이상훈 추가
      * 토큰 받아 해당 직원의 부서 명과 부서인원 리턴
@@ -86,13 +114,18 @@ public class DepartmentService {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
             if (3 <= commonUtil.checkMaster(authentication)) {
-                return new RES_DepNameAndMemCount("RDAM001", new DepartmentNameAndMemberCountDTO("구이앤금우통신", (int) memberRepository.count()));
+                return new RES_DepNameAndMemCount("RDAM001", new DepartmentNameAndMemberCountDTO("구이앤금우통신",
+                        (int) memberRepository.count()));
             }
 
             String memberId = authentication.getName();
             Member member = memberRepository.findAllByMemberIdAndDeletedIsFalse(memberId);
 
             Department department = member.getDepartment();
+            if(department.getDepartmentName() == null) {
+                return new RES_DepNameAndMemCount("RDAM003", "부서에 속해있지않습니다.");
+            }
+
             String depName = department.getDepartmentName();
             int countOfMember = department.getMemberList().size();
             return new RES_DepNameAndMemCount("RDAM001", new DepartmentNameAndMemberCountDTO(depName, countOfMember));

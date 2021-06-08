@@ -33,6 +33,11 @@ public class AccountUtil {
         member.setDepartment(department);
     }
 
+    public void updateSelfMember(Member my, Update_AccountDTO_REQ updateAccountDTOReq, BCryptPasswordEncoder passwordEncoder){
+        my.setPassword(passwordEncoder.encode(updateAccountDTOReq.getPassword()));
+        my.setPhone(updateAccountDTOReq.getPhone());
+    }
+
     public Authority toAuthority(Update_AccountDTO_REQ updateAccountDTOReq){
         Authority authority;
         if(updateAccountDTOReq.getAuthority().equals("ROLE_ADMIN")){

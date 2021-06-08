@@ -90,10 +90,10 @@ public class AccountService {
     // 회원 정보 수정
     @Transactional
     public Update_AccountDTO_RES updateMember(Update_AccountDTO_REQ updateAccountDTOReq){
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String level = authentication.getAuthorities().toString();
-        Member target = memberRepository.findAllByMemberIdAndDeletedIsFalse(updateAccountDTOReq.getMemberId());
         try{
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String level = authentication.getAuthorities().toString();
+            Member target = memberRepository.findAllByMemberIdAndDeletedIsFalse(updateAccountDTOReq.getMemberId());
             if(securityUtil.checkAuthority(updateAccountDTOReq, level, target)){
                 Department department = departmentRepository.getOne(updateAccountDTOReq.getDep_id());
                 accountUtil.updateSetMember(target, department, updateAccountDTOReq, passwordEncoder);
@@ -109,15 +109,15 @@ public class AccountService {
     // 회원 정보 삭제
     @Transactional
     public Delete_AccountDTO_RES deleteMember(MemberDTO_REQ memberDTOReq){
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String level = authentication.getAuthorities().toString();
-        Member target = memberRepository.findAllByMemberIdAndDeletedIsFalse(memberDTOReq.getMemberId());
         try{
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String level = authentication.getAuthorities().toString();
+            Member target = memberRepository.findAllByMemberIdAndDeletedIsFalse(memberDTOReq.getMemberId());
             if(securityUtil.checkTargetAuthority(level, target)){
                 target.setDeleted(true);
                 return new Delete_AccountDTO_RES("DA001");
             }
-            return new Delete_AccountDTO_RES("DA003", "해당 회원을 삭제할 권한이 없습니다.");
+            else return new Delete_AccountDTO_RES("DA003", "해당 회원을 삭제할 권한이 없습니다.");
         }catch(Exception e){
             return new Delete_AccountDTO_RES("DA002", e.getMessage());
         }

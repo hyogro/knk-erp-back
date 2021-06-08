@@ -37,6 +37,12 @@ public class DepartmentController {
         return ResponseEntity.ok(departmentService.deleteDepartment(departmentDTOReq));
     }
 
+    // 부서 팀장 수정
+    @PostMapping("/updateLeader")
+    public ResponseEntity<UpdateLeader_DepartmentDTO_RES> updateLeader(@RequestBody Update_DepartmentLeaderDTO_REQ updateDepartmentLeaderDTOReq){
+        return ResponseEntity.ok(departmentService.updateLeader(updateDepartmentLeaderDTOReq));
+    }
+
     /**2021-06-07 15:07 이상훈 추가
     토큰 받아 해당 직원의 부서 명과 부서인원 리턴**/
     @PostMapping("/readDepartmentNameAndMemberCount")
