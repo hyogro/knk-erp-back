@@ -68,6 +68,19 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .apply(new knk.erp.api.shlee.config.JwtSecurityConfig(tokenProvider));
     }
 
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        // - (3)
+        configuration.addAllowedOrigin("*");
+        configuration.addAllowedMethod("*");
+        configuration.addAllowedHeader("*");
+        configuration.setAllowCredentials(true);
+        configuration.setMaxAge(3600L);
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
+    }
 
     @Bean
     public BCryptPasswordEncoder bCryptPasswordEncoder() {
