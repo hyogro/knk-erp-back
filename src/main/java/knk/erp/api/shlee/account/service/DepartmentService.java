@@ -30,6 +30,9 @@ public class DepartmentService {
     @Transactional
     public Create_DepartmentDTO_RES createDepartment(DepartmentDTO_REQ departmentDTOReq) {
         try {
+            if(departmentRepository.existsByDepartmentNameAndDeletedIsFalse(departmentDTOReq.getDepartmentName())) {
+                return new Create_DepartmentDTO_RES("CD003", "이미 존재하는 부서입니다.");
+            }
             Department department = departmentDTOReq.toDepartment();
             departmentRepository.save(department);
             return new Create_DepartmentDTO_RES("CD001");
@@ -53,6 +56,9 @@ public class DepartmentService {
     @Transactional
     public Update_DepartmentDTO_RES updateDepartment(DepartmentDTO_REQ departmentDTOReq) {
         try {
+            if(departmentRepository.existsByDepartmentNameAndDeletedIsFalse(departmentDTOReq.getDepartmentName())){
+                return new Update_DepartmentDTO_RES("UD003", "이미 존재하는 부서입니다.");
+            }
             Department department = departmentRepository.getOne(departmentDTOReq.getDep_id());
             department.setDepartmentName(departmentDTOReq.getDepartmentName());
             departmentRepository.save(department);

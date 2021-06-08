@@ -17,25 +17,38 @@ public class AccountUtil {
     public List<Read_MemberDTO> getMemberList(List<Member> memberList){
         List<Read_MemberDTO> member_List = new ArrayList<>();
         for(Member member : memberList){
-            member_List.add(new Read_MemberDTO(member.getId(), member.getMemberId(), null, member.getPhone(),
-                    member.getMemberName(), member.getVacation(), member.getDepartment().getId(),
-                    member.getDepartment().getDepartmentName(), member.getAuthority()));
+            member_List.add(new Read_MemberDTO(member.getMemberId(), null, member.getPhone(),
+                    member.getMemberName(), member.getVacation(), member.getDepartment().getDepartmentName(), member.getAuthority()));
         }
         return member_List;
     }
 
     public void updateSetMember(Member member, Department department, Update_AccountDTO_REQ updateAccountDTOReq,
                                 BCryptPasswordEncoder passwordEncoder){
-        member.setPassword(passwordEncoder.encode(updateAccountDTOReq.getPassword()));
-        member.setAuthority(toAuthority(updateAccountDTOReq));
-        member.setPhone(updateAccountDTOReq.getPhone());
-        member.setVacation(updateAccountDTOReq.getVacation());
-        member.setDepartment(department);
+        if(updateAccountDTOReq.getPassword() != null){
+            member.setPassword(passwordEncoder.encode(updateAccountDTOReq.getPassword()));
+        }
+        if(updateAccountDTOReq.getAuthority() != null){
+            member.setAuthority(toAuthority(updateAccountDTOReq));
+        }
+        if(updateAccountDTOReq.getPhone() != null){
+            member.setPhone(updateAccountDTOReq.getPhone());
+        }
+        if(updateAccountDTOReq.getVacation() != 0){
+            member.setVacation(updateAccountDTOReq.getVacation());
+        }
+        if(department != null){
+            member.setDepartment(department);
+        }
     }
 
     public void updateSelfMember(Member my, Update_AccountDTO_REQ updateAccountDTOReq, BCryptPasswordEncoder passwordEncoder){
-        my.setPassword(passwordEncoder.encode(updateAccountDTOReq.getPassword()));
-        my.setPhone(updateAccountDTOReq.getPhone());
+        if(updateAccountDTOReq.getPassword()!=null){
+            my.setPassword(passwordEncoder.encode(updateAccountDTOReq.getPassword()));
+        }
+       if(updateAccountDTOReq.getPhone()!=null){
+           my.setPhone(updateAccountDTOReq.getPhone());
+       }
     }
 
     public Authority toAuthority(Update_AccountDTO_REQ updateAccountDTOReq){

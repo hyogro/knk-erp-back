@@ -33,21 +33,20 @@ public class AccountService {
 
     // 회원 가입
     @Transactional
-    public SignUp_MemberDTO_RES signup(MemberDTO_REQ MemberDTOReq){
-
-        Department department = departmentRepository.getOne(MemberDTOReq.getDepartmentId());
-
-        if(memberRepository.existsByMemberId(MemberDTOReq.getMemberId())) {
-            return new SignUp_MemberDTO_RES("SU003", "이미 가입된 ID 입니다.");
-        }
-        Member member = MemberDTOReq.toMember(passwordEncoder);
-
-        member.setDepartment(department);
-
+    public SignUp_MemberDTO_RES signup(MemberDTO_REQ memberDTOReq){
         try {
+            if(memberRepository.existsByMemberId(memberDTOReq.getMemberId())) {
+                return new SignUp_MemberDTO_RES("SU003", "이미 가입된 ID 입니다.");
+            }
+            Member member = memberDTOReq.toMember(passwordEncoder);
+
+            if(memberDTOReq.getDepartmentId() != null) {
+                Department department = departmentRepository.getOne(memberDTOReq.getDepartmentId());
+                member.setDepartment(department);
+                department.getMemberList().add(member);
+                departmentRepository.save(department);
+            }
             memberRepository.save(member);
-            department.getMemberList().add(member);
-            departmentRepository.save(department);
             return new SignUp_MemberDTO_RES("SU001");
         }catch (Exception e){
             return new SignUp_MemberDTO_RES("SU002", e.getMessage());
@@ -95,7 +94,7 @@ public class AccountService {
             String level = authentication.getAuthorities().toString();
             Member target = memberRepository.findAllByMemberIdAndDeletedIsFalse(updateAccountDTOReq.getMemberId());
             if(securityUtil.checkAuthority(updateAccountDTOReq, level, target)){
-                Department department = departmentRepository.getOne(updateAccountDTOReq.getDep_id());
+                Department department = departmentRepository.getOne(target.getDepartment().getId());
                 accountUtil.updateSetMember(target, department, updateAccountDTOReq, passwordEncoder);
                 memberRepository.save(target);
                 return new Update_AccountDTO_RES("UA001");

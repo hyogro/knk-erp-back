@@ -14,13 +14,13 @@ public class MyPageController {
     private final MyPageService myPageService;
 
     // 회원 본인 정보 불러오기
-    @PostMapping("/mypage")
-    public ResponseEntity<GetMyInfo_MyPageDTO_RES> getmyinfo(){
-        return ResponseEntity.ok(myPageService.getmyinfo());
+    @PostMapping("/myPage")
+    public ResponseEntity<GetMyInfo_MyPageDTO_RES> getMyInfo(){
+        return ResponseEntity.ok(myPageService.getMyInfo());
     }
 
-    @PostMapping("/updateself")
-    public ResponseEntity<UpdateSelf_MyPageDTO_RES> updateself(@RequestBody Update_AccountDTO_REQ updateAccountDTOReq){
-        return ResponseEntity.ok(myPageService.updateself(updateAccountDTOReq));
+    @PostMapping("/updateSelf")
+    public ResponseEntity<UpdateSelf_MyPageDTO_RES> updateSelf(@RequestBody Update_AccountDTO_REQ updateAccountDTOReq){
+        return ResponseEntity.ok(myPageService.updateSelf(updateAccountDTOReq));
     }
 }

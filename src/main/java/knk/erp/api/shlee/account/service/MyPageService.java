@@ -25,13 +25,12 @@ public class MyPageService {
 
     // 회원 본인 정보 불러오기
     @Transactional(readOnly = true)
-    public GetMyInfo_MyPageDTO_RES getmyinfo(){
+    public GetMyInfo_MyPageDTO_RES getMyInfo(){
         try{
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             Member my = memberRepository.findAllByMemberIdAndDeletedIsFalse(authentication.getName());
-            return new GetMyInfo_MyPageDTO_RES("GMI001", new Read_MemberDTO(my.getId(), my.getMemberId(),
-                    null, my.getPhone(), my.getMemberName(), my.getVacation(), my.getDepartment().getId(),
-                    my.getDepartment().getDepartmentName(), my.getAuthority()));
+            return new GetMyInfo_MyPageDTO_RES("GMI001", new Read_MemberDTO(my.getMemberId(), null, my.getPhone(),
+                    my.getMemberName(), my.getVacation(), my.getDepartment().getDepartmentName(), my.getAuthority()));
         }catch(Exception e){
             return new GetMyInfo_MyPageDTO_RES("GMI002", e.getMessage());
         }
@@ -39,7 +38,7 @@ public class MyPageService {
 
     // 회원 본인 정보 수정
     @Transactional
-    public UpdateSelf_MyPageDTO_RES updateself(Update_AccountDTO_REQ updateAccountDTOReq){
+    public UpdateSelf_MyPageDTO_RES updateSelf(Update_AccountDTO_REQ updateAccountDTOReq){
         try{
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             Member my = memberRepository.findAllByMemberIdAndDeletedIsFalse(authentication.getName());

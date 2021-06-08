@@ -9,13 +9,11 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Read_MemberDTO {
-    private Long id;
     private String memberId;
     private String password;
     private String phone;
     private String memberName;
     private float vacation;
-    private Long departmentId;
     private String departmentName;
     private Authority authority;
 }

@@ -16,11 +16,16 @@ public class SecurityUtil {
             if(level.equals("[ROLE_ADMIN]")) my_level = 5;
             else my_level = Integer.parseInt(level.replace("[ROLE_LVL","").replace("]",""));
 
-            if(updateAccountDTOReq.getAuthority().equals("ROLE_ADMIN")) update_level = 5;
-            else update_level = Integer.parseInt(updateAccountDTOReq.getAuthority().replace("ROLE_LVL",""));
+            if(updateAccountDTOReq.getAuthority() != null){
+
+                if(updateAccountDTOReq.getAuthority().equals("ROLE_ADMIN")) update_level = 5;
+                else update_level = Integer.parseInt(updateAccountDTOReq.getAuthority().replace("ROLE_LVL",""));
+
+            }
+            else update_level = 0;
+
             return my_level > update_level;
         }
-
         return false;
     }
 

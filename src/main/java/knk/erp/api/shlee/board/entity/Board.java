@@ -10,7 +10,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-/*
 @Getter
 @Setter
 @NoArgsConstructor
@@ -23,4 +22,3 @@ public class Board extends Time {
 
 
 }
-*/

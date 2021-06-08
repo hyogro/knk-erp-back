@@ -17,6 +17,7 @@ public class Create_DepartmentDTO_RES {
     private void createCodeList(){
         this.help_codeList.put("CD001", "부서 생성 성공");
         this.help_codeList.put("CD002", "부서 생성 실패");
+        this.help_codeList.put("CD003", "부서 생성 실패 - 이미 존재하는 부서 이름");
     }
 
     //error
