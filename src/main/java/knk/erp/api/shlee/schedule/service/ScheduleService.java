@@ -1,5 +1,6 @@
 package knk.erp.api.shlee.schedule.service;
 
+import knk.erp.api.shlee.account.entity.MemberRepository;
 import knk.erp.api.shlee.common.jwt.TokenProvider;
 import knk.erp.api.shlee.schedule.dto.Attendance.RES_createRectifyAttendance;
 import knk.erp.api.shlee.schedule.dto.Schedule.*;
@@ -17,17 +18,23 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class ScheduleService{
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
     private final ScheduleRepository scheduleRepository;
+    private final MemberRepository memberRepository;
     private final ScheduleUtil util;
 
     public RES_createSchedule createSchedule(ScheduleDTO scheduleDTO){
         try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String memberId = authentication.getName();
+            scheduleDTO.setMemberId(memberId);
+            scheduleDTO.setDepartmentId(getDepartmentIdByMemberId(memberId));
             scheduleRepository.save(scheduleDTO.toEntity());
             return new RES_createSchedule("CS001");
         }catch (Exception e){
@@ -35,9 +42,27 @@ public class ScheduleService{
         }
     }
 
-    public RES_readScheduleList readScheduleList(){
+    public RES_readScheduleList readScheduleList(REQ_readScheduleListOption option){
         try {
-            List<Schedule> scheduleList = scheduleRepository.findAllByDeletedIsFalse();
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String memberId = authentication.getName();
+            LinkedHashSet<Schedule> scheduleSet = new LinkedHashSet<>();
+
+            if(option.getViewOption().contains("all")){
+                scheduleSet.addAll(scheduleRepository.findAllByViewOptionAndDeletedIsFalse("all"
+                        , PageRequest.of(option.getPage(), option.getSize())).toSet());
+            }
+            if(option.getViewOption().contains("dep")){
+                Long departmentId = getDepartmentIdByMemberId(memberId);
+                scheduleSet.addAll(scheduleRepository.findAllByViewOptionAndDepartmentIdAndDeletedIsFalse("dep"
+                        , departmentId, PageRequest.of(option.getPage(), option.getSize())).toList());
+            }
+            if(option.getViewOption().contains("own")){
+                scheduleSet.addAll(scheduleRepository.findAllByViewOptionAndMemberIdAndDeletedIsFalse("own"
+                        , memberId, PageRequest.of(option.getPage(), option.getSize())).toList());
+            }
+
+            List<Schedule> scheduleList = new ArrayList<>(scheduleSet);
             return new RES_readScheduleList("RSL001", util.ScheduleListToDTO(scheduleList));
         }
         catch (Exception e){
@@ -104,6 +129,15 @@ public class ScheduleService{
         }
         catch (Exception e){
             return new RES_readScheduleList("RSL002", e.getMessage());
+        }
+    }
+
+    //맴버 아이디로 부서 아이디 가져오기
+    private Long getDepartmentIdByMemberId(String memberId) {
+        try {
+            return memberRepository.findAllByMemberIdAndDeletedIsFalse(memberId).getDepartment().getId();
+        }catch (Exception e){
+            return -1L;
         }
     }
 

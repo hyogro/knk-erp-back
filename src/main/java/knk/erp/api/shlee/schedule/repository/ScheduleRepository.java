@@ -11,5 +11,8 @@ import java.util.List;
 
 public interface ScheduleRepository extends JpaRepository<Schedule, Long> {
     List<Schedule> findAllByDeletedIsFalse();
+    Page<Schedule> findAllByViewOptionAndDeletedIsFalse(String viewOption, Pageable pageable);
+    Page<Schedule> findAllByViewOptionAndDepartmentIdAndDeletedIsFalse(String viewOption, Long departmentId, Pageable pageable);
+    Page<Schedule> findAllByViewOptionAndMemberIdAndDeletedIsFalse(String viewOption, String memberId, Pageable pageable);
     Page<Schedule> findAllByDeletedIsFalseAndMemberIdAndEndDateAfter(String memberId, LocalDateTime today, Pageable pageable);
 }

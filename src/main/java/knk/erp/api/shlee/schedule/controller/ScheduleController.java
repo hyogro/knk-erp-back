@@ -22,8 +22,8 @@ public class ScheduleController {
 
     /** 일정 목록 읽기 **/
     @PostMapping("/readScheduleList")
-    public ResponseEntity<RES_readScheduleList> readScheduleList(){
-        return ResponseEntity.ok(scheduleService.readScheduleList());
+    public ResponseEntity<RES_readScheduleList> readScheduleList(@RequestBody REQ_readScheduleListOption readScheduleListOption){
+        return ResponseEntity.ok(scheduleService.readScheduleList(readScheduleListOption));
     }
 
     /** 일정 상세 읽기 **/
