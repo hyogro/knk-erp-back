@@ -25,7 +25,6 @@ public class ScheduleService{
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
     private final ScheduleRepository scheduleRepository;
     private final ScheduleUtil util;
-    private final TokenProvider tokenProvider;
 
     public RES_createSchedule createSchedule(ScheduleDTO scheduleDTO){
         try {

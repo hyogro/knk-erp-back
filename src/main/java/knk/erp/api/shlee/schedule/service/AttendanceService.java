@@ -33,7 +33,6 @@ public class AttendanceService {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
     private final AttendanceRepository attendanceRepository;
     private final RectifyAttendanceRepository rectifyAttendanceRepository;
-    private final TokenProvider tokenProvider;
     private final AttendanceUtil util;
     private final CommonUtil commonUtil;
 
