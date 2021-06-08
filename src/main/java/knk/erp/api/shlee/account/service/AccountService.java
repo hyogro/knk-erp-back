@@ -107,6 +107,9 @@ public class AccountService {
                 Department department = null;
 
                 if(departmentRepository.existsByDepartmentNameAndDeletedIsFalse(updateAccountDTOReq.getDepartmentName())){
+                    if(departmentRepository.getOne(target.getDepartment().getId()).getLeader() == target){
+                        return new Update_AccountDTO_RES("UA005", "수정할 대상이 부서의 리더입니다.");
+                    }
                     department = departmentRepository.findByDepartmentName(updateAccountDTOReq.getDepartmentName());
                 }
 
@@ -136,6 +139,14 @@ public class AccountService {
             else return new Delete_AccountDTO_RES("DA004", "대상 회원이 존재하지 않습니다.");
 
             if(securityUtil.checkTargetAuthority(level, target)){
+                if(target.getDepartment().getLeader() != null){
+                    if(target.getDepartment().getLeader() == target){
+                        Department department = departmentRepository.getOne(target.getDepartment().getId());
+                        department.setLeader(null);
+                        departmentRepository.save(department);
+                    }
+                }
+
                 target.setDeleted(true);
                 memberRepository.save(target);
 

@@ -73,20 +73,6 @@ public class DepartmentService {
         }
     }
 
-    // 부서 목록에서 부서 삭제
-    @Transactional
-    public Delete_DepartmentDTO_RES deleteDepartment(DepartmentDTO_REQ departmentDTOReq) {
-        try {
-            Department department = departmentRepository.getOne(departmentDTOReq.getDep_id());
-            department.setDeleted(true);
-            departmentRepository.save(department);
-
-            return new Delete_DepartmentDTO_RES("DD001");
-        } catch (Exception e) {
-            return new Delete_DepartmentDTO_RES("DD002", e.getMessage());
-        }
-    }
-
     // 부서 리더 수정
     @Transactional
     public UpdateLeader_DepartmentDTO_RES updateLeader(Update_DepartmentLeaderDTO_REQ updateDepartmentLeaderDTOReq){
@@ -124,6 +110,20 @@ public class DepartmentService {
             else return new UpdateLeader_DepartmentDTO_RES("ULD003", "리더로 지정하려는 멤버가 해당 부서의 멤버가 아닙니다.");
         }catch (Exception e){
             return new UpdateLeader_DepartmentDTO_RES("ULD002", e.getMessage());
+        }
+    }
+
+    // 부서 목록에서 부서 삭제
+    @Transactional
+    public Delete_DepartmentDTO_RES deleteDepartment(DepartmentDTO_REQ departmentDTOReq) {
+        try {
+            Department department = departmentRepository.getOne(departmentDTOReq.getDep_id());
+            department.setDeleted(true);
+            departmentRepository.save(department);
+
+            return new Delete_DepartmentDTO_RES("DD001");
+        } catch (Exception e) {
+            return new Delete_DepartmentDTO_RES("DD002", e.getMessage());
         }
     }
 
