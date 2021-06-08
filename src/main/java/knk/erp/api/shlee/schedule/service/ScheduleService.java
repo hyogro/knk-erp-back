@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -55,12 +56,15 @@ public class ScheduleService{
         }
     }
 
-    public RES_updateSchedule updateSchedule(ScheduleDTO scheduleDTO, String token){
+    public RES_updateSchedule updateSchedule(ScheduleDTO scheduleDTO){
         try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String memberId = authentication.getName();
+
             Schedule schedule = scheduleRepository.getOne(scheduleDTO.getId());
 
             //실패 - 본인이 아니면 삭제불가
-            boolean isOwner = tokenProvider.getAuthentication(token).getName().equals(schedule.getMemberId());
+            boolean isOwner = memberId.equals(schedule.getMemberId());
             if(!isOwner) return new RES_updateSchedule("US003");
 
             util.DTOTOSchedule(schedule, scheduleDTO);
@@ -72,12 +76,13 @@ public class ScheduleService{
         }
     }
 
-    public RES_deleteSchedule deleteSchedule(ScheduleDTO scheduleDTO, String token){
+    public RES_deleteSchedule deleteSchedule(ScheduleDTO scheduleDTO){
         try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String memberId = authentication.getName();
             Schedule schedule = scheduleRepository.getOne(scheduleDTO.getId());
-
             //실패 - 본인이 아니면 삭제불가
-            boolean isOwner = tokenProvider.getAuthentication(token).getName().equals(schedule.getMemberId());
+            boolean isOwner = memberId.equals(schedule.getMemberId());
             if(!isOwner) return new RES_deleteSchedule("DS003");
 
             schedule.setDeleted(true);

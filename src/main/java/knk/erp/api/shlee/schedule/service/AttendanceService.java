@@ -17,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
@@ -47,18 +48,15 @@ public class AttendanceService {
      **/
 
     //출근 기록
-    public RES_onWork onWork(AttendanceDTO attendanceDTO, String token) {
+    public RES_onWork onWork(AttendanceDTO attendanceDTO) {
         try {
-            String memberId = attendanceDTO.getMemberId();
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String memberId = authentication.getName();
             LocalDateTime now = LocalDateTime.now();
 
             //실패 - 기존 출근기록 있으면 리턴
             boolean isOnWorked = attendanceRepository.countByAttendanceDateAndMemberIdAndDeletedIsFalse(now.toLocalDate(), memberId) != 0;
             if (isOnWorked) return new RES_onWork("ON003");
-
-            //실패 - 본인이 아니면 생성불가
-            boolean isOwner = tokenProvider.getAuthentication(token).getName().equals(memberId);
-            if (!isOwner) return new RES_onWork("ON004");
 
             //성공 - 기존 출근기록 없으면 생성 후 응답
             attendanceDTO.setAttendanceDate(now.toLocalDate());
@@ -74,16 +72,17 @@ public class AttendanceService {
     }
 
     //퇴근 기록
-    public RES_offWork offWork(AttendanceDTO attendanceDTO, String token) {
+    public RES_offWork offWork(AttendanceDTO attendanceDTO) {
         try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             LocalDateTime now = LocalDateTime.now();
 
             //실패 - 기존 퇴근기록 있으면 수정불가
             Attendance attendance = attendanceRepository.getOne(attendanceDTO.getId());
             if (attendance.getOffWork() != null) return new RES_offWork("OFF003");
 
-            //실패 - 본인이 아니면 생성불가
-            boolean isOwner = tokenProvider.getAuthentication(token).getName().equals(attendance.getMemberId());
+            //실패 - 본인이 아니면 수정불가
+            boolean isOwner = authentication.getName().equals(attendance.getMemberId());
             if (!isOwner) return new RES_offWork("OFF004");
 
             //성공 - 기존 퇴근기록 없으면 생성 후 응답
@@ -112,9 +111,9 @@ public class AttendanceService {
     }
 
     //출,퇴근기록 정정 요청 -> 정정요청 신규 생성
-    public RES_createRectifyAttendance createRectifyAttendance(RectifyAttendanceDTO rectifyAttendanceDTO, String token) {
+    public RES_createRectifyAttendance createRectifyAttendance(RectifyAttendanceDTO rectifyAttendanceDTO) {
         try {
-            Authentication authentication = tokenProvider.getAuthentication(token);
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             String memberId = authentication.getName();
 
             rectifyAttendanceDTO.setMemberId(memberId);
@@ -138,9 +137,9 @@ public class AttendanceService {
     }
 
     //출,퇴근기록 정정 요청 -> 출퇴근 기록으로 정정요청 생성
-    public RES_updateRectifyAttendance updateRectifyAttendance(RectifyAttendanceDTO rectifyAttendanceDTO, String token) {
+    public RES_updateRectifyAttendance updateRectifyAttendance(RectifyAttendanceDTO rectifyAttendanceDTO) {
         try {
-            Authentication authentication = tokenProvider.getAuthentication(token);
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             String memberId = authentication.getName();
 
             Attendance attendance = attendanceRepository.getOne(rectifyAttendanceDTO.getId());
@@ -221,9 +220,10 @@ public class AttendanceService {
     }
 
     //출,퇴근 정정요청목록 조회
-    public RES_readRectifyAttendanceList readRectifyAttendanceList(RectifyAttendanceDTO rectifyAttendanceDTO, String token) {
+    public RES_readRectifyAttendanceList readRectifyAttendanceList(RectifyAttendanceDTO rectifyAttendanceDTO) {
         try {
-            String memberId = tokenProvider.getAuthentication(token).getName();
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String memberId = authentication.getName();
 
             List<RectifyAttendance> rectifyAttendanceList = rectifyAttendanceRepository.findAllByMemberIdAndDeletedIsFalse(memberId);
             return new RES_readRectifyAttendanceList("RRAL001", util.RectifyAttendanceListToDTO(rectifyAttendanceList));
@@ -234,9 +234,10 @@ public class AttendanceService {
     }
 
     //출,퇴근 정정요청 삭제
-    public RES_deleteRectifyAttendance deleteRectifyAttendance(RectifyAttendanceDTO rectifyAttendanceDTO, String token) {
+    public RES_deleteRectifyAttendance deleteRectifyAttendance(RectifyAttendanceDTO rectifyAttendanceDTO) {
         try {
-            String memberId = tokenProvider.getAuthentication(token).getName();
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String memberId = authentication.getName();
 
             RectifyAttendance rectifyAttendance = rectifyAttendanceRepository.getOne(rectifyAttendanceDTO.getId());
 
@@ -252,9 +253,11 @@ public class AttendanceService {
     }
 
     //출,퇴근 정정 승인 레벨 2, 레벨 3만 접근 가능.
-    public RES_approveRectifyAttendance approveRectifyAttendance(RectifyAttendanceDTO rectifyAttendanceDTO, String token) {
+    public RES_approveRectifyAttendance approveRectifyAttendance(RectifyAttendanceDTO rectifyAttendanceDTO) {
         try {
-            Authentication authentication = tokenProvider.getAuthentication(token);
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String memberId = authentication.getName();
+
             RectifyAttendance rectifyAttendance = rectifyAttendanceRepository.getOne(rectifyAttendanceDTO.getId());
             if (!rectifyApproved(authentication, rectifyAttendance)) return new RES_approveRectifyAttendance("ARA003");
             RectifyAttendance done = rectifyAttendanceRepository.save(rectifyAttendance);

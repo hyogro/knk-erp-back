@@ -39,14 +39,14 @@ public class ScheduleController {
 
     /**일정 수정**/
     @PostMapping("/updateSchedule")
-    public ResponseEntity<RES_updateSchedule> updateSchedule(@RequestBody ScheduleDTO scheduleDTO, @RequestHeader(value = "token") String token){
-        return ResponseEntity.ok(scheduleService.updateSchedule(scheduleDTO, token.substring(7)));
+    public ResponseEntity<RES_updateSchedule> updateSchedule(@RequestBody ScheduleDTO scheduleDTO){
+        return ResponseEntity.ok(scheduleService.updateSchedule(scheduleDTO));
     }
 
     /**일정 삭제**/
     @PostMapping("/deleteSchedule")
-    public ResponseEntity<RES_deleteSchedule> deleteSchedule(@RequestBody ScheduleDTO scheduleDTO, @RequestHeader(value = "token") String token){
-        return ResponseEntity.ok(scheduleService.deleteSchedule(scheduleDTO, token.substring(7)));
+    public ResponseEntity<RES_deleteSchedule> deleteSchedule(@RequestBody ScheduleDTO scheduleDTO){
+        return ResponseEntity.ok(scheduleService.deleteSchedule(scheduleDTO));
     }
 
     /**메인화면 일정 목록 읽기**/
