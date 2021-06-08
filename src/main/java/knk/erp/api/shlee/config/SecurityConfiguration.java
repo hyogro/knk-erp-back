@@ -22,7 +22,8 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @RequiredArgsConstructor
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     private final TokenProvider tokenProvider;
-     // 정적 자원에 대해서는 Security 설정을 적용하지 않음.
+
+    // 정적 자원에 대해서는 Security 설정을 적용하지 않음.
     @Override
     public void configure(WebSecurity web) {
         web.ignoring().requestMatchers(PathRequest.toStaticResources().atCommonLocations());
@@ -31,25 +32,27 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
+
+                //2021-06-08 15:36 이상훈 추가 Cors 세팅
+                .httpBasic().disable()
+                .cors().configurationSource(corsConfigurationSource())
+                .and()
                 .csrf().disable()
                 // form 기반의 로그인에 대해 비활성화
                 .formLogin().disable()
 
                 .authorizeRequests()
 
-                //2021-06-08 15:24 이상훈 추가 Cors 세팅
-                .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
-
                 // 로그인, 회원가입 API 는 권한없이 접근 가능하도록 설정
                 .antMatchers("/account/login", "/account/signup").permitAll()
 
                 // 회원 정보 목록 읽어오기, 회원 정보 수정, 회원 삭제는 관리자 이상만 가능하도록 설정
-                .antMatchers("/account/readMember", "/account/updateMember","/account/deleteMember")
-                .hasAnyRole("LVL3", "LVL4","ADMIN")
+                .antMatchers("/account/readMember", "/account/updateMember", "/account/deleteMember")
+                .hasAnyRole("LVL3", "LVL4", "ADMIN")
 
                 // 부서 생성, 수정, 삭제, 부서 리더 수정은 관리자 이상만 가능하도록 설정
                 .antMatchers("/department/createDepartment", "department/updateDepartment",
-                        "/department/deleteDepartment", "/department/updateLeader").hasAnyRole("LVL3", "LVL4","ADMIN")
+                        "/department/deleteDepartment", "/department/updateLeader").hasAnyRole("LVL3", "LVL4", "ADMIN")
 
                 //부서 목록 읽어오기는 회원가입 때도 써야하므로 권한 없이 접근 가능하도록 설정
                 .antMatchers("/department/readDepartment").permitAll()
