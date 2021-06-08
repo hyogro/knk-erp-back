@@ -11,9 +11,11 @@ import java.util.List;
 public class DepartmentUtil {
     public List<DepartmentDTO_REQ> getDepartmentList(List<Department> departmentList){
         List<DepartmentDTO_REQ> Department_List = new ArrayList<>();
+
         for(Department department : departmentList){
             Department_List.add(new DepartmentDTO_REQ(department.getId(), department.getDepartmentName()));
         }
+
         return Department_List;
     }
 }

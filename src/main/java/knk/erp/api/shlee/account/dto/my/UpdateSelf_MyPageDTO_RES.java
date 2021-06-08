@@ -1,6 +1,5 @@
 package knk.erp.api.shlee.account.dto.my;
 
-import knk.erp.api.shlee.account.dto.member.Read_MemberDTO;
 import lombok.*;
 
 import java.util.LinkedHashMap;

@@ -20,6 +20,7 @@ public class AccountUtil {
             member_List.add(new Read_MemberDTO(member.getMemberId(), null, member.getPhone(),
                     member.getMemberName(), member.getVacation(), member.getDepartment().getDepartmentName(), member.getAuthority()));
         }
+
         return member_List;
     }
 
@@ -68,6 +69,7 @@ public class AccountUtil {
         else{
             authority = Authority.ROLE_LVL1;
         }
+
         return authority;
     }
 }

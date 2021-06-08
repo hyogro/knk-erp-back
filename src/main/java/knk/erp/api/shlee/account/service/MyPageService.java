@@ -27,6 +27,7 @@ public class MyPageService {
         try{
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             Member my = memberRepository.findAllByMemberIdAndDeletedIsFalse(authentication.getName());
+
             return new GetMyInfo_MyPageDTO_RES("GMI001", new Read_MemberDTO(my.getMemberId(), null, my.getPhone(),
                     my.getMemberName(), my.getVacation(), my.getDepartment().getDepartmentName(), my.getAuthority()));
         }catch(Exception e){
@@ -42,6 +43,7 @@ public class MyPageService {
             Member my = memberRepository.findAllByMemberIdAndDeletedIsFalse(authentication.getName());
             accountUtil.updateSelfMember(my, updateAccountDTOReq, passwordEncoder);
             memberRepository.save(my);
+
             return new UpdateSelf_MyPageDTO_RES("USM001");
         }catch (Exception e){
             return new UpdateSelf_MyPageDTO_RES("USM002", e.getMessage());
