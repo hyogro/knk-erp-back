@@ -63,4 +63,10 @@ public class AttendanceController {
         return ResponseEntity.ok(attendanceService.approveRectifyAttendance(rectifyAttendanceDTO, token.substring(7)));
     }
 
+    /** 출,퇴근 기록 요약정보 조회 **/
+    @PostMapping("readAttendanceSummary")
+    public ResponseEntity<RES_readAttendanceSummary> readAttendanceSummary(@RequestHeader(value = "token") String token){
+        return ResponseEntity.ok(attendanceService.readAttendanceSummary(token.substring(7)));
+    }
+
 }

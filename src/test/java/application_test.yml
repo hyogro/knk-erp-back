@@ -10,7 +10,7 @@ spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     password: z4319495!
-    url: jdbc:mysql://gng-erp-db.cm5g8gvdoxau.ap-northeast-2.rds.amazonaws.com:3306/dev
+    url: jdbc:mysql://gng-erp-db.cm5g8gvdoxau.ap-northeast-2.rds.amazonaws.com:3306/dev_test
     username: shlee
   jpa:
     database-platform: org.hibernate.dialect.MySQL5InnoDBDialect

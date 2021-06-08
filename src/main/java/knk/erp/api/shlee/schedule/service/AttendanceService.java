@@ -209,7 +209,7 @@ public class AttendanceService {
                 return true;
             }
         }
-        //LVL3(부장) 인 경우 모두 승인
+        //LVL3(부장)이상인 경우 모두 승인
         else if (3 <= commonUtil.checkMaster(authentication)) {
             rectifyAttendance.setApproval_1(true);
             rectifyAttendance.setApprover_1(leaderId);
@@ -281,9 +281,8 @@ public class AttendanceService {
                 Member member = memberRepository.findAllByMemberIdAndDeletedIsFalse(memberId);
                 Department department = member.getDepartment();
                 int countOfMember = department.getMemberList().size();
-                long departmentId = department.getId();
-                onWork = attendanceRepository.countByAttendanceDateAndDepartmentIdAndDeletedIsFalse(today, departmentId);
-                lateWork = attendanceRepository.countByAttendanceDateAndDepartmentIdAndOnWorkAfterAndDeletedIsFalse(today, departmentId, LocalDateTime.of(today, nine));
+                onWork = attendanceRepository.countByAttendanceDateAndDepartmentIdAndDeletedIsFalse(today, department.getId());
+                lateWork = attendanceRepository.countByAttendanceDateAndDepartmentIdAndOnWorkAfterAndDeletedIsFalse(today, department.getId(), LocalDateTime.of(today, nine));
                 vacation = 0;
                 yetWork = countOfMember - onWork - lateWork - vacation;
             } else if (3 <= commonUtil.checkMaster(authentication)) {
