@@ -94,11 +94,13 @@ public class ScheduleService{
         }
     }
 
-    public RES_readScheduleList readIndexScheduleList(String token){
+    public RES_readScheduleList readIndexScheduleList(){
         try {
-            Authentication authentication = tokenProvider.getAuthentication(token);
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String memberId = authentication.getName();
+
             LocalDateTime today = LocalDateTime.of(LocalDate.now(), LocalTime.of(0,0,0));
-            List<Schedule> scheduleList = scheduleRepository.findAllByDeletedIsFalseAndMemberIdAndEndDateAfter(authentication.getName(), today, PageRequest.of(0, 5)).toList();
+            List<Schedule> scheduleList = scheduleRepository.findAllByDeletedIsFalseAndMemberIdAndEndDateAfter(memberId, today, PageRequest.of(0, 5)).toList();
             return new RES_readScheduleList("RSL001", util.ScheduleListToDTO(scheduleList));
         }
         catch (Exception e){

@@ -1,14 +1,13 @@
 package knk.erp.api.shlee.schedule.entity;
 
 import lombok.*;
-import org.springframework.data.annotation.CreatedDate;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 @Getter
 @Setter
@@ -31,10 +30,10 @@ public class RectifyAttendance extends Time {
     private LocalDate attendanceDate;
 
     @Column(nullable = false)
-    private LocalDateTime onWork;
+    private LocalTime onWork;
 
     @Column
-    private LocalDateTime offWork;
+    private LocalTime offWork;
 
     @Column
     private boolean approval_1;
@@ -51,11 +50,11 @@ public class RectifyAttendance extends Time {
     @Column(length = 100)
     private String memo;
 
-    @Column
+    @Column(unique = true)
     private Long targetId;
 
     @Builder
-    public RectifyAttendance(String memberId, Long departmentId, LocalDate attendanceDate, LocalDateTime onWork, LocalDateTime offWork, String memo, Long targetId) {
+    public RectifyAttendance(String memberId, Long departmentId, LocalDate attendanceDate, LocalTime onWork, LocalTime offWork, String memo, Long targetId) {
         this.memberId = memberId;
         this.departmentId = departmentId;
         this.attendanceDate = attendanceDate;

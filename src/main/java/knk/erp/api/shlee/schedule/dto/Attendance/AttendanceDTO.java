@@ -1,14 +1,13 @@
 package knk.erp.api.shlee.schedule.dto.Attendance;
 
 import knk.erp.api.shlee.schedule.entity.Attendance;
-import knk.erp.api.shlee.schedule.entity.Time;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 @Getter
 @Setter
@@ -20,15 +19,22 @@ public class AttendanceDTO{
     private String memberId;
     private Long departmentId;
     private LocalDate attendanceDate;
-    private LocalDateTime onWork;
-    private LocalDateTime offWork;
+    private LocalTime onWork;
+    private LocalTime offWork;
 
     public AttendanceDTO(Attendance attendance){
         this.id = attendance.getId();
         this.memberId = attendance.getMemberId();
+        this.departmentId = attendance.getDepartmentId();
         this.attendanceDate = attendance.getAttendanceDate();
         this.onWork = attendance.getOnWork();
         this.offWork = attendance.getOffWork();
+    }
+    public AttendanceDTO(String memberId, LocalDate attendanceDate, LocalTime onWork, Long departmentId){
+        this.memberId = memberId;
+        this.attendanceDate = attendanceDate;
+        this.onWork = onWork;
+        this.departmentId = departmentId;
     }
 
     public Attendance toEntity(){
