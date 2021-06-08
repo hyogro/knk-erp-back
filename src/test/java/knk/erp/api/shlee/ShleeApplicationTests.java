@@ -2,7 +2,9 @@ package knk.erp.api.shlee;
 
 import knk.erp.api.shlee.account.dto.account.Login_TokenDTO_RES;
 import knk.erp.api.shlee.account.dto.account.SignUp_MemberDTO_RES;
+import knk.erp.api.shlee.account.dto.account.Update_AccountDTO_RES;
 import knk.erp.api.shlee.account.dto.member.MemberDTO_REQ;
+import knk.erp.api.shlee.account.dto.member.Update_AccountDTO_REQ;
 import knk.erp.api.shlee.account.service.AccountService;
 import knk.erp.api.shlee.schedule.dto.Schedule.ScheduleDTO;
 import knk.erp.api.shlee.schedule.service.ScheduleService;
@@ -20,34 +22,37 @@ import java.time.LocalDateTime;
 @SpringBootTest
 class ShleeApplicationTests {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
-    @Autowired
-    AccountService accountService;
-    @Autowired
-    ScheduleService scheduleService;
-    private String accessToken="";
+    //@Autowired
+    //AccountService accountService;
+    //@Autowired
+    //ScheduleService scheduleService;
+    //private String accessToken="";
 
     @Test
     @Order(1)
     public void contextLoads() {
+        /*
         signUpTest();
         String accessToken = loginTest();
         readMemberTest();
         updateMemberTest(accessToken);
         deleteMemberTest(accessToken);
+        */
     }
+    /*
     private void signUpTest(){
         MemberDTO_REQ memberDTOReq = new MemberDTO_REQ(null, "suTest_memberId_1", "1234"
-                , "010-6828-3435", "테스트_1", 0, 0L, "", null);
+                , "010-6828-3435", "테스트_1", 0, 0L);
         SignUp_MemberDTO_RES signUp_memberDTO_res = accountService.signup(memberDTOReq);
         logger.info("맴버생성 테스트 result: {}", signUp_memberDTO_res);
     }
 
     private String loginTest(){
         MemberDTO_REQ memberDTOReq = new MemberDTO_REQ(null, "suTest_memberId_1", "1234"
-                , null, null, 0, null, null, null);
+                , null, null, 0, null);
         Login_TokenDTO_RES login_tokenDTO_res = accountService.login(memberDTOReq);
         logger.info("맴버로그인 테스트 result: {}", login_tokenDTO_res);
-        return "Bearer " + login_tokenDTO_res.getTokenDto().getAccessToken();
+        return login_tokenDTO_res.getTokenDto().getAccessToken();
     }
 
     private void readMemberTest(){
@@ -55,11 +60,17 @@ class ShleeApplicationTests {
     }
 
     private void updateMemberTest(String accessToken){
-        logger.info("맴버수정 테스트 result: {}", accountService.readMember());
+        Update_AccountDTO_REQ memberDTOReq = new Update_AccountDTO_REQ(null, "suTest_memberId_1", "1234", "ROLE_LVL1"
+                , "010-1234-1234", 0, 0L);
+        Update_AccountDTO_RES updateMember = accountService.updateMember(memberDTOReq, accessToken);
+
+        logger.info("맴버수정 테스트 result: {}", updateMember);
     }
 
     private void deleteMemberTest(String accessToken){
-        logger.info("맴버삭제 테스트 result: {}", accountService.readMember());
+        MemberDTO_REQ memberDTOReq = new MemberDTO_REQ(null, "suTest_memberId_1", null
+                , null, null, 0, null);
+        logger.info("맴버삭제 테스트 result: {}", accountService.deleteMember(memberDTOReq, accessToken));
     }
 
     @Test
@@ -73,7 +84,7 @@ class ShleeApplicationTests {
         logger.info("일정생성 테스트 result: {}", scheduleService.createSchedule(scheduleDTO));
     }
 
-
+*/
 
 
 }
