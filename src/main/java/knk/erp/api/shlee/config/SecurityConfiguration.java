@@ -59,11 +59,6 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
 
-                //2021-06-08 15:24 이상훈 추가 Cors 세팅
-                .authorizeRequests()
-                .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
-                .and()
-
                 // JwtFilter 를 addFilterBefore 로 등록했던 JwtSecurityConfig 클래스를 적용
                 .apply(new knk.erp.api.shlee.config.JwtSecurityConfig(tokenProvider));
     }
