@@ -18,16 +18,16 @@ public class Member extends Time {
     @GeneratedValue
     private Long id;
 
-    @Column
+    @Column(nullable = false)
     private String memberId;
 
-    @Column
+    @Column(nullable = false)
     private String password;
 
-    @Column(length = 11)
+    @Column(length = 13, nullable = false)
     private String phone;
 
-    @Column
+    @Column(nullable = false)
     private String memberName;
 
     @Column
