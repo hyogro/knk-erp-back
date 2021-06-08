@@ -22,7 +22,6 @@ public class DepartmentController {
     // 부서 목록 읽어오기
     @PostMapping("/readDepartment")
     public ResponseEntity<Read_DepartmentDTO_RES> readDepartment(){
-        System.out.println("123123");
         return ResponseEntity.ok(departmentService.readDepartment());
     }
 

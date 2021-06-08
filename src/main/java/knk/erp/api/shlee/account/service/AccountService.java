@@ -1,10 +1,7 @@
 package knk.erp.api.shlee.account.service;
 
-import knk.erp.api.shlee.account.dto.account.Read_AccountDTO_RES;
-import knk.erp.api.shlee.account.dto.account.Update_AccountDTO_RES;
+import knk.erp.api.shlee.account.dto.account.*;
 import knk.erp.api.shlee.account.dto.member.MemberDTO_REQ;
-import knk.erp.api.shlee.account.dto.account.SignUp_MemberDTO_RES;
-import knk.erp.api.shlee.account.dto.account.Login_TokenDTO_RES;
 import knk.erp.api.shlee.account.dto.member.Update_AccountDTO_REQ;
 import knk.erp.api.shlee.account.entity.*;
 import knk.erp.api.shlee.account.util.AccountUtil;
@@ -15,13 +12,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -99,7 +94,7 @@ public class AccountService {
                 "");
         Member target = memberRepository.getOne(updateAccountDTOReq.getId());
         try{
-            if(securityUtil.checkUpdateTargetAuthority(updateAccountDTOReq, level, target)){
+            if(securityUtil.checkTargetAuthority(level, target)){
                 if(securityUtil.checkAuthority(updateAccountDTOReq, level)){
                     Department department = departmentRepository.getOne(updateAccountDTOReq.getDep_id());
                     accountUtil.updateSetMember(target, department, updateAccountDTOReq, passwordEncoder);
@@ -110,6 +105,24 @@ public class AccountService {
             return new Update_AccountDTO_RES("UA003", "해당 정보를 수정할 권한이 없습니다.");
         }catch(Exception e){
             return new Update_AccountDTO_RES("UA002", e.getMessage());
+        }
+    }
+
+    // 회원 정보 삭제
+    @Transactional
+    public Delete_AccountDTO_RES deleteMember(MemberDTO_REQ memberDTOReq, String token){
+        Authentication authentication = tokenProvider.getAuthentication(token);
+        String level = authentication.getAuthorities().toString().replace("[ROLE_", "").replace("]",
+                "");
+        Member target = memberRepository.getOne(memberDTOReq.getId());
+        try{
+            if(securityUtil.checkTargetAuthority(level, target)){
+                target.setDeleted(true);
+                return new Delete_AccountDTO_RES("DA001");
+            }
+            return new Delete_AccountDTO_RES("DA003", "해당 회원을 삭제할 권한이 없습니다.");
+        }catch(Exception e){
+            return new Delete_AccountDTO_RES("DA002", e.getMessage());
         }
     }
 }

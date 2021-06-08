@@ -27,21 +27,24 @@ public class AccountController {
         return ResponseEntity.ok(accountService.login(memberDTOReq));
     }
 
+    // 회원 정보 읽어오기
     @PostMapping("/readMember")
     public ResponseEntity<Read_AccountDTO_RES> readMember(){
         return ResponseEntity.ok(accountService.readMember());
     }
 
+    // 회원 정보 수정
     @PostMapping("/updateMember")
     public ResponseEntity<Update_AccountDTO_RES> updateMember(@RequestBody Update_AccountDTO_REQ updateAccountDTOReq,
                                                               @RequestHeader(value = "token") String token){
         return ResponseEntity.ok(accountService.updateMember(updateAccountDTOReq, token.substring(7)));
     }
 
-    /*
+    // 회원 정보 삭제
     @PostMapping("/deleteMember")
-    public ResponseEntity<Delete_AccountDTO_RES> deleteMember(@RequestBody MemberDTO_REQ memberDTOReq){
-        return ResponseEntity.ok(accountService.deleteMember(memberDTOReq));
+    public ResponseEntity<Delete_AccountDTO_RES> deleteMember(@RequestBody MemberDTO_REQ memberDTOReq,
+                                                              @RequestHeader(value = "token") String token){
+        return ResponseEntity.ok(accountService.deleteMember(memberDTOReq, token.substring(7)));
     }
-    */
+
 }
