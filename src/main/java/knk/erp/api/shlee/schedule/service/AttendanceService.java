@@ -30,7 +30,6 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class AttendanceService {
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
     private final AttendanceRepository attendanceRepository;
     private final RectifyAttendanceRepository rectifyAttendanceRepository;
     private final AttendanceUtil util;

@@ -2,6 +2,7 @@ package knk.erp.api.shlee.schedule.service;
 
 import knk.erp.api.shlee.account.entity.MemberRepository;
 import knk.erp.api.shlee.common.jwt.TokenProvider;
+import knk.erp.api.shlee.common.util.CommonUtil;
 import knk.erp.api.shlee.schedule.dto.Attendance.RES_createRectifyAttendance;
 import knk.erp.api.shlee.schedule.dto.Schedule.*;
 import knk.erp.api.shlee.schedule.entity.Schedule;
@@ -29,6 +30,7 @@ public class ScheduleService{
     private final ScheduleRepository scheduleRepository;
     private final MemberRepository memberRepository;
     private final ScheduleUtil util;
+    private final CommonUtil commonUtil;
 
     public RES_createSchedule createSchedule(ScheduleDTO scheduleDTO){
         try {

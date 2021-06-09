@@ -21,7 +21,6 @@ import java.time.LocalDateTime;
 
 @SpringBootTest
 class ShleeApplicationTests {
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
     //@Autowired
     //AccountService accountService;
     //@Autowired
