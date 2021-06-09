@@ -48,7 +48,7 @@ public class ScheduleService{
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             String memberId = authentication.getName();
             List<Schedule> scheduleList = new ArrayList<>();
-            Sort sort = Sort.by(Sort.Direction.DESC, "startDate");
+            Sort sort = Sort.by(Sort.Direction.ASC, "startDate");
 
             if(option.getViewOption().contains("all")){
                 scheduleList.addAll(scheduleRepository.findAllByViewOptionAndDeletedIsFalse("all"
