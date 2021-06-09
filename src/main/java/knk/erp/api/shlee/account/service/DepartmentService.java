@@ -117,9 +117,21 @@ public class DepartmentService {
     @Transactional
     public Delete_DepartmentDTO_RES deleteDepartment(DepartmentDTO_REQ departmentDTOReq) {
         try {
-            Department department = departmentRepository.getOne(departmentDTOReq.getDep_id());
-            department.setDeleted(true);
-            departmentRepository.save(department);
+            Department target = departmentRepository.getOne(departmentDTOReq.getDep_id());
+            List<Member> memberList =  target.getMemberList();
+
+            for(Member m : memberList){
+                m.setDepartment(departmentRepository.findByDepartmentName("부서미지정"));
+            }
+
+            if(target.getLeader().getAuthority().equals(Authority.ROLE_LVL2)){
+                target.getLeader().setAuthority(Authority.ROLE_LVL1);
+                memberRepository.save(target.getLeader());
+            }
+
+            target.setLeader(null);
+            target.setDeleted(true);
+            departmentRepository.save(target);
 
             return new Delete_DepartmentDTO_RES("DD001");
         } catch (Exception e) {
