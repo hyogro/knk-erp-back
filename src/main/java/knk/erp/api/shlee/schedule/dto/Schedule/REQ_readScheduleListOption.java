@@ -18,6 +18,4 @@ public class REQ_readScheduleListOption {
     private String viewOption;
     private int page;
     private int size;
-    private LocalDateTime startDate;
-    private LocalDateTime endDate;
 }
