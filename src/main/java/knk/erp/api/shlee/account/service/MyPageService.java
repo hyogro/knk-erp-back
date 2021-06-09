@@ -29,7 +29,7 @@ public class MyPageService {
             Member my = memberRepository.findAllByMemberIdAndDeletedIsFalse(authentication.getName());
 
             return new GetMyInfo_MyPageDTO_RES("GMI001", new Read_MemberDTO(my.getMemberId(), null, my.getPhone(),
-                    my.getMemberName(), my.getVacation(), my.getDepartment().getDepartmentName(), my.getAuthority()));
+                    my.getMemberName(), my.getVacation(), my.getDepartment().getDepartmentName(), my.getAuthority(), my.getJoiningDate()));
         }catch(Exception e){
             return new GetMyInfo_MyPageDTO_RES("GMI002", e.getMessage());
         }

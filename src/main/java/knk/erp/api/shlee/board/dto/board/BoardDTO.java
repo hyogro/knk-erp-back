@@ -1,4 +1,4 @@
-package knk.erp.api.shlee.board.dto;
+package knk.erp.api.shlee.board.dto.board;
 
 import knk.erp.api.shlee.board.entity.Board;
 import knk.erp.api.shlee.board.entity.BoardType;
@@ -11,7 +11,7 @@ import java.util.List;
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
-public class BoardDTO_REQ {
+public class BoardDTO {
     private Long idx;
     private String title;
     //private String target_department;

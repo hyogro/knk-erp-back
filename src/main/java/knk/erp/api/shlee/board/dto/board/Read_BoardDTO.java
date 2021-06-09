@@ -1,4 +1,4 @@
-package knk.erp.api.shlee.board.dto;
+package knk.erp.api.shlee.board.dto.board;
 
 import lombok.*;
 

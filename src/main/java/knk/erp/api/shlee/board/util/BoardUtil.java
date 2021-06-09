@@ -2,7 +2,7 @@ package knk.erp.api.shlee.board.util;
 
 import knk.erp.api.shlee.account.entity.Member;
 import knk.erp.api.shlee.account.entity.MemberRepository;
-import knk.erp.api.shlee.board.dto.BoardDTO_REQ;
+import knk.erp.api.shlee.board.dto.board.BoardDTO;
 import knk.erp.api.shlee.board.entity.Board;
 import org.springframework.stereotype.Component;
 
@@ -11,17 +11,17 @@ import java.util.List;
 @Component
 public class BoardUtil {
 
-    public void updateSetBoard(Board target, BoardDTO_REQ boardDTOReq){
-        if(boardDTOReq.getTitle() != null){
-            target.setTitle(boardDTOReq.getTitle());
+    public void updateSetBoard(Board target, BoardDTO boardDTO){
+        if(boardDTO.getTitle() != null){
+            target.setTitle(boardDTO.getTitle());
         }
 
-        if(boardDTOReq.getContent() != null){
-            target.setContent(boardDTOReq.getContent());
+        if(boardDTO.getContent() != null){
+            target.setContent(boardDTO.getContent());
         }
 
-        if(boardDTOReq.getReference_memberName().size() > 0){
-            target.setReference_memberName(boardDTOReq.getReference_memberName());
+        if(boardDTO.getReference_memberName().size() > 0){
+            target.setReference_memberName(boardDTO.getReference_memberName());
         }
     }
 
