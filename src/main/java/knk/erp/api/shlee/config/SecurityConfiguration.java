@@ -55,9 +55,6 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .antMatchers("/department/createDepartment", "department/updateDepartment",
                         "/department/deleteDepartment", "/department/updateLeader").hasAnyRole("LVL3", "LVL4", "ADMIN")
 
-                //부서 목록 읽어오기는 회원가입 때도 써야하므로 권한 없이 접근 가능하도록 설정
-                .antMatchers("/department/readDepartment").permitAll()
-
                 // 나머지 API 는 권한 인증 필요
                 .anyRequest().authenticated()
                 .and()
