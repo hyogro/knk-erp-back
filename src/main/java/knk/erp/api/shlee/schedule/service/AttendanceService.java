@@ -24,6 +24,7 @@ import javax.persistence.EntityNotFoundException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -165,7 +166,7 @@ public class AttendanceService {
     private void rectifyToAttendance(Long id) {
         RectifyAttendance rectifyAttendance = rectifyAttendanceRepository.getOne(id);
 
-        if (rectifyAttendance.isApproval_1() && rectifyAttendance.isApproval_2() && !rectifyAttendance.isDeleted()) {
+        if (rectifyAttendance.isApproval1() && rectifyAttendance.isApproval2() && !rectifyAttendance.isDeleted()) {
             Attendance attendance = util.RectifyToAttendance(rectifyAttendance);
 
             attendanceRepository.save(attendance);
@@ -194,19 +195,19 @@ public class AttendanceService {
             Member member = memberRepository.findAllByMemberIdAndDeletedIsFalse(memberId);
             Department department_l = departmentRepository.findByLeader_MemberId(leaderId);
             if (member.getDepartment().getId().equals(department_l.getId())) {
-                rectifyAttendance.setApproval_1(true);
-                rectifyAttendance.setApprover_1(leaderId);
+                rectifyAttendance.setApproval1(true);
+                rectifyAttendance.setApprover1(leaderId);
                 return true;
             }
         }
         //LVL3(부장)이상인 경우 모두 승인
         else if (3 <= commonUtil.checkMaster(authentication)) {
-            if(!rectifyAttendance.isApproval_1()){
-                rectifyAttendance.setApproval_1(true);
-                rectifyAttendance.setApprover_1(leaderId);
+            if(!rectifyAttendance.isApproval1()){
+                rectifyAttendance.setApproval1(true);
+                rectifyAttendance.setApprover1(leaderId);
             }
-            rectifyAttendance.setApproval_2(true);
-            rectifyAttendance.setApprover_2(leaderId);
+            rectifyAttendance.setApproval2(true);
+            rectifyAttendance.setApprover2(leaderId);
             return true;
         }
         return false;
@@ -242,6 +243,27 @@ public class AttendanceService {
         } catch (Exception e) {
             //실패 - Exception 발생
             return new RES_deleteRectifyAttendance("DRA002", e.getMessage());
+        }
+    }
+
+    //승인해야할 출,퇴근 정정요청목록 조회
+    public RES_readRectifyAttendanceList readRectifyAttendanceListForApprove() {
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String memberId = authentication.getName();
+            List<RectifyAttendance> rectifyAttendanceList = new ArrayList<>();
+            if (commonUtil.checkMaster(authentication) == 2) {
+                Member member = memberRepository.findAllByMemberIdAndDeletedIsFalse(memberId);
+                Long departmentId = member.getDepartment().getId();
+                rectifyAttendanceList = rectifyAttendanceRepository.findAllByDepartmentIdAndDeletedIsFalse(departmentId);
+            }
+            else if(3 <= commonUtil.checkMaster(authentication)){
+                rectifyAttendanceList = rectifyAttendanceRepository.findAllByDeletedIsFalse();
+            }
+            return new RES_readRectifyAttendanceList("RRAL001", util.RectifyAttendanceListToDTO(rectifyAttendanceList));
+        } catch (Exception e) {
+            //실패 - Exception 발생
+            return new RES_readRectifyAttendanceList("RRAL002", e.getMessage());
         }
     }
 

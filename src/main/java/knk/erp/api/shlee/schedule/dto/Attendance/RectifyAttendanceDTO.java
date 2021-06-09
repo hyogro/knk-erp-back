@@ -19,10 +19,10 @@ public class RectifyAttendanceDTO {
     private LocalDate attendanceDate;
     private LocalTime onWork;
     private LocalTime offWork;
-    private boolean approval_1;
-    private boolean approval_2;
-    private String approver_1;
-    private String approver_2;
+    private boolean approval1;
+    private boolean approval2;
+    private String approver1;
+    private String approver2;
     private String memo;
 
     public RectifyAttendance toEntity(){
@@ -36,10 +36,10 @@ public class RectifyAttendanceDTO {
         this.attendanceDate = rectifyAttendance.getAttendanceDate();
         this.onWork = rectifyAttendance.getOnWork();
         this.offWork = rectifyAttendance.getOffWork();
-        this.approval_1 = rectifyAttendance.isApproval_1();
-        this.approval_2 = rectifyAttendance.isApproval_2();
-        this.approver_1 = rectifyAttendance.getApprover_1();
-        this.approver_2 = rectifyAttendance.getApprover_2();
+        this.approval1 = rectifyAttendance.isApproval1();
+        this.approval2 = rectifyAttendance.isApproval2();
+        this.approver1 = rectifyAttendance.getApprover1();
+        this.approver2 = rectifyAttendance.getApprover2();
         this.memo = rectifyAttendance.getMemo();
     }
 
