@@ -54,7 +54,7 @@ public class ScheduleService{
 
             if(option.getViewOption().contains("all")){
                 scheduleList.addAll(scheduleRepository.findAllByViewOptionAndDeletedIsFalse("all"
-                        , PageRequest.of(option.getPage(), option.getSize(), sort)).toSet());
+                        , PageRequest.of(option.getPage(), option.getSize(), sort)).toList());
             }
             if(option.getViewOption().contains("dep")){
                 Long departmentId = getDepartmentIdByMemberId(memberId);
@@ -75,6 +75,7 @@ public class ScheduleService{
 
     public RES_readScheduleDetail readScheduleDetail(ScheduleDTO scheduleDTO){
         try {
+
             Schedule schedule = scheduleRepository.getOne(scheduleDTO.getId());
             return new RES_readScheduleDetail("RSD001", util.ScheduleToDTO(schedule));
         }
@@ -90,9 +91,8 @@ public class ScheduleService{
 
             Schedule schedule = scheduleRepository.getOne(scheduleDTO.getId());
 
-            //실패 - 본인이 아니면 삭제불가
-            boolean isOwner = memberId.equals(schedule.getMemberId());
-            if(!isOwner) return new RES_updateSchedule("US003");
+            //실패 - 본인이 아니면 수정불가
+            if(!memberId.equals(schedule.getMemberId())) return new RES_updateSchedule("US003");
 
             util.DTOTOSchedule(schedule, scheduleDTO);
 
@@ -109,8 +109,7 @@ public class ScheduleService{
             String memberId = authentication.getName();
             Schedule schedule = scheduleRepository.getOne(scheduleDTO.getId());
             //실패 - 본인이 아니면 삭제불가
-            boolean isOwner = memberId.equals(schedule.getMemberId());
-            if(!isOwner) return new RES_deleteSchedule("DS003");
+            if(!memberId.equals(schedule.getMemberId())) return new RES_deleteSchedule("DS003");
 
             schedule.setDeleted(true);
             scheduleRepository.save(schedule);

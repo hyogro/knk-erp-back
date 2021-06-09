@@ -23,6 +23,12 @@ public class RES_readScheduleDetail {
     }
 
     //error
+    public RES_readScheduleDetail(String code) {
+        createCodeList();
+        this.code = code;
+    }
+
+    //error
     public RES_readScheduleDetail(String code, String message) {
         createCodeList();
         this.code = code;

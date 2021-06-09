@@ -41,10 +41,6 @@ public class AttendanceService {
     private final MemberRepository memberRepository;
     private final DepartmentRepository departmentRepository;
 
-    /**
-     * 권한 여부 체크를 위한 사용자, 부서 리포지토리 접근
-     **/
-
     //출근 기록
     public RES_onWork onWork() {
         try {

@@ -26,8 +26,10 @@ public class ScheduleUtil {
         schedule.setViewOption(scheduleDTO.getViewOption());
         schedule.setStartDate(scheduleDTO.getStartDate());
         schedule.setEndDate(scheduleDTO.getEndDate());
+        /*
         schedule.setMemberId(scheduleDTO.getMemberId());
         schedule.setDepartmentId(scheduleDTO.getDepartmentId());
+         */
     }
 
 }

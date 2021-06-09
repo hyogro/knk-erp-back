@@ -6,6 +6,7 @@ import lombok.Setter;
 import lombok.ToString;
 import org.springframework.data.domain.PageRequest;
 
+import java.time.LocalDateTime;
 import java.util.LinkedHashMap;
 import java.util.List;
 
@@ -17,4 +18,6 @@ public class REQ_readScheduleListOption {
     private String viewOption;
     private int page;
     private int size;
+    private LocalDateTime startDate;
+    private LocalDateTime endDate;
 }
