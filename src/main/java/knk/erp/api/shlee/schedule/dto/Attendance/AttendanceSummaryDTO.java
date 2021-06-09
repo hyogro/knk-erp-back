@@ -9,7 +9,6 @@ import lombok.*;
 @AllArgsConstructor
 @RequiredArgsConstructor
 public class AttendanceSummaryDTO{
-
     public int onWork;
     public int yetWork;
     public int lateWork;

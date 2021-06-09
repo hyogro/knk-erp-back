@@ -97,4 +97,11 @@ public class AttendanceController {
         return ResponseEntity.ok(attendanceService.readAttendanceSummary());
     }
 
+    /**
+     * 출,퇴근 기록 요약정보 조회
+     **/
+    @PostMapping("readAttendanceToday")
+    public ResponseEntity<RES_readAttendance> readAttendanceToday() {
+        return ResponseEntity.ok(attendanceService.readAttendanceToday());
+    }
 }

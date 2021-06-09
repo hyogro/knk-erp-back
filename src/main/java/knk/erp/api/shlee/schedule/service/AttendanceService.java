@@ -67,10 +67,10 @@ public class AttendanceService {
             LocalDate today = LocalDate.now();
             LocalTime onWorkTime = LocalTime.now();
 
-            //실패 - 기존 퇴근기록 있으면 수정불가
             Optional<Attendance> attendanceOptional = attendanceRepository.findByAttendanceDateAndMemberIdAndDeletedIsFalse(today, memberId);
             if (!attendanceOptional.isPresent()) return new RES_offWork("OFF005");
 
+            //실패 - 기존 퇴근기록 있으면 수정불가
             Attendance attendance = attendanceOptional.get();
             if (attendance.getOffWork() != null) return new RES_offWork("OFF003");
 
@@ -305,6 +305,19 @@ public class AttendanceService {
             return new RES_readAttendanceSummary("RSS001", new AttendanceSummaryDTO(onWork, yetWork, lateWork));
         } catch (Exception e) {
             return new RES_readAttendanceSummary("RSS002", e.getMessage());
+        }
+    }
+
+    //개인 출,퇴근 당일정보 조회
+    public RES_readAttendance readAttendanceToday(){
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String memberId = authentication.getName();
+            LocalDate today = LocalDate.now();
+            Optional<Attendance> attendance = attendanceRepository.findByAttendanceDateAndMemberIdAndDeletedIsFalse(today, memberId);
+            return attendance.map(value -> new RES_readAttendance("RA001", new AttendanceDTO(value))).orElseGet(() -> new RES_readAttendance("RA003"));
+        }catch (Exception e){
+            return new RES_readAttendance("RA002", e.getMessage());
         }
     }
 
