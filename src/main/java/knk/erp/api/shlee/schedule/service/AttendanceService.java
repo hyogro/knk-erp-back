@@ -1,28 +1,22 @@
 package knk.erp.api.shlee.schedule.service;
 
-import knk.erp.api.shlee.account.entity.*;
-import knk.erp.api.shlee.common.jwt.TokenProvider;
+import knk.erp.api.shlee.account.entity.Department;
+import knk.erp.api.shlee.account.entity.DepartmentRepository;
+import knk.erp.api.shlee.account.entity.Member;
+import knk.erp.api.shlee.account.entity.MemberRepository;
 import knk.erp.api.shlee.common.util.CommonUtil;
 import knk.erp.api.shlee.schedule.dto.Attendance.*;
-import knk.erp.api.shlee.schedule.dto.Schedule.*;
 import knk.erp.api.shlee.schedule.entity.Attendance;
 import knk.erp.api.shlee.schedule.entity.RectifyAttendance;
-import knk.erp.api.shlee.schedule.entity.Schedule;
 import knk.erp.api.shlee.schedule.repository.AttendanceRepository;
 import knk.erp.api.shlee.schedule.repository.RectifyAttendanceRepository;
-import knk.erp.api.shlee.schedule.repository.ScheduleRepository;
 import knk.erp.api.shlee.schedule.util.AttendanceUtil;
-import knk.erp.api.shlee.schedule.util.ScheduleUtil;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import javax.persistence.EntityNotFoundException;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -180,7 +174,7 @@ public class AttendanceService {
     private Long getDepartmentIdByMemberId(String memberId) {
         try {
             return memberRepository.findAllByMemberIdAndDeletedIsFalse(memberId).getDepartment().getId();
-        }catch (Exception e){
+        } catch (Exception e) {
             return -1L;
         }
     }
@@ -202,7 +196,7 @@ public class AttendanceService {
         }
         //LVL3(부장)이상인 경우 모두 승인
         else if (3 <= commonUtil.checkMaster(authentication)) {
-            if(!rectifyAttendance.isApproval1()){
+            if (!rectifyAttendance.isApproval1()) {
                 rectifyAttendance.setApproval1(true);
                 rectifyAttendance.setApprover1(leaderId);
             }
@@ -256,8 +250,7 @@ public class AttendanceService {
                 Member member = memberRepository.findAllByMemberIdAndDeletedIsFalse(memberId);
                 Long departmentId = member.getDepartment().getId();
                 rectifyAttendanceList = rectifyAttendanceRepository.findAllByDepartmentIdAndDeletedIsFalse(departmentId);
-            }
-            else if(3 <= commonUtil.checkMaster(authentication)){
+            } else if (3 <= commonUtil.checkMaster(authentication)) {
                 rectifyAttendanceList = rectifyAttendanceRepository.findAllByDeletedIsFalse();
             }
             return new RES_readRectifyAttendanceList("RRAL001", util.RectifyAttendanceListToDTO(rectifyAttendanceList));

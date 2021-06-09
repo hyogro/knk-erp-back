@@ -1,6 +1,5 @@
 package knk.erp.api.shlee.schedule.service;
 
-import knk.erp.api.shlee.account.entity.DepartmentRepository;
 import knk.erp.api.shlee.account.entity.Member;
 import knk.erp.api.shlee.account.entity.MemberRepository;
 import knk.erp.api.shlee.common.util.CommonUtil;
@@ -30,7 +29,6 @@ public class VacationService {
      * 권한 여부 체크를 위한 사용자, 부서 리포지토리 접근
      **/
     private final MemberRepository memberRepository;
-    private final DepartmentRepository departmentRepository;
 
     //휴가 생성
     public RES_createVacation createVacation(VacationDTO vacationDTO) {
@@ -167,7 +165,6 @@ public class VacationService {
         }
         return false;
     }
-
 
     //맴버 아이디로 부서 아이디 가져오기
     private Long getDepartmentIdByMemberId(String memberId) {
