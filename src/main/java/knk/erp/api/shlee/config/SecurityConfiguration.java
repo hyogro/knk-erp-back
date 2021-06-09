@@ -33,7 +33,6 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
-
                 //2021-06-08 15:36 이상훈 추가 Cors 세팅
                 .httpBasic().disable()
                 .cors().configurationSource(corsConfigurationSource())
