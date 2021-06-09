@@ -1,5 +1,5 @@
 package knk.erp.api.shlee.board.controller;
-/*
+
 import knk.erp.api.shlee.board.dto.BoardDTO_REQ;
 import knk.erp.api.shlee.board.dto.Create_BoardDTO_RES;
 import knk.erp.api.shlee.board.service.BoardService;
@@ -22,4 +22,3 @@ public class BoardController {
         return ResponseEntity.ok(boardService.createBoard(boardDTOReq));
     }
 }
-*/
