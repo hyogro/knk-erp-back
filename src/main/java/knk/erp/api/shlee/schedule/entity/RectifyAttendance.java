@@ -36,16 +36,16 @@ public class RectifyAttendance extends Time {
     private LocalTime offWork;
 
     @Column
-    private boolean approval_1;
+    private boolean approval1;
 
     @Column
-    private boolean approval_2;
+    private boolean approval2;
 
     @Column(length = 30)
-    private String approver_1;
+    private String approver1;
 
     @Column(length = 30)
-    private String approver_2;
+    private String approver2;
 
     @Column(length = 100)
     private String memo;

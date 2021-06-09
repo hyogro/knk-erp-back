@@ -18,4 +18,6 @@ public interface AttendanceRepository extends JpaRepository<Attendance, Long> {
    int countByAttendanceDateAndDeletedIsFalse(LocalDate today);//오늘 출근한사람 목록
    int countByAttendanceDateAndDepartmentIdAndOnWorkAfterAndDeletedIsFalse(LocalDate today, Long departmentId, LocalTime nine);//부서별 오늘 지각한사람 목록
    int countByAttendanceDateAndOnWorkAfterAndDeletedIsFalse(LocalDate today, LocalTime nine);//오늘 지각한사람 목록
+
+
 }
