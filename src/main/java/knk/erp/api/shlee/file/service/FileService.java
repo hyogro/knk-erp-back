@@ -28,15 +28,15 @@ public class FileService {
 
             String extension = originalFilename.substring(originalFilename.lastIndexOf("."));
 
-            String fileName = LocalDateTime.now()+"_"+extension;
-            fileName = fileName.replace("T", " ");
+            String fileName = LocalDateTime.now()+"";
+            fileName = fileName.replace("T", "").replace("-","").replace(".","").replace(":","")+extension;
 
             File file = File.builder().originalFileName(originalFilename).fileName(fileName).extension(extension).build();
             fileRepository.save(file);
 
-            Path location = this.path.resolve(originalFilename);
+            Path location = this.path.resolve(fileName);
             Files.copy(multipartFile.getInputStream(), location, StandardCopyOption.REPLACE_EXISTING);
-            return new RES_fileSave("FS001", originalFilename);
+            return new RES_fileSave("FS001", fileName);
         } catch (IOException e) {
             return new RES_fileSave("FS002", e.getMessage());
         }
