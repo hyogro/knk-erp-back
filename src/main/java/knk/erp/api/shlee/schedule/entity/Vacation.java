@@ -41,13 +41,13 @@ public class Vacation extends Time {
     private LocalDateTime endDate;
 
     @Column(nullable = false)
-    private Long memberId;
+    private String memberId;
 
     @Column(nullable = false)
     private Long departmentId;
 
     @Builder
-    public Vacation(String title, String memo, boolean approval_1, boolean approval_2, String approveMemo, LocalDateTime startDate, LocalDateTime endDate, Long memberId, Long departmentId) {
+    public Vacation(String title, String memo, boolean approval_1, boolean approval_2, String approveMemo, LocalDateTime startDate, LocalDateTime endDate, String memberId, Long departmentId) {
         this.title = title;
         this.memo = memo;
         this.approval_1 = approval_1;
