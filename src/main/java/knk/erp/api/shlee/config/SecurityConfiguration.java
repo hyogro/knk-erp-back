@@ -43,12 +43,12 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 // form 기반의 로그인에 대해 비활성화
                 .formLogin().disable()
 
-                // 로그인, 회원가입 API 는 권한없이 접근 가능하도록 설정
+                // 로그인 API 권한없이 접근 가능하도록 설정
                 .authorizeRequests()
-                .antMatchers("/account/login", "/account/signup").permitAll()
+                .antMatchers("/account/login").permitAll()
 
                 // 회원 정보 목록 읽어오기, 회원 정보 수정, 회원 삭제는 관리자 이상만 가능하도록 설정
-                .antMatchers("/account/readMember", "/account/updateMember", "/account/deleteMember")
+                .antMatchers("/account/readMember", "/account/updateMember", "/account/deleteMember", "/account/signup")
                 .hasAnyRole("LVL3", "LVL4", "ADMIN")
 
                 // 부서 생성, 수정, 삭제, 부서 리더 수정은 관리자 이상만 가능하도록 설정
