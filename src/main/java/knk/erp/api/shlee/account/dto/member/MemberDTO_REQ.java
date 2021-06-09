@@ -6,6 +6,8 @@ import lombok.*;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
+import java.time.LocalDate;
+
 @Getter
 @Setter
 @ToString
@@ -19,6 +21,7 @@ public class MemberDTO_REQ {
     private String memberName;
     private float vacation;
     private Long departmentId;
+    private LocalDate joiningDate;
 
     public Member toMember(BCryptPasswordEncoder passwordEncoder){
         return Member.builder()
@@ -28,6 +31,7 @@ public class MemberDTO_REQ {
                 .memberName(memberName)
                 .vacation(vacation)
                 .authority(Authority.ROLE_LVL1)
+                .joiningDate(joiningDate)
                 .build();
     }
 

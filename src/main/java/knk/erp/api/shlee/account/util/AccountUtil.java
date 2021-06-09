@@ -17,8 +17,8 @@ public class AccountUtil {
     public List<Read_MemberDTO> getMemberList(List<Member> memberList){
         List<Read_MemberDTO> member_List = new ArrayList<>();
         for(Member member : memberList){
-            member_List.add(new Read_MemberDTO(member.getMemberId(), null, member.getPhone(),
-                    member.getMemberName(), member.getVacation(), member.getDepartment().getDepartmentName(), member.getAuthority()));
+            member_List.add(new Read_MemberDTO(member.getMemberId(), null, member.getPhone(), member.getMemberName(),
+                    member.getVacation(), member.getDepartment().getDepartmentName(), member.getAuthority(), member.getJoiningDate()));
         }
 
         return member_List;
@@ -40,6 +40,9 @@ public class AccountUtil {
         }
         if(department != null){
             member.setDepartment(department);
+        }
+        if(updateAccountDTOReq.getJoiningDate() != null){
+            member.setJoiningDate(updateAccountDTOReq.getJoiningDate());
         }
     }
 

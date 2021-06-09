@@ -2,6 +2,8 @@ package knk.erp.api.shlee.account.dto.member;
 
 import lombok.*;
 
+import java.time.LocalDate;
+
 @Getter
 @Setter
 @ToString
@@ -14,4 +16,5 @@ public class Update_AccountDTO_REQ {
     private String phone;
     private float vacation;
     private String departmentName;
+    private LocalDate joiningDate;
 }

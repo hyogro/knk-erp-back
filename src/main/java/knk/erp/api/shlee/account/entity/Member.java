@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 
 @Getter
 @Setter
@@ -31,6 +32,9 @@ public class Member extends Time {
     private String memberName;
 
     @Column
+    private LocalDate joiningDate;
+
+    @Column
     private float vacation;
 
     @Enumerated(EnumType.STRING)
@@ -41,12 +45,14 @@ public class Member extends Time {
     private Department department;
 
     @Builder
-    public Member(String memberId, String phone, String memberName, String password, float vacation, Authority authority){
+    public Member(String memberId, String phone, String memberName, String password, float vacation, Authority authority,
+                  LocalDate joiningDate){
         this.memberId = memberId;
         this.phone = phone;
         this.memberName = memberName;
         this.password = password;
         this.vacation = vacation;
         this.authority = authority;
+        this.joiningDate = joiningDate;
     }
 }

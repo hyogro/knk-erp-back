@@ -3,6 +3,8 @@ package knk.erp.api.shlee.account.dto.member;
 import knk.erp.api.shlee.account.entity.Authority;
 import lombok.*;
 
+import java.time.LocalDate;
+
 @Getter
 @Setter
 @ToString
@@ -16,4 +18,5 @@ public class Read_MemberDTO {
     private float vacation;
     private String departmentName;
     private Authority authority;
+    private LocalDate joiningDate;
 }
