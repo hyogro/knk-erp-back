@@ -26,9 +26,10 @@ public class FileService {
             String originalFilename = multipartFile.getOriginalFilename();
             assert originalFilename != null;
 
-            String extension = originalFilename.substring(originalFilename.lastIndexOf("."), originalFilename.length());
+            String extension = originalFilename.substring(originalFilename.lastIndexOf("."));
 
             String fileName = LocalDateTime.now()+"_"+extension;
+            fileName = fileName.replace("T", " ");
 
             File file = File.builder().originalFileName(originalFilename).fileName(fileName).extension(extension).build();
             fileRepository.save(file);
