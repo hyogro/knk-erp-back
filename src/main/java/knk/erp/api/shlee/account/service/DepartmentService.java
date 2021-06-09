@@ -24,7 +24,6 @@ public class DepartmentService {
     private final MemberRepository memberRepository;
     //2021-06-08 09:10 이상훈 추가
     private final CommonUtil commonUtil;
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     // 부서 목록에 새로운 부서 추가
     @Transactional

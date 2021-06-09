@@ -30,7 +30,6 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class AttendanceService {
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
     private final AttendanceRepository attendanceRepository;
     private final RectifyAttendanceRepository rectifyAttendanceRepository;
     private final AttendanceUtil util;
@@ -283,12 +282,12 @@ public class AttendanceService {
                 int countOfMember = department.getMemberList().size();
                 onWork = attendanceRepository.countByAttendanceDateAndDepartmentIdAndDeletedIsFalse(today, department.getId());
                 lateWork = attendanceRepository.countByAttendanceDateAndDepartmentIdAndOnWorkAfterAndDeletedIsFalse(today, department.getId(), nine);
-                yetWork = countOfMember - onWork - lateWork;
+                yetWork = countOfMember - onWork;
             } else if (3 <= commonUtil.checkMaster(authentication)) {
                 int countOfMember = (int) memberRepository.count();
                 onWork = attendanceRepository.countByAttendanceDateAndDeletedIsFalse(today);
                 lateWork = attendanceRepository.countByAttendanceDateAndOnWorkAfterAndDeletedIsFalse(today, nine);
-                yetWork = countOfMember - onWork - lateWork;
+                yetWork = countOfMember - onWork;
             } else {
                 return new RES_readAttendanceSummary("RSS003");
             }
