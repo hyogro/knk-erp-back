@@ -1,7 +1,6 @@
 package knk.erp.api.shlee.board.dto.board;
 
 import knk.erp.api.shlee.board.entity.Board;
-import knk.erp.api.shlee.board.entity.BoardType;
 import lombok.*;
 
 import java.util.List;
@@ -27,13 +26,9 @@ public class BoardDTO {
                 //.target_department(target_department)
                 .content(content)
                 .referenceMemberName(referenceMemberName)
-                .boardType(toBoardType(boardType))
+                .boardType(boardType)
                 .writerMemberId(writerMemberId)
                 .writerDepId(writerDepId)
                 .build();
-    }
-
-    public BoardType toBoardType(String boardType){
-        return boardType.equals("공지사항") ? BoardType.notice : BoardType.free;
     }
 }

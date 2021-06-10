@@ -4,7 +4,6 @@ import knk.erp.api.shlee.account.entity.Member;
 import knk.erp.api.shlee.account.entity.MemberRepository;
 import knk.erp.api.shlee.board.dto.board.BoardDTO;
 import knk.erp.api.shlee.board.entity.Board;
-import knk.erp.api.shlee.board.entity.BoardType;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -21,8 +20,14 @@ public class BoardUtil {
             target.setContent(boardDTO.getContent());
         }
 
-        if(boardDTO.getReferenceMemberName().size() > 0){
-            target.setReferenceMemberName(boardDTO.getReferenceMemberName());
+        if(boardDTO.getReferenceMemberName() != null){
+            if(boardDTO.getReferenceMemberName().size() > 0){
+                target.setReferenceMemberName(boardDTO.getReferenceMemberName());
+            }
+        }
+
+        if(boardDTO.getBoardType() != null){
+            target.setBoardType(boardDTO.getBoardType());
         }
 
     }
@@ -39,9 +44,5 @@ public class BoardUtil {
     public String referenceNameToMemberId(String name, MemberRepository memberRepository){
         Member m = memberRepository.findByMemberNameAndDeletedIsFalse(name);
         return m.getMemberId();
-    }
-
-    public BoardType toBoardType(String boardType){
-        return boardType.equals("공지사항") ? BoardType.notice : BoardType.free;
     }
 }

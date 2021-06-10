@@ -42,8 +42,7 @@ public class Board extends Time {
 
     // 태그(ex : 공지사항, 자유게시판...)
     @Column(nullable = false)
-    @Enumerated(EnumType.STRING)
-    private BoardType boardType;
+    private String boardType;
 
     // 작성자 memberId
     @Column
@@ -54,7 +53,7 @@ public class Board extends Time {
     private Long writerDepId;
 
     @Builder
-    public Board(String title, String content, List<String> referenceMemberName, BoardType boardType, String writerMemberId,
+    public Board(String title, String content, List<String> referenceMemberName, String boardType, String writerMemberId,
                  Long writerDepId){
         this.title = title;
         //this.target_department = target_department;

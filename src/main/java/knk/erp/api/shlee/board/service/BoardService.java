@@ -7,7 +7,6 @@ import knk.erp.api.shlee.board.dto.boardlist.BoardListSearchDTO_REQ;
 import knk.erp.api.shlee.board.dto.boardlist.Search_BoardListDTO_RES;
 import knk.erp.api.shlee.board.entity.Board;
 import knk.erp.api.shlee.board.entity.BoardRepository;
-import knk.erp.api.shlee.board.entity.BoardType;
 import knk.erp.api.shlee.board.util.BoardUtil;
 import knk.erp.api.shlee.common.util.CommonUtil;
 import lombok.RequiredArgsConstructor;
@@ -64,7 +63,7 @@ public class BoardService {
             }
             else {
                 return new Read_BoardDTO_RES("RB001", new Read_BoardDTO(target.getTitle(), target.getReferenceMemberName(),
-                        target.getContent(), target.getBoardType().getValue(), writer.getMemberName(),
+                        target.getContent(), target.getBoardType(), writer.getMemberName(),
                         writer.getDepartment().getDepartmentName(), target.getCreateDate(), target.getUpdateDate()));
             }
         }catch(Exception e){
@@ -130,6 +129,8 @@ public class BoardService {
         try{
             if(boardListSearchDTOReq.getSearchType() == null) boardListSearchDTOReq.setSearchType("");
 
+            if(boardListSearchDTOReq.getKeyword() == null) boardListSearchDTOReq.setKeyword("");
+
             pageable = PageRequest.of(pageable.getPageNumber() <= 0 ? 0 : pageable.getPageNumber() - 1, pageable.getPageSize());
             Page<Board> boardList;
 
@@ -139,11 +140,8 @@ public class BoardService {
                     break;
 
                 case "태그검색":
-                    BoardType targetType = null;
-                    if(boardListSearchDTOReq.getKeyword().equals("공지사항")) targetType = BoardType.notice;
-                    else if(boardListSearchDTOReq.getKeyword().equals("자유게시판")) targetType = BoardType.free;
+                    boardList = boardRepository.findAllByBoardTypeContainingAndDeletedFalse(boardListSearchDTOReq.getKeyword(), pageable);
 
-                    boardList = boardRepository.findAllByBoardTypeContainingAndDeletedFalse(targetType, pageable);
                     break;
 
                 case "작성자검색":
