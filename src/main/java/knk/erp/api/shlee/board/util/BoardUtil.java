@@ -21,8 +21,8 @@ public class BoardUtil {
             target.setContent(boardDTO.getContent());
         }
 
-        if(boardDTO.getReference_memberName().size() > 0){
-            target.setReference_memberName(boardDTO.getReference_memberName());
+        if(boardDTO.getReferenceMemberName().size() > 0){
+            target.setReferenceMemberName(boardDTO.getReferenceMemberName());
         }
 
     }

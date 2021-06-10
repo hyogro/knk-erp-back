@@ -38,7 +38,7 @@ public class Board extends Time {
     // 참조 대상 memberName
     @Column
     @Convert(converter = StringListConverter.class)
-    private List<String> reference_memberName;
+    private List<String> referenceMemberName;
 
     // 태그(ex : 공지사항, 자유게시판...)
     @Column(nullable = false)
@@ -54,12 +54,12 @@ public class Board extends Time {
     private Long writerDepId;
 
     @Builder
-    public Board(String title, String content, List<String> reference_memberName, BoardType boardType, String writerMemberId,
+    public Board(String title, String content, List<String> referenceMemberName, BoardType boardType, String writerMemberId,
                  Long writerDepId){
         this.title = title;
         //this.target_department = target_department;
         this.content = content;
-        this.reference_memberName = reference_memberName;
+        this.referenceMemberName = referenceMemberName;
         this.boardType = boardType;
         this.writerMemberId = writerMemberId;
         this.writerDepId = writerDepId;

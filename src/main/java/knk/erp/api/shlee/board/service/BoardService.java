@@ -4,13 +4,15 @@ import knk.erp.api.shlee.account.entity.Member;
 import knk.erp.api.shlee.account.entity.MemberRepository;
 import knk.erp.api.shlee.board.dto.board.*;
 import knk.erp.api.shlee.board.dto.boardlist.BoardListSearchDTO_REQ;
-import knk.erp.api.shlee.board.dto.boardlist.Read_BoardListDTO_RES;
+import knk.erp.api.shlee.board.dto.boardlist.Search_BoardListDTO_RES;
 import knk.erp.api.shlee.board.entity.Board;
 import knk.erp.api.shlee.board.entity.BoardRepository;
-import knk.erp.api.shlee.board.util.BoardListUtil;
+import knk.erp.api.shlee.board.entity.BoardType;
 import knk.erp.api.shlee.board.util.BoardUtil;
 import knk.erp.api.shlee.common.util.CommonUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -26,7 +28,6 @@ public class BoardService {
     private final BoardRepository boardRepository;
     private final BoardUtil boardUtil;
     private final CommonUtil commonUtil;
-    private final BoardListUtil boardListUtil;
 
     // 게시글 생성
     @Transactional
@@ -57,12 +58,12 @@ public class BoardService {
             Board target = boardRepository.findByIdx(boardDTO.getIdx());
             Member writer = memberRepository.findAllByMemberIdAndDeletedIsFalse(target.getWriterMemberId());
             board_idx = target.getIdx();
-            List<String> reference_name = target.getReference_memberName();
+            List<String> reference_name = target.getReferenceMemberName();
             if(reference_name.size() > 0 && !boardUtil.checkReference(reference_name, reader, memberRepository)){
                 return new Read_BoardDTO_RES("RB003", "참조 대상이 아님");
             }
             else {
-                return new Read_BoardDTO_RES("RB001", new Read_BoardDTO(target.getTitle(), target.getReference_memberName(),
+                return new Read_BoardDTO_RES("RB001", new Read_BoardDTO(target.getTitle(), target.getReferenceMemberName(),
                         target.getContent(), target.getBoardType().getValue(), writer.getMemberName(),
                         writer.getDepartment().getDepartmentName(), target.getCreateDate(), target.getUpdateDate()));
             }
@@ -123,14 +124,48 @@ public class BoardService {
         }
     }
 
-    // 게시글 목록 기본 보기
+    // 게시글 목록 보기
     @Transactional
-    public Read_BoardListDTO_RES readList(Pageable pageable, BoardListSearchDTO_REQ boardListSearchDTOReq){
+    public Search_BoardListDTO_RES boardList(Pageable pageable, BoardListSearchDTO_REQ boardListSearchDTOReq){
         try{
-            return new Read_BoardListDTO_RES("RBL001", boardListUtil.findAllBoardList(pageable, boardRepository));
+            if(boardListSearchDTOReq.getSearchType() == null) boardListSearchDTOReq.setSearchType("");
+
+            pageable = PageRequest.of(pageable.getPageNumber() <= 0 ? 0 : pageable.getPageNumber() - 1, pageable.getPageSize());
+            Page<Board> boardList;
+
+            switch (boardListSearchDTOReq.getSearchType()) {
+                case "제목검색":
+                    boardList = boardRepository.findAllByTitleContainingAndDeletedFalse(pageable, boardListSearchDTOReq.getKeyword());
+                    break;
+
+                case "태그검색":
+                    BoardType targetType = null;
+                    if(boardListSearchDTOReq.getKeyword().equals("공지사항")) targetType = BoardType.notice;
+                    else if(boardListSearchDTOReq.getKeyword().equals("자유게시판")) targetType = BoardType.free;
+
+                    boardList = boardRepository.findAllByBoardTypeContainingAndDeletedFalse(targetType, pageable);
+                    break;
+
+                case "작성자검색":
+                    String target_memberId = boardListSearchDTOReq.getKeyword();
+                    Member writer = memberRepository.findByMemberNameAndDeletedIsFalse(target_memberId);
+                    boardList = boardRepository.findAllByWriterMemberIdContainingAndDeletedFalse(pageable, writer.getMemberId());
+                    break;
+
+                case "참조":
+                    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+                    Member me = memberRepository.findAllByMemberIdAndDeletedIsFalse(authentication.getName());
+                    System.out.println(me.getMemberId());
+                    boardList = boardRepository.findAllByReferenceMemberNameContainingAndDeletedFalse(pageable, me.getMemberName());
+                    break;
+
+                default:
+                    boardList = boardRepository.findAllByDeletedIsFalse(pageable);
+                    break;
+            }
+            return new Search_BoardListDTO_RES("SBL001", boardList);
         }catch(Exception e){
-            return new Read_BoardListDTO_RES("RBL002", e.getMessage());
+            return new Search_BoardListDTO_RES("SBL002", e.getMessage());
         }
     }
 }
-
