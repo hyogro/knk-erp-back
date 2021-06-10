@@ -173,7 +173,7 @@ public class VacationService {
                 vacation = vacationRepository.countAllByDepartmentIdAndStartDateBeforeAndEndDateAfterAndDeletedIsFalse(department.getId(), todayS, todayE);
 
             } else if (3 <= commonUtil.checkMaster(authentication)) {
-                vacation = vacationRepository.countAllByStartDateBeforeAndEndDateAfterAndDeletedIsFalse(todayS, todayE);
+                vacation = vacationRepository.countAllByStartDateAfterAndEndDateBeforeAndDeletedIsFalse(todayS, todayE);
             } else {
                 return new RES_readVacationSummary("RVS003");
             }

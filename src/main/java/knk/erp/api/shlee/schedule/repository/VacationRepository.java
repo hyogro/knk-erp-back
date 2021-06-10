@@ -13,6 +13,6 @@ public interface VacationRepository extends JpaRepository<Vacation, Long> {
     List<Vacation> findAllByApproval2IsFalseAndDeletedIsFalse();
 
     int countAllByDepartmentIdAndStartDateBeforeAndEndDateAfterAndDeletedIsFalse(Long departmentId, LocalDateTime today, LocalDateTime today2);
-    int countAllByStartDateBeforeAndEndDateAfterAndDeletedIsFalse(LocalDateTime today, LocalDateTime today2);
+    int countAllByStartDateAfterAndEndDateBeforeAndDeletedIsFalse(LocalDateTime today, LocalDateTime today2);
 
 }
