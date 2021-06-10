@@ -170,7 +170,7 @@ public class VacationService {
             if (commonUtil.checkMaster(authentication) == 2) {
                 Member member = memberRepository.findAllByMemberIdAndDeletedIsFalse(memberId);
                 Department department = member.getDepartment();
-                vacation = vacationRepository.countAllByDepartmentIdAndStartDateBeforeAndEndDateAfterAndApproval1IsTrueAndApproval2IsTrueAndDeletedIsFalse(department.getId(), todayS, todayE);
+                vacation = vacationRepository.countAllByDepartmentIdAndStartDateAfterAndEndDateBeforeAndApproval1IsTrueAndApproval2IsTrueAndDeletedIsFalse(department.getId(), todayS, todayE);
 
             } else if (3 <= commonUtil.checkMaster(authentication)) {
                 vacation = vacationRepository.countAllByStartDateAfterAndEndDateBeforeAndApproval1IsTrueAndApproval2IsTrueAndDeletedIsFalse(todayS, todayE);
