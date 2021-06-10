@@ -18,6 +18,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -161,15 +162,16 @@ public class VacationService {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             String memberId = authentication.getName();
             int vacation; //휴가
-            LocalDate today = LocalDate.now();
+            LocalDateTime todayS = LocalDateTime.of(LocalDate.now(), LocalTime.of(0,0,0));
+            LocalDateTime todayE = LocalDateTime.of(LocalDate.now(), LocalTime.of(23,59,59));
 
             if (commonUtil.checkMaster(authentication) == 2) {
                 Member member = memberRepository.findAllByMemberIdAndDeletedIsFalse(memberId);
                 Department department = member.getDepartment();
-                vacation = vacationRepository.countAllByDepartmentIdAndStartDate_DateBeforeAndEndDate_DateAfterAndDeletedIsFalse(department.getId(), today, today);
+                vacation = vacationRepository.countAllByDepartmentIdAndStartDateBeforeAndEndDateAfterAndDeletedIsFalse(department.getId(), todayS, todayE);
 
             } else if (3 <= commonUtil.checkMaster(authentication)) {
-                vacation = vacationRepository.countAllByStartDate_DateBeforeAndEndDate_DateAfterAndDeletedIsFalse(today, today);
+                vacation = vacationRepository.countAllByStartDateBeforeAndEndDateAfterAndDeletedIsFalse(todayS, todayE);
             } else {
                 return new RES_readVacationSummary("RVS003");
             }

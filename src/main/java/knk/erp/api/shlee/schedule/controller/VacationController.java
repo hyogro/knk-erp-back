@@ -50,4 +50,11 @@ public class VacationController {
     public ResponseEntity<RES_rejectVacation> rejectVacation(@RequestBody REQ_rejectVacation reject){
         return ResponseEntity.ok(vacationService.rejectVacation(reject));
     }
+    /**휴가 요약정보 조회**/
+    @PostMapping("/readVacationSummary")
+    public ResponseEntity<RES_readVacationSummary> rejectVacation(){
+        return ResponseEntity.ok(vacationService.readVacationSummary());
+    }
+
+
 }

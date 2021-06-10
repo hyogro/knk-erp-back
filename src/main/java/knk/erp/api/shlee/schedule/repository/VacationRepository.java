@@ -4,6 +4,7 @@ import knk.erp.api.shlee.schedule.entity.Vacation;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface VacationRepository extends JpaRepository<Vacation, Long> {
@@ -11,7 +12,7 @@ public interface VacationRepository extends JpaRepository<Vacation, Long> {
     List<Vacation> findAllByDepartmentIdAndApproval1IsFalseAndDeletedIsFalse(Long departmentId);
     List<Vacation> findAllByApproval2IsFalseAndDeletedIsFalse();
 
-    int countAllByDepartmentIdAndStartDate_DateBeforeAndEndDate_DateAfterAndDeletedIsFalse(Long departmentId, LocalDate today, LocalDate today2);
-    int countAllByStartDate_DateBeforeAndEndDate_DateAfterAndDeletedIsFalse(LocalDate today, LocalDate today2);
+    int countAllByDepartmentIdAndStartDateBeforeAndEndDateAfterAndDeletedIsFalse(Long departmentId, LocalDateTime today, LocalDateTime today2);
+    int countAllByStartDateBeforeAndEndDateAfterAndDeletedIsFalse(LocalDateTime today, LocalDateTime today2);
 
 }
