@@ -3,6 +3,7 @@ package knk.erp.api.shlee.board.service;
 import knk.erp.api.shlee.account.entity.Member;
 import knk.erp.api.shlee.account.entity.MemberRepository;
 import knk.erp.api.shlee.board.dto.board.*;
+import knk.erp.api.shlee.board.dto.boardlist.BoardListDTO_RES;
 import knk.erp.api.shlee.board.dto.boardlist.BoardListSearchDTO_REQ;
 import knk.erp.api.shlee.board.dto.boardlist.Search_BoardListDTO_RES;
 import knk.erp.api.shlee.board.entity.Board;
@@ -153,14 +154,16 @@ public class BoardService {
                 case "참조":
                     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
                     Member me = memberRepository.findAllByMemberIdAndDeletedIsFalse(authentication.getName());
-                    boardPage = boardRepository.findAllByReferenceMemberNameContainingAndDeletedFalse(pageable, me.getMemberName());
+                    boardPage = boardRepository.findAllByDeletedIsFalse(pageable);
                     break;
 
                 default:
                     boardPage = boardRepository.findAllByDeletedIsFalse(pageable);
                     break;
             }
-            return new Search_BoardListDTO_RES("SBL001", boardPage);
+            Page<BoardListDTO_RES> page = boardPage.map(board -> new BoardListDTO_RES(board.getTitle(), board.getContent(),
+                    board.getWriterMemberId(), board.getWriterDepId(), board.getCreateDate(), board.getUpdateDate(), board.getReferenceMemberId()));
+            return new Search_BoardListDTO_RES("SBL001", page);
         }catch(Exception e){
             return new Search_BoardListDTO_RES("SBL002", e.getMessage());
         }
