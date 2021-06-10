@@ -98,7 +98,7 @@ public class AttendanceController {
     }
 
     /**
-     * 출,퇴근 기록 요약정보 조회
+     * 개인 출,퇴근 당일정보 조회
      **/
     @PostMapping("readAttendanceToday")
     public ResponseEntity<RES_readAttendance> readAttendanceToday() {
