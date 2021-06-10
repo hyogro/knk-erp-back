@@ -18,8 +18,8 @@ public class Search_BoardListDTO_RES {
     private Page<BoardListDTO_RES> page;
 
     private void createCodeList(){
-        this.help_codeList.put("SBL001", "게시글 리스트 읽기 성공");
-        this.help_codeList.put("SBL002", "게시글 리스트 읽기 실패");
+        this.help_codeList.put("SBL001", "게시글 리스트 불러오기 성공");
+        this.help_codeList.put("SBL002", "게시글 리스트 불러오기 실패");
     }
 
     // error
