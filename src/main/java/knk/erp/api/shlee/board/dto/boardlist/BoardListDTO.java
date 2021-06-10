@@ -6,6 +6,5 @@ import lombok.*;
 @Setter
 @ToString
 @AllArgsConstructor
-@NoArgsConstructor
 public class BoardListDTO {
 }

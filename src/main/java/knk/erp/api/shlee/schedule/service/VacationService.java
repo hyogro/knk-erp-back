@@ -1,8 +1,11 @@
 package knk.erp.api.shlee.schedule.service;
 
+import knk.erp.api.shlee.account.entity.Department;
 import knk.erp.api.shlee.account.entity.Member;
 import knk.erp.api.shlee.account.entity.MemberRepository;
 import knk.erp.api.shlee.common.util.CommonUtil;
+import knk.erp.api.shlee.schedule.dto.Attendance.AttendanceSummaryDTO;
+import knk.erp.api.shlee.schedule.dto.Attendance.RES_readAttendanceSummary;
 import knk.erp.api.shlee.schedule.dto.Vacation.*;
 import knk.erp.api.shlee.schedule.entity.Vacation;
 import knk.erp.api.shlee.schedule.repository.VacationRepository;
@@ -14,6 +17,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -134,9 +139,11 @@ public class VacationService {
 
                 if (vacation.isApproval1() && vacation.isApproval2()) return new RES_rejectVacation("RV004");
 
-                Member member = memberRepository.findAllByMemberIdAndDeletedIsFalse(memberId);
-                Long departmentId = member.getDepartment().getId();
-                if (!vacation.getDepartmentId().equals(departmentId)) return new RES_rejectVacation("RV003");
+                if (commonUtil.checkMaster(authentication) == 2) {
+                    Member member = memberRepository.findAllByMemberIdAndDeletedIsFalse(memberId);
+                    Long departmentId = member.getDepartment().getId();
+                    if (!vacation.getDepartmentId().equals(departmentId)) return new RES_rejectVacation("RV003");
+                }
 
                 vacationRepository.save(vacation);
                 return new RES_rejectVacation("RV001");
@@ -145,6 +152,30 @@ public class VacationService {
 
         } catch (Exception e) {
             return new RES_rejectVacation("RV002", e.getMessage());
+        }
+    }
+
+    //휴가 요약정보 조회
+    public RES_readVacationSummary readVacationSummary(){
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String memberId = authentication.getName();
+            int vacation; //휴가
+            LocalDate today = LocalDate.now();
+
+            if (commonUtil.checkMaster(authentication) == 2) {
+                Member member = memberRepository.findAllByMemberIdAndDeletedIsFalse(memberId);
+                Department department = member.getDepartment();
+                vacation = vacationRepository.countAllByDepartmentIdAndStartDate_DateBeforeAndEndDate_DateAfterAndDeletedIsFalse(department.getId(), today, today);
+
+            } else if (3 <= commonUtil.checkMaster(authentication)) {
+                vacation = vacationRepository.countAllByStartDate_DateBeforeAndEndDate_DateAfterAndDeletedIsFalse(today, today);
+            } else {
+                return new RES_readVacationSummary("RVS003");
+            }
+            return new RES_readVacationSummary("RVS001", new VacationSummaryDTO(vacation));
+        } catch (Exception e) {
+            return new RES_readVacationSummary("RVS002", e.getMessage());
         }
     }
 
@@ -174,6 +205,8 @@ public class VacationService {
             return -1L;
         }
     }
+
+
 
 }
 
