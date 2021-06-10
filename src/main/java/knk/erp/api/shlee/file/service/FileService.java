@@ -4,6 +4,8 @@ import knk.erp.api.shlee.file.dto.RES_fileSave;
 import knk.erp.api.shlee.file.entity.File;
 import knk.erp.api.shlee.file.repository.FileRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -23,6 +25,9 @@ public class FileService {
 
     public RES_fileSave saveFile(MultipartFile multipartFile) {
         try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String memberId = authentication.getName();
+
             String originalFilename = multipartFile.getOriginalFilename();
             assert originalFilename != null;
 
@@ -31,7 +36,7 @@ public class FileService {
             String fileName = LocalDateTime.now()+"";
             fileName = fileName.replace("T", "").replace("-","").replace(".","").replace(":","")+extension;
 
-            File file = File.builder().originalFileName(originalFilename).fileName(fileName).extension(extension).build();
+            File file = File.builder().originalFileName(originalFilename).fileName(fileName).extension(extension).memberId(memberId).build();
             fileRepository.save(file);
 
             Path location = this.path.resolve(fileName);
