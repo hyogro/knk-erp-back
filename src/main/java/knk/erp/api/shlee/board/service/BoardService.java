@@ -154,7 +154,7 @@ public class BoardService {
                 case "참조":
                     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
                     Member me = memberRepository.findAllByMemberIdAndDeletedIsFalse(authentication.getName());
-                    boardPage = boardRepository.findAllByDeletedIsFalse(pageable);
+                    boardPage = boardRepository.findAllByReferenceMemberIdContainingAndDeletedFalse(pageable, me.getMemberId());
                     break;
 
                 default:

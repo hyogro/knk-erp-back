@@ -1,6 +1,5 @@
 package knk.erp.api.shlee.board.dto.boardlist;
 
-import knk.erp.api.shlee.board.entity.Board;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -19,7 +18,4 @@ public class BoardListDTO_RES {
     LocalDateTime createDate;
     LocalDateTime updateDate;
     List<String> referenceMemberId;
-
-
-
 }
