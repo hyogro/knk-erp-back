@@ -1,8 +1,12 @@
 package knk.erp.api.shlee.board.controller;
 
 import knk.erp.api.shlee.board.dto.board.*;
+import knk.erp.api.shlee.board.dto.boardlist.BoardListSearchDTO_REQ;
+import knk.erp.api.shlee.board.dto.boardlist.Read_BoardListDTO_RES;
 import knk.erp.api.shlee.board.service.BoardService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -33,8 +37,14 @@ public class BoardController {
 
     // 게시글 삭제
     @PostMapping("/{board_idx}/deleteBoard")
-    public ResponseEntity<Delete_BoardDTO_RES> deleteBoard(@PathVariable Long board_idx, @RequestBody BoardDTO boardDTOReq){
-        return ResponseEntity.ok(boardService.deleteBoard(board_idx, boardDTOReq));
+    public ResponseEntity<Delete_BoardDTO_RES> deleteBoard(@PathVariable Long board_idx, @RequestBody BoardDTO boardDTO){
+        return ResponseEntity.ok(boardService.deleteBoard(board_idx, boardDTO));
     }
 
+    // 게시글 목록 보기
+    @PostMapping("/list")
+    public ResponseEntity<Read_BoardListDTO_RES> readList(@PageableDefault Pageable pageable,
+                                                          @RequestBody BoardListSearchDTO_REQ boardListSearchDTOReq){
+        return ResponseEntity.ok(boardService.readList(pageable, boardListSearchDTOReq));
+    }
 }

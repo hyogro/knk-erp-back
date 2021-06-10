@@ -18,6 +18,8 @@ public class BoardDTO {
     private String content;
     private List<String> reference_memberName;  // 참조 대상 member 이름
     private String boardType;
+    private String writerMemberId;
+    private Long writerDepId;
 
     public Board toBoard(){
         return Board.builder()
@@ -26,6 +28,8 @@ public class BoardDTO {
                 .content(content)
                 .reference_memberName(reference_memberName)
                 .boardType(toBoardType(boardType))
+                .writerMemberId(writerMemberId)
+                .writerDepId(writerDepId)
                 .build();
     }
 
