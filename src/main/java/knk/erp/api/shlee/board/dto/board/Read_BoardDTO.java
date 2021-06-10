@@ -12,7 +12,7 @@ import java.util.List;
 @NoArgsConstructor
 public class Read_BoardDTO {
     private String title;
-    private List<String> referenceMemberName;
+    private List<String> referenceMemberId;
     private String content;
     private String boardType;
     private String writer_name;

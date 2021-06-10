@@ -20,9 +20,9 @@ public class BoardUtil {
             target.setContent(boardDTO.getContent());
         }
 
-        if(boardDTO.getReferenceMemberName() != null){
-            if(boardDTO.getReferenceMemberName().size() > 0){
-                target.setReferenceMemberName(boardDTO.getReferenceMemberName());
+        if(boardDTO.getReferenceMemberId() != null){
+            if(boardDTO.getReferenceMemberId().size() > 0){
+                target.setReferenceMemberId(boardDTO.getReferenceMemberId());
             }
         }
 
@@ -32,17 +32,11 @@ public class BoardUtil {
 
     }
 
-    public boolean checkReference(List<String> reference_name, Member reader, MemberRepository memberRepository){
+    public boolean checkReference(List<String> reference_memberId, Member reader){
         System.out.println(reader.getMemberId());
-        for(String name : reference_name){
-            String reference_memberId = referenceNameToMemberId(name, memberRepository);
-            if(reference_memberId.equals(reader.getMemberId())) return true;
+        for(String memberId : reference_memberId){
+            if(memberId.equals(reader.getMemberId())) return true;
         }
         return false;
-    }
-
-    public String referenceNameToMemberId(String name, MemberRepository memberRepository){
-        Member m = memberRepository.findByMemberNameAndDeletedIsFalse(name);
-        return m.getMemberId();
     }
 }
