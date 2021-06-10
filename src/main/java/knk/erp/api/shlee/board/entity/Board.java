@@ -41,12 +41,12 @@ public class Board extends Time {
     private List<String> reference_memberName;
 
     // 태그(ex : 공지사항, 자유게시판...)
-    @Column
+    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private BoardType boardType;
 
     // 작성자 memberId
-    @Column(nullable = false)
+    @Column
     private String writerMemberId;
 
     // 작성자 부서 id
