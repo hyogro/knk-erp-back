@@ -118,7 +118,12 @@ public class VacationService {
                 if (!vacation.getDepartmentId().equals(departmentId)) return new RES_approveVacation("AV003");
             }
 
+            System.out.println(vacation.toString());
             boolean isChange = approveCheck(authentication, vacation);
+            if(isChange) vacationRepository.save(vacation);
+
+            System.out.println(commonUtil.checkMaster(authentication));
+            System.out.println(vacation.toString());
 
             return isChange ? new RES_approveVacation("AV001") : new RES_approveVacation("AV003");
 
