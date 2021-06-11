@@ -23,6 +23,12 @@ public class FileService {
     private final FileRepository fileRepository;
     private final Path path = Paths.get("/home/ubuntu/files");
 
+    private String fileNameMake(String extension){
+        String fileName = LocalDateTime.now()+"";
+        return fileName.replace("T", "").replace("-","").replace(".","").replace(":","")+extension;
+
+    }
+
     public RES_fileSave saveFile(MultipartFile multipartFile) {
         try {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -33,8 +39,7 @@ public class FileService {
 
             String extension = originalFilename.substring(originalFilename.lastIndexOf("."));
 
-            String fileName = LocalDateTime.now()+"";
-            fileName = fileName.replace("T", "").replace("-","").replace(".","").replace(":","")+extension;
+            String fileName = fileNameMake(extension);
 
             File file = File.builder().originalFileName(originalFilename).fileName(fileName).extension(extension).memberId(memberId).build();
             fileRepository.save(file);
