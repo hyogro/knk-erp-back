@@ -15,7 +15,7 @@ public class BoardDTO {
     private String title;
     //private String target_department;
     private String content;
-    private List<String> referenceMemberName;  // 참조 대상 member 이름
+    private List<String> referenceMemberId;  // 참조 대상 memberId
     private String boardType;
     private String writerMemberId;
     private Long writerDepId;
@@ -25,7 +25,7 @@ public class BoardDTO {
                 .title(title)
                 //.target_department(target_department)
                 .content(content)
-                .referenceMemberName(referenceMemberName)
+                .referenceMemberId(referenceMemberId)
                 .boardType(boardType)
                 .writerMemberId(writerMemberId)
                 .writerDepId(writerDepId)

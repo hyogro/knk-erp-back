@@ -3,6 +3,7 @@ package knk.erp.api.shlee.board.service;
 import knk.erp.api.shlee.account.entity.Member;
 import knk.erp.api.shlee.account.entity.MemberRepository;
 import knk.erp.api.shlee.board.dto.board.*;
+import knk.erp.api.shlee.board.dto.boardlist.BoardListDTO_RES;
 import knk.erp.api.shlee.board.dto.boardlist.BoardListSearchDTO_REQ;
 import knk.erp.api.shlee.board.dto.boardlist.Search_BoardListDTO_RES;
 import knk.erp.api.shlee.board.entity.Board;
@@ -57,12 +58,13 @@ public class BoardService {
             Board target = boardRepository.findByIdx(boardDTO.getIdx());
             Member writer = memberRepository.findAllByMemberIdAndDeletedIsFalse(target.getWriterMemberId());
             board_idx = target.getIdx();
-            List<String> reference_name = target.getReferenceMemberName();
-            if(reference_name.size() > 0 && !boardUtil.checkReference(reference_name, reader, memberRepository)){
+            List<String> reference_memberId = target.getReferenceMemberId();
+
+            if(reference_memberId.size() > 0 && !boardUtil.checkReference(reference_memberId, reader)){
                 return new Read_BoardDTO_RES("RB003", "참조 대상이 아님");
             }
             else {
-                return new Read_BoardDTO_RES("RB001", new Read_BoardDTO(target.getTitle(), target.getReferenceMemberName(),
+                return new Read_BoardDTO_RES("RB001", new Read_BoardDTO(target.getTitle(), target.getReferenceMemberId(),
                         target.getContent(), target.getBoardType(), writer.getMemberName(),
                         writer.getDepartment().getDepartmentName(), target.getCreateDate(), target.getUpdateDate()));
             }
@@ -132,36 +134,36 @@ public class BoardService {
             if(boardListSearchDTOReq.getKeyword() == null) boardListSearchDTOReq.setKeyword("");
 
             pageable = PageRequest.of(pageable.getPageNumber() <= 0 ? 0 : pageable.getPageNumber() - 1, pageable.getPageSize());
-            Page<Board> boardList;
+            Page<Board> boardPage;
 
             switch (boardListSearchDTOReq.getSearchType()) {
                 case "제목검색":
-                    boardList = boardRepository.findAllByTitleContainingAndDeletedFalse(pageable, boardListSearchDTOReq.getKeyword());
+                    boardPage = boardRepository.findAllByTitleContainingAndDeletedFalse(pageable, boardListSearchDTOReq.getKeyword());
                     break;
 
                 case "태그검색":
-                    boardList = boardRepository.findAllByBoardTypeContainingAndDeletedFalse(boardListSearchDTOReq.getKeyword(), pageable);
-
+                    boardPage = boardRepository.findAllByBoardTypeContainingAndDeletedFalse(boardListSearchDTOReq.getKeyword(), pageable);
                     break;
 
                 case "작성자검색":
                     String target_memberId = boardListSearchDTOReq.getKeyword();
                     Member writer = memberRepository.findByMemberNameAndDeletedIsFalse(target_memberId);
-                    boardList = boardRepository.findAllByWriterMemberIdContainingAndDeletedFalse(pageable, writer.getMemberId());
+                    boardPage = boardRepository.findAllByWriterMemberIdContainingAndDeletedFalse(pageable, writer.getMemberId());
                     break;
 
                 case "참조":
                     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
                     Member me = memberRepository.findAllByMemberIdAndDeletedIsFalse(authentication.getName());
-                    System.out.println(me.getMemberId());
-                    boardList = boardRepository.findAllByReferenceMemberNameContainingAndDeletedFalse(pageable, me.getMemberName());
+                    boardPage = boardRepository.findAllByReferenceMemberIdContainingAndDeletedFalse(pageable, me.getMemberId());
                     break;
 
                 default:
-                    boardList = boardRepository.findAllByDeletedIsFalse(pageable);
+                    boardPage = boardRepository.findAllByDeletedIsFalse(pageable);
                     break;
             }
-            return new Search_BoardListDTO_RES("SBL001", boardList);
+            Page<BoardListDTO_RES> page = boardPage.map(board -> new BoardListDTO_RES(board.getTitle(), board.getContent(),
+                    board.getWriterMemberId(), board.getWriterDepId(), board.getCreateDate(), board.getUpdateDate(), board.getReferenceMemberId()));
+            return new Search_BoardListDTO_RES("SBL001", page);
         }catch(Exception e){
             return new Search_BoardListDTO_RES("SBL002", e.getMessage());
         }

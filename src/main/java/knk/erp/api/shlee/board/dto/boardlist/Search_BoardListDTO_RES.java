@@ -15,11 +15,11 @@ public class Search_BoardListDTO_RES {
     private String code;
     private String message;
     private LinkedHashMap<String, String> help_codeList = new LinkedHashMap<>();
-    private Page<Board> boardPage;
+    private Page<BoardListDTO_RES> page;
 
     private void createCodeList(){
-        this.help_codeList.put("SBL001", "게시글 리스트 읽기 성공");
-        this.help_codeList.put("SBL002", "게시글 리스트 읽기 실패");
+        this.help_codeList.put("SBL001", "게시글 리스트 불러오기 성공");
+        this.help_codeList.put("SBL002", "게시글 리스트 불러오기 실패");
     }
 
     // error
@@ -30,9 +30,9 @@ public class Search_BoardListDTO_RES {
     }
 
     // ok
-    public Search_BoardListDTO_RES(String code, Page<Board> boardPage) {
+    public Search_BoardListDTO_RES(String code, Page<BoardListDTO_RES> page) {
         createCodeList();
         this.code = code;
-        this.boardPage = boardPage;
+        this.page = page;
     }
 }
