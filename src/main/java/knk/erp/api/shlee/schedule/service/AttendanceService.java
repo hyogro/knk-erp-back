@@ -6,7 +6,6 @@ import knk.erp.api.shlee.account.entity.Member;
 import knk.erp.api.shlee.account.entity.MemberRepository;
 import knk.erp.api.shlee.common.util.CommonUtil;
 import knk.erp.api.shlee.schedule.dto.Attendance.*;
-import knk.erp.api.shlee.schedule.dto.Schedule.ScheduleDTO;
 import knk.erp.api.shlee.schedule.entity.Attendance;
 import knk.erp.api.shlee.schedule.entity.RectifyAttendance;
 import knk.erp.api.shlee.schedule.repository.AttendanceRepository;
@@ -123,14 +122,13 @@ public class AttendanceService {
     public RES_updateRectifyAttendance updateRectifyAttendance(RectifyAttendanceDTO rectifyAttendanceDTO) {
         try {
             String memberId = getMemberId();
-
+            setMemberIdAndDepartmentId(rectifyAttendanceDTO);
             Attendance attendance = attendanceRepository.findByIdAndDeletedIsFalse(rectifyAttendanceDTO.getId());
 
             //실패 - 본인이 아니면 정정요청 불가
             if (!attendance.getMemberId().equals(memberId)) return new RES_updateRectifyAttendance("URA003");
 
             RectifyAttendance rectifyAttendance = util.AttendanceToRectify(attendance, rectifyAttendanceDTO);
-            rectifyAttendance.setDepartmentId(getDepartmentId(memberId));
 
             //레벨에 따른 1,2차 승인여부 변경
             rectifyApproved(rectifyAttendance);
@@ -155,44 +153,11 @@ public class AttendanceService {
 
         if (rectifyAttendance.isApproval1() && rectifyAttendance.isApproval2() && !rectifyAttendance.isDeleted()) {
             Attendance attendance = util.RectifyToAttendance(rectifyAttendance);
-
             attendanceRepository.save(attendance);
 
             rectifyAttendance.setDeleted(true);
             rectifyAttendanceRepository.save(rectifyAttendance);
         }
-    }
-
-    //맴버 아이디로 부서 아이디 가져오기
-    private Long getDepartmentId(String memberId) {
-        try {
-            return memberRepository.findAllByMemberIdAndDeletedIsFalse(memberId).getDepartment().getId();
-        } catch (Exception e) {
-            return -1L;
-        }
-    }
-
-    //요청 시 권한에 따라서 1, 2차 승인 여부 변경
-    private boolean rectifyApproved(RectifyAttendance rectifyAttendance) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
-        String leaderId = getMemberId();
-
-        //LVL2(부서장) 인 경우 승인하려는 맴버가 부서원인지 확인 후 승인 진행
-        if (commonUtil.checkMaster(authentication) == 2) {
-            Department department_m = memberRepository.findAllByMemberIdAndDeletedIsFalse(rectifyAttendance.getMemberId()).getDepartment();
-            Department department_l = departmentRepository.findByLeader_MemberId(leaderId);
-            if (department_m.equals(department_l)) {
-                setApprovalAndApprover(rectifyAttendance, 1, leaderId);
-                return true;
-            }
-        }
-        //LVL3(부장)이상인 경우 모두 승인
-        else if (3 <= commonUtil.checkMaster(authentication)) {
-            setApprovalAndApprover(rectifyAttendance, 2, leaderId);
-            return true;
-        }
-        return false;
     }
 
     //출,퇴근 정정요청목록 조회
@@ -234,11 +199,11 @@ public class AttendanceService {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             String memberId = authentication.getName();
             List<RectifyAttendance> rectifyAttendanceList = new ArrayList<>();
-            if (commonUtil.checkMaster(authentication) == 2) {
+            if (commonUtil.checkLevel(authentication) == 2) {
                 Member member = memberRepository.findAllByMemberIdAndDeletedIsFalse(memberId);
                 Long departmentId = member.getDepartment().getId();
                 rectifyAttendanceList = rectifyAttendanceRepository.findAllByDepartmentIdAndDeletedIsFalse(departmentId);
-            } else if (3 <= commonUtil.checkMaster(authentication)) {
+            } else if (3 <= commonUtil.checkLevel(authentication)) {
                 rectifyAttendanceList = rectifyAttendanceRepository.findAllByDeletedIsFalse();
             }
             return new RES_readRectifyAttendanceList("RRAL001", util.RectifyAttendanceListToDTO(rectifyAttendanceList));
@@ -273,18 +238,16 @@ public class AttendanceService {
             LocalDate today = LocalDate.now();
             LocalTime nine = LocalTime.of(9, 0, 0);
 
-            if (commonUtil.checkMaster(authentication) == 2) {
-                Member member = memberRepository.findAllByMemberIdAndDeletedIsFalse(memberId);
-                Department department = member.getDepartment();
-                int countOfMember = department.getMemberList().size();
+            if (commonUtil.checkLevel(authentication) == 2) {
+                Department department = memberRepository.findAllByMemberIdAndDeletedIsFalse(memberId).getDepartment();
                 onWork = attendanceRepository.countByAttendanceDateAndDepartmentIdAndDeletedIsFalse(today, department.getId());
                 lateWork = attendanceRepository.countByAttendanceDateAndDepartmentIdAndOnWorkAfterAndDeletedIsFalse(today, department.getId(), nine);
-                yetWork = countOfMember - onWork;
-            } else if (3 <= commonUtil.checkMaster(authentication)) {
-                int countOfMember = (int) memberRepository.count();
+                yetWork = department.getMemberList().size() - onWork;
+            }
+            else if (3 <= commonUtil.checkLevel(authentication)) {
                 onWork = attendanceRepository.countByAttendanceDateAndDeletedIsFalse(today);
                 lateWork = attendanceRepository.countByAttendanceDateAndOnWorkAfterAndDeletedIsFalse(today, nine);
-                yetWork = countOfMember - onWork;
+                yetWork = (int) memberRepository.count() - onWork;
             } else {
                 return new RES_readAttendanceSummary("RSS003");
             }
@@ -307,6 +270,39 @@ public class AttendanceService {
         }
     }
 
+    //맴버 아이디로 부서 아이디 가져오기
+    private Long getDepartmentId(String memberId) {
+        try {
+            return memberRepository.findAllByMemberIdAndDeletedIsFalse(memberId).getDepartment().getId();
+        } catch (Exception e) {
+            return -1L;
+        }
+    }
+
+    //요청 시 권한에 따라서 1, 2차 승인 여부 변경
+    private boolean rectifyApproved(RectifyAttendance rectifyAttendance) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        String leaderId = getMemberId();
+
+        //LVL2(부서장) 인 경우 승인하려는 맴버가 부서원인지 확인 후 승인 진행
+        if (commonUtil.checkLevel(authentication) == 2) {
+            Department department_m = memberRepository.findAllByMemberIdAndDeletedIsFalse(rectifyAttendance.getMemberId()).getDepartment();
+            Department department_l = departmentRepository.findByLeader_MemberId(leaderId);
+            if (department_m.equals(department_l)) {
+                setApprovalAndApprover(rectifyAttendance, 1, leaderId);
+                return true;
+            }
+        }
+        //LVL3(부장)이상인 경우 모두 승인
+        else if (3 <= commonUtil.checkLevel(authentication)) {
+            setApprovalAndApprover(rectifyAttendance, 2, leaderId);
+            return true;
+        }
+        return false;
+    }
+
+    //승인및 승인자 설정
     private void setApprovalAndApprover(RectifyAttendance rectifyAttendance, int degree, String approver) {
         if (degree == 1) {
             rectifyAttendance.setApproval1(true);
