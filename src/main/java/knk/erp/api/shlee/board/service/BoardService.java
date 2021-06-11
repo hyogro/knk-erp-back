@@ -12,7 +12,6 @@ import knk.erp.api.shlee.board.util.BoardUtil;
 import knk.erp.api.shlee.common.util.CommonUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
@@ -52,7 +51,7 @@ public class BoardService {
 
     // 게시글 읽기
     @Transactional
-    public Read_BoardDTO_RES readBoard(Long board_idx, BoardDTO boardDTO){
+    public Read_BoardDTO_RES readBoard(BoardDTO boardDTO){
         try{
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             Member reader = memberRepository.findAllByMemberIdAndDeletedIsFalse(authentication.getName());
@@ -75,7 +74,7 @@ public class BoardService {
 
     // 게시글 수정
     @Transactional
-    public Update_BoardDTO_RES updateBoard(Long board_idx, BoardDTO boardDTO){
+    public Update_BoardDTO_RES updateBoard(BoardDTO boardDTO){
         try{
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             Member updater = memberRepository.findAllByMemberIdAndDeletedIsFalse(authentication.getName());
@@ -103,7 +102,7 @@ public class BoardService {
 
     // 게시글 삭제
     @Transactional
-    public Delete_BoardDTO_RES deleteBoard(Long board_idx, BoardDTO boardDTO){
+    public Delete_BoardDTO_RES deleteBoard(BoardDTO boardDTO){
         try{
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             Member deleter = memberRepository.findAllByMemberIdAndDeletedIsFalse(authentication.getName());

@@ -26,19 +26,19 @@ public class BoardController {
     // 게시글 읽기
     @PostMapping("/{board_idx}")
     public ResponseEntity<Read_BoardDTO_RES> readBoard(@PathVariable Long board_idx, @RequestBody BoardDTO boardDTO){
-        return ResponseEntity.ok(boardService.readBoard(board_idx, boardDTO));
+        return ResponseEntity.ok(boardService.readBoard(boardDTO));
     }
 
     // 게시글 수정
     @PostMapping("/{board_idx}/updateBoard")
     public ResponseEntity<Update_BoardDTO_RES> updateBoard(@PathVariable Long board_idx, @RequestBody BoardDTO boardDTO){
-        return ResponseEntity.ok(boardService.updateBoard(board_idx, boardDTO));
+        return ResponseEntity.ok(boardService.updateBoard(boardDTO));
     }
 
     // 게시글 삭제
     @PostMapping("/{board_idx}/deleteBoard")
     public ResponseEntity<Delete_BoardDTO_RES> deleteBoard(@PathVariable Long board_idx, @RequestBody BoardDTO boardDTO){
-        return ResponseEntity.ok(boardService.deleteBoard(board_idx, boardDTO));
+        return ResponseEntity.ok(boardService.deleteBoard(boardDTO));
     }
 
     // 게시글 목록 보기
