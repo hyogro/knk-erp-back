@@ -12,6 +12,7 @@ import knk.erp.api.shlee.board.util.BoardUtil;
 import knk.erp.api.shlee.common.util.CommonUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
@@ -134,6 +135,7 @@ public class BoardService {
             if(boardListSearchDTOReq.getKeyword() == null) boardListSearchDTOReq.setKeyword("");
 
             pageable = PageRequest.of(pageable.getPageNumber() <= 0 ? 0 : pageable.getPageNumber() - 1, pageable.getPageSize());
+
             Page<Board> boardPage;
 
             switch (boardListSearchDTOReq.getSearchType()) {
@@ -153,8 +155,8 @@ public class BoardService {
 
                 case "참조":
                     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-                    Member me = memberRepository.findAllByMemberIdAndDeletedIsFalse(authentication.getName());
-                    boardPage = boardRepository.findAllByReferenceMemberIdContainingAndDeletedFalse(pageable, me.getMemberId());
+                    boardPage = boardUtil.findAllByReferenceMemberId(authentication, boardRepository.findAllByDeletedIsFalse(pageable),
+                            pageable);
                     break;
 
                 default:

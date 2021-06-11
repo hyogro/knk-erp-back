@@ -2,6 +2,7 @@ package knk.erp.api.shlee.board.util;
 
 
 import javax.persistence.AttributeConverter;
+import javax.persistence.Converter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
