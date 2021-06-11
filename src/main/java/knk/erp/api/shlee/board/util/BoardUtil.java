@@ -17,16 +17,8 @@ public class BoardUtil {
 
     public Page<Board> findAllByReferenceMemberId(Authentication authentication, Page<Board> boardPage, Pageable pageable){
         List<Board> ref_BoardList = new ArrayList<>();
-        for(int index = 0; index < boardPage.getContent().size(); index++){
-            Board b = boardPage.getContent().get(index);
-
-            int check = 0;
-            if(!b.getReferenceMemberId().isEmpty()){
-                for(String ref_id : b.getReferenceMemberId()){
-                    if(ref_id.equals(authentication.getName())) check = 1;
-                }
-            }
-            if(check == 1) ref_BoardList.add(b);
+        for(Board b : boardPage.getContent()){
+            if(b.getReferenceMemberId().contains(authentication.getName()))ref_BoardList.add(b);
         }
 
         return new PageImpl<>(ref_BoardList, pageable, ref_BoardList.size());
