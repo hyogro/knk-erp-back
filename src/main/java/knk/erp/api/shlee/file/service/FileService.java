@@ -23,31 +23,47 @@ public class FileService {
     private final FileRepository fileRepository;
     private final Path path = Paths.get("/home/ubuntu/files");
 
-    private String fileNameMake(String extension){
-        String fileName = LocalDateTime.now()+"";
-        return fileName.replace("T", "").replace("-","").replace(".","").replace(":","")+extension;
+    private String getMemberId() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return authentication.getName();
+    }
 
+    private String getOriginalFileName(MultipartFile multipartFile) {
+        return multipartFile.getOriginalFilename();
+    }
+
+    private String makeFileName(String extension) {
+        String fileName = LocalDateTime.now() + "";
+        return fileName.replace("T", "").replace("-", "").replace(".", "").replace(":", "") + extension;
+    }
+
+    private String getExtension(String originalFilename) {
+        return originalFilename.substring(originalFilename.lastIndexOf("."));
+    }
+
+    private void resolveFile(MultipartFile multipartFile, String fileName) throws IOException {
+        Path location = this.path.resolve(fileName);
+        Files.copy(multipartFile.getInputStream(), location, StandardCopyOption.REPLACE_EXISTING);
+    }
+
+    private File saveEntity(MultipartFile multipartFile) {
+        String memberId = getMemberId();
+        String originalFilename = getOriginalFileName(multipartFile);
+        String extension = getExtension(originalFilename);
+        String fileName = makeFileName(extension);
+
+        File file = File.builder().originalFileName(originalFilename).fileName(fileName).extension(extension).memberId(memberId).build();
+        return fileRepository.save(file);
     }
 
     public RES_fileSave saveFile(MultipartFile multipartFile) {
         try {
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            String memberId = authentication.getName();
+            String fileName = saveEntity(multipartFile).getFileName();
 
-            String originalFilename = multipartFile.getOriginalFilename();
-            assert originalFilename != null;
+            resolveFile(multipartFile, fileName);
 
-            String extension = originalFilename.substring(originalFilename.lastIndexOf("."));
-
-            String fileName = fileNameMake(extension);
-
-            File file = File.builder().originalFileName(originalFilename).fileName(fileName).extension(extension).memberId(memberId).build();
-            fileRepository.save(file);
-
-            Path location = this.path.resolve(fileName);
-            Files.copy(multipartFile.getInputStream(), location, StandardCopyOption.REPLACE_EXISTING);
             return new RES_fileSave("FS001", fileName);
-        } catch (IOException e) {
+        } catch (Exception e) {
             return new RES_fileSave("FS002", e.getMessage());
         }
 
