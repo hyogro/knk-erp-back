@@ -199,11 +199,11 @@ public class AttendanceService {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             String memberId = authentication.getName();
             List<RectifyAttendance> rectifyAttendanceList = new ArrayList<>();
-            if (commonUtil.checkLevel(authentication) == 2) {
+            if (commonUtil.checkLevel() == 2) {
                 Member member = memberRepository.findAllByMemberIdAndDeletedIsFalse(memberId);
                 Long departmentId = member.getDepartment().getId();
                 rectifyAttendanceList = rectifyAttendanceRepository.findAllByDepartmentIdAndDeletedIsFalse(departmentId);
-            } else if (3 <= commonUtil.checkLevel(authentication)) {
+            } else if (3 <= commonUtil.checkLevel()) {
                 rectifyAttendanceList = rectifyAttendanceRepository.findAllByDeletedIsFalse();
             }
             return new RES_readRectifyAttendanceList("RRAL001", util.RectifyAttendanceListToDTO(rectifyAttendanceList));
@@ -238,13 +238,13 @@ public class AttendanceService {
             LocalDate today = LocalDate.now();
             LocalTime nine = LocalTime.of(9, 0, 0);
 
-            if (commonUtil.checkLevel(authentication) == 2) {
+            if (commonUtil.checkLevel() == 2) {
                 Department department = memberRepository.findAllByMemberIdAndDeletedIsFalse(memberId).getDepartment();
                 onWork = attendanceRepository.countByAttendanceDateAndDepartmentIdAndDeletedIsFalse(today, department.getId());
                 lateWork = attendanceRepository.countByAttendanceDateAndDepartmentIdAndOnWorkAfterAndDeletedIsFalse(today, department.getId(), nine);
                 yetWork = department.getMemberList().size() - onWork;
             }
-            else if (3 <= commonUtil.checkLevel(authentication)) {
+            else if (3 <= commonUtil.checkLevel()) {
                 onWork = attendanceRepository.countByAttendanceDateAndDeletedIsFalse(today);
                 lateWork = attendanceRepository.countByAttendanceDateAndOnWorkAfterAndDeletedIsFalse(today, nine);
                 yetWork = (int) memberRepository.count() - onWork;
@@ -286,7 +286,7 @@ public class AttendanceService {
         String leaderId = getMemberId();
 
         //LVL2(부서장) 인 경우 승인하려는 맴버가 부서원인지 확인 후 승인 진행
-        if (commonUtil.checkLevel(authentication) == 2) {
+        if (commonUtil.checkLevel() == 2) {
             Department department_m = memberRepository.findAllByMemberIdAndDeletedIsFalse(rectifyAttendance.getMemberId()).getDepartment();
             Department department_l = departmentRepository.findByLeader_MemberId(leaderId);
             if (department_m.equals(department_l)) {
@@ -295,7 +295,7 @@ public class AttendanceService {
             }
         }
         //LVL3(부장)이상인 경우 모두 승인
-        else if (3 <= commonUtil.checkLevel(authentication)) {
+        else if (3 <= commonUtil.checkLevel()) {
             setApprovalAndApprover(rectifyAttendance, 2, leaderId);
             return true;
         }

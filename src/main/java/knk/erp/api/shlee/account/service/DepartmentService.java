@@ -145,7 +145,7 @@ public class DepartmentService {
         try {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-            if (3 <= commonUtil.checkLevel(authentication)) {
+            if (3 <= commonUtil.checkLevel()) {
                 return new RES_DepNameAndMemCount("RDAM001", new DepartmentNameAndMemberCountDTO("구이앤금우통신",
                         (int) memberRepository.count()));
             }
