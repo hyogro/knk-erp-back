@@ -25,14 +25,10 @@ public class ScheduleService {
     private final ScheduleRepository scheduleRepository;
     private final MemberRepository memberRepository;
     private final ScheduleUtil util;
-    private final CommonUtil commonUtil;
 
     public RES_createSchedule createSchedule(ScheduleDTO scheduleDTO) {
         try {
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            String memberId = authentication.getName();
-            scheduleDTO.setMemberId(memberId);
-            scheduleDTO.setDepartmentId(getDepartmentIdByMemberId(memberId));
+            setMemberIdAndDepartmentId(scheduleDTO);
             scheduleRepository.save(scheduleDTO.toEntity());
             return new RES_createSchedule("CS001");
         } catch (Exception e) {
@@ -42,26 +38,21 @@ public class ScheduleService {
 
     public RES_readScheduleList readScheduleList(REQ_readScheduleListOption option) {
         try {
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            String memberId = authentication.getName();
+            String memberId = getMemberId();
+            Long departmentId = getDepartmentId(memberId);
+            String viewOption = option.getViewOption();
             List<Schedule> scheduleList = new ArrayList<>();
-            Sort sort = Sort.by(Sort.Direction.ASC, "startDate");
-            if(option.getViewOption().isEmpty()){
-                scheduleList.addAll(scheduleRepository.findAllByMemberIdAndDeletedIsFalse(memberId,
-                        PageRequest.of(option.getPage(), option.getSize(), sort)).toList());
+            if (viewOption.isEmpty()) {
+                scheduleList.addAll(scheduleRepository.findAllByMemberIdAndDeletedIsFalse(memberId,getPageRequest(option)).toList());
             }
-            if (option.getViewOption().contains("all")) {
-                scheduleList.addAll(scheduleRepository.findAllByViewOptionAndDeletedIsFalse("all"
-                        , PageRequest.of(option.getPage(), option.getSize(), sort)).toList());
+            if (parseViewOption(viewOption, "all")) {
+                scheduleList.addAll(scheduleRepository.findAllByViewOptionAndDeletedIsFalse("all", getPageRequest(option)).toList());
             }
-            if (option.getViewOption().contains("dep")) {
-                Long departmentId = getDepartmentIdByMemberId(memberId);
-                scheduleList.addAll(scheduleRepository.findAllByViewOptionAndDepartmentIdAndDeletedIsFalse("dep"
-                        , departmentId, PageRequest.of(option.getPage(), option.getSize(), sort)).toList());
+            if (parseViewOption(viewOption, "dep")) {
+                scheduleList.addAll(scheduleRepository.findAllByViewOptionAndDepartmentIdAndDeletedIsFalse("dep", departmentId, getPageRequest(option)).toList());
             }
-            if (option.getViewOption().contains("own")) {
-                scheduleList.addAll(scheduleRepository.findAllByViewOptionAndMemberIdAndDeletedIsFalse("own"
-                        , memberId, PageRequest.of(option.getPage(), option.getSize(), sort)).toList());
+            if (parseViewOption(viewOption, "own")) {
+                scheduleList.addAll(scheduleRepository.findAllByViewOptionAndMemberIdAndDeletedIsFalse("own", memberId, getPageRequest(option)).toList());
             }
 
             return new RES_readScheduleList("RSL001", util.ScheduleListToDTO(scheduleList));
@@ -72,7 +63,6 @@ public class ScheduleService {
 
     public RES_readScheduleDetail readScheduleDetail(ScheduleDTO scheduleDTO) {
         try {
-
             Schedule schedule = scheduleRepository.getOne(scheduleDTO.getId());
             return new RES_readScheduleDetail("RSD001", util.ScheduleToDTO(schedule));
         } catch (Exception e) {
@@ -82,16 +72,12 @@ public class ScheduleService {
 
     public RES_updateSchedule updateSchedule(ScheduleDTO scheduleDTO) {
         try {
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            String memberId = authentication.getName();
+            String memberId = getMemberId();
 
             Schedule schedule = scheduleRepository.getOne(scheduleDTO.getId());
-
             //실패 - 본인이 아니면 수정불가
             if (!memberId.equals(schedule.getMemberId())) return new RES_updateSchedule("US003");
-
             util.DTOTOSchedule(schedule, scheduleDTO);
-
             scheduleRepository.save(schedule);
             return new RES_updateSchedule("US001");
         } catch (Exception e) {
@@ -101,8 +87,7 @@ public class ScheduleService {
 
     public RES_deleteSchedule deleteSchedule(ScheduleDTO scheduleDTO) {
         try {
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            String memberId = authentication.getName();
+            String memberId = getMemberId();
             Schedule schedule = scheduleRepository.getOne(scheduleDTO.getId());
             //실패 - 본인이 아니면 삭제불가
             if (!memberId.equals(schedule.getMemberId())) return new RES_deleteSchedule("DS003");
@@ -116,26 +101,37 @@ public class ScheduleService {
         }
     }
 
-    public RES_readScheduleList readIndexScheduleList() {
-        try {
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            String memberId = authentication.getName();
+    //옵션으로 페이지정보 생성
+    private PageRequest getPageRequest(REQ_readScheduleListOption option) {
+        Sort sort = Sort.by(Sort.Direction.ASC, "startDate");
+        return PageRequest.of(option.getPage(), option.getSize(), sort);
+    }
 
-            LocalDateTime today = LocalDateTime.of(LocalDate.now(), LocalTime.of(0, 0, 0));
-            List<Schedule> scheduleList = scheduleRepository.findAllByDeletedIsFalseAndMemberIdAndEndDateAfter(memberId, today, PageRequest.of(0, 5)).toList();
-            return new RES_readScheduleList("RSL001", util.ScheduleListToDTO(scheduleList));
-        } catch (Exception e) {
-            return new RES_readScheduleList("RSL002", e.getMessage());
-        }
+    //뷰 옵션 체크
+    private boolean parseViewOption(String viewOption, String target) {
+        return viewOption.contains(target);
+    }
+
+    //ScheduleDTO 에 맴버 아이디 및 부서아이디 입력
+    private void setMemberIdAndDepartmentId(ScheduleDTO scheduleDTO) {
+        String memberId = getMemberId();
+        scheduleDTO.setMemberId(memberId);
+        scheduleDTO.setDepartmentId(getDepartmentId(memberId));
     }
 
     //맴버 아이디로 부서 아이디 가져오기
-    private Long getDepartmentIdByMemberId(String memberId) {
+    private Long getDepartmentId(String memberId) {
         try {
             return memberRepository.findAllByMemberIdAndDeletedIsFalse(memberId).getDepartment().getId();
         } catch (Exception e) {
             return -1L;
         }
+    }
+
+    //권한 정보 얻어 맴버 아이디 가져오기
+    private String getMemberId() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return authentication.getName();
     }
 
 }
