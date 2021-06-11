@@ -58,7 +58,6 @@ public class BoardService {
             Member reader = memberRepository.findAllByMemberIdAndDeletedIsFalse(authentication.getName());
             Board target = boardRepository.findByIdx(boardDTO.getIdx());
             Member writer = memberRepository.findAllByMemberIdAndDeletedIsFalse(target.getWriterMemberId());
-            board_idx = target.getIdx();
             List<String> reference_memberId = target.getReferenceMemberId();
 
             if(reference_memberId.size() > 0 && !boardUtil.checkReference(reference_memberId, reader)){
@@ -81,7 +80,6 @@ public class BoardService {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             Member updater = memberRepository.findAllByMemberIdAndDeletedIsFalse(authentication.getName());
             Board target = boardRepository.findByIdx(boardDTO.getIdx());
-            board_idx = target.getIdx();
 
             if(!target.getWriterMemberId().equals(updater.getMemberId())) {
                 return new Update_BoardDTO_RES("UB003", "게시글 작성자가 아님");
@@ -110,7 +108,6 @@ public class BoardService {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             Member deleter = memberRepository.findAllByMemberIdAndDeletedIsFalse(authentication.getName());
             Board target = boardRepository.findByIdx(boardDTO.getIdx());
-            board_idx = target.getIdx();
 
             if(!target.getWriterMemberId().equals(deleter.getMemberId())) {
                 return new Delete_BoardDTO_RES("DB003", "게시글 작성자가 아님");
