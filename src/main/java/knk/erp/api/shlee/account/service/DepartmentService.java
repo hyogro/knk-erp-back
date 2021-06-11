@@ -5,8 +5,6 @@ import knk.erp.api.shlee.account.entity.*;
 import knk.erp.api.shlee.account.util.DepartmentUtil;
 import knk.erp.api.shlee.common.util.CommonUtil;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -147,7 +145,7 @@ public class DepartmentService {
         try {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-            if (3 <= commonUtil.checkMaster(authentication)) {
+            if (3 <= commonUtil.checkLevel()) {
                 return new RES_DepNameAndMemCount("RDAM001", new DepartmentNameAndMemberCountDTO("구이앤금우통신",
                         (int) memberRepository.count()));
             }

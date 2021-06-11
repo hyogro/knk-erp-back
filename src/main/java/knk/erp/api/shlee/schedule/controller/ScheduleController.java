@@ -54,11 +54,4 @@ public class ScheduleController {
         return ResponseEntity.ok(scheduleService.deleteSchedule(scheduleDTO));
     }
 
-    /**
-     * 메인화면 일정 목록 읽기
-     **/
-    @PostMapping("/readIndexScheduleList")
-    public ResponseEntity<RES_readScheduleList> readIndexScheduleList() {
-        return ResponseEntity.ok(scheduleService.readIndexScheduleList());
-    }
 }

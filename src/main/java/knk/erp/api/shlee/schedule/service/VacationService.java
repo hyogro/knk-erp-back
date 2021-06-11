@@ -4,8 +4,6 @@ import knk.erp.api.shlee.account.entity.Department;
 import knk.erp.api.shlee.account.entity.Member;
 import knk.erp.api.shlee.account.entity.MemberRepository;
 import knk.erp.api.shlee.common.util.CommonUtil;
-import knk.erp.api.shlee.schedule.dto.Attendance.AttendanceSummaryDTO;
-import knk.erp.api.shlee.schedule.dto.Attendance.RES_readAttendanceSummary;
 import knk.erp.api.shlee.schedule.dto.Vacation.*;
 import knk.erp.api.shlee.schedule.entity.Vacation;
 import knk.erp.api.shlee.schedule.repository.VacationRepository;
@@ -39,13 +37,12 @@ public class VacationService {
     //휴가 생성
     public RES_createVacation createVacation(VacationDTO vacationDTO) {
         try {
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            String memberId = authentication.getName();
+            String memberId = getMemberId();
             vacationDTO.setMemberId(memberId);
-            vacationDTO.setDepartmentId(getDepartmentIdByMemberId(memberId));
+            vacationDTO.setDepartmentId(getDepartmentId(memberId));
 
             Vacation vacation = vacationDTO.toEntity();
-            approveCheck(authentication, vacation);
+            approveCheck(vacation);
 
             vacationRepository.save(vacation);
             return new RES_createVacation("CV001");
@@ -57,8 +54,7 @@ public class VacationService {
     //내 휴가목록 조회
     public RES_readVacationList readVacationList() {
         try {
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            String memberId = authentication.getName();
+            String memberId = getMemberId();
             List<Vacation> vacationList = vacationRepository.findAllByMemberIdAndDeletedIsFalse(memberId);
             return new RES_readVacationList("RVL001", util.VacationListToDTO(vacationList));
         } catch (Exception e) {
@@ -69,8 +65,7 @@ public class VacationService {
     //내 휴가 삭제
     public RES_deleteVacation deleteVacation(VacationDTO vacationDTO) {
         try {
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            String memberId = authentication.getName();
+            String memberId = getMemberId();
 
             Vacation vacation = vacationRepository.getOne(vacationDTO.getId());
             if (vacation.isApproval1() && vacation.isApproval2()) return new RES_deleteVacation("DV003");
@@ -87,16 +82,15 @@ public class VacationService {
     //승인, 거부할 휴가목록 조회
     public RES_readVacationList readVacationListForApprove() {
         try {
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            String memberId = authentication.getName();
+            String memberId = getMemberId();
             List<Vacation> vacationList = new ArrayList<>();
 
-            if (commonUtil.checkMaster(authentication) == 2) {
+            if (commonUtil.checkLevel() == 2) {
                 Member member = memberRepository.findAllByMemberIdAndDeletedIsFalse(memberId);
                 Long departmentId = member.getDepartment().getId();
                 vacationList = vacationRepository.findAllByDepartmentIdAndApproval1IsFalseAndDeletedIsFalse(departmentId);
 
-            } else if (3 <= commonUtil.checkMaster(authentication)) {
+            } else if (3 <= commonUtil.checkLevel()) {
                 vacationList = vacationRepository.findAllByApproval2IsFalseAndDeletedIsFalse();
             }
             return new RES_readVacationList("RVL001", util.VacationListToDTO(vacationList));
@@ -108,17 +102,16 @@ public class VacationService {
     //휴가 승인
     public RES_approveVacation approveVacation(VacationDTO vacationDTO) {
         try {
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            String memberId = authentication.getName();
+            String memberId = getMemberId();
             Vacation vacation = vacationRepository.getOne(vacationDTO.getId());
 
-            if (commonUtil.checkMaster(authentication) == 2) {
+            if (commonUtil.checkLevel() == 2) {
                 Member member = memberRepository.findAllByMemberIdAndDeletedIsFalse(memberId);
                 Long departmentId = member.getDepartment().getId();
                 if (!vacation.getDepartmentId().equals(departmentId)) return new RES_approveVacation("AV003");
             }
 
-            boolean isChange = approveCheck(authentication, vacation);
+            boolean isChange = approveCheck(vacation);
             if(isChange) vacationRepository.save(vacation);
 
             return isChange ? new RES_approveVacation("AV001") : new RES_approveVacation("AV003");
@@ -131,10 +124,9 @@ public class VacationService {
     //휴가 거절
     public RES_rejectVacation rejectVacation(REQ_rejectVacation reject) {
         try {
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            String memberId = authentication.getName();
+            String memberId = getMemberId();
 
-            if (2 <= commonUtil.checkMaster(authentication)) {
+            if (2 <= commonUtil.checkLevel()) {
 
                 Vacation vacation = vacationRepository.getOne(reject.getId());
                 vacation.setReject(true);
@@ -142,7 +134,7 @@ public class VacationService {
 
                 if (vacation.isApproval1() && vacation.isApproval2()) return new RES_rejectVacation("RV004");
 
-                if (commonUtil.checkMaster(authentication) == 2) {
+                if (commonUtil.checkLevel() == 2) {
                     Member member = memberRepository.findAllByMemberIdAndDeletedIsFalse(memberId);
                     Long departmentId = member.getDepartment().getId();
                     if (!vacation.getDepartmentId().equals(departmentId)) return new RES_rejectVacation("RV003");
@@ -161,18 +153,17 @@ public class VacationService {
     //휴가 요약정보 조회
     public RES_readVacationSummary readVacationSummary(){
         try {
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            String memberId = authentication.getName();
+            String memberId = getMemberId();
             int vacation; //휴가
             LocalDateTime todayS = LocalDateTime.of(LocalDate.now(), LocalTime.of(0,0,0));
             LocalDateTime todayE = LocalDateTime.of(LocalDate.now(), LocalTime.of(23,59,59));
 
-            if (commonUtil.checkMaster(authentication) == 2) {
+            if (commonUtil.checkLevel() == 2) {
                 Member member = memberRepository.findAllByMemberIdAndDeletedIsFalse(memberId);
                 Department department = member.getDepartment();
                 vacation = vacationRepository.countAllByDepartmentIdAndStartDateAfterAndEndDateBeforeAndApproval1IsTrueAndApproval2IsTrueAndDeletedIsFalse(department.getId(), todayS, todayE);
 
-            } else if (3 <= commonUtil.checkMaster(authentication)) {
+            } else if (3 <= commonUtil.checkLevel()) {
                 vacation = vacationRepository.countAllByStartDateAfterAndEndDateBeforeAndApproval1IsTrueAndApproval2IsTrueAndDeletedIsFalse(todayS, todayE);
             } else {
                 return new RES_readVacationSummary("RVS003");
@@ -184,12 +175,13 @@ public class VacationService {
     }
 
     //권한 체크 및 승인여부 변경
-    private boolean approveCheck(Authentication authentication, Vacation vacation) {
-        if (commonUtil.checkMaster(authentication) == 2) {
+    private boolean approveCheck(Vacation vacation) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (commonUtil.checkLevel() == 2) {
             vacation.setApproval1(true);
             vacation.setApprover1(authentication.getName());
             return true;
-        } else if (3 <= commonUtil.checkMaster(authentication)) {
+        } else if (3 <= commonUtil.checkLevel()) {
             if (!vacation.isApproval1()) {
                 vacation.setApproval1(true);
                 vacation.setApprover1(authentication.getName());
@@ -202,12 +194,18 @@ public class VacationService {
     }
 
     //맴버 아이디로 부서 아이디 가져오기
-    private Long getDepartmentIdByMemberId(String memberId) {
+    private Long getDepartmentId(String memberId) {
         try {
             return memberRepository.findAllByMemberIdAndDeletedIsFalse(memberId).getDepartment().getId();
         } catch (Exception e) {
             return -1L;
         }
+    }
+
+    //권한 정보 얻어 맴버 아이디 가져오기
+    private String getMemberId() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return authentication.getName();
     }
 
 
