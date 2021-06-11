@@ -145,8 +145,8 @@ public class BoardService {
 
                 case "작성자검색":
                     String target_memberId = boardListSearchDTOReq.getKeyword();
-                    Member writer = memberRepository.findByMemberNameAndDeletedIsFalse(target_memberId);
-                    boardPage = boardRepository.findAllByWriterMemberIdContainingAndDeletedFalse(pageable, writer.getMemberId());
+                    Member writer = memberRepository.findAllByMemberIdAndDeletedIsFalse(target_memberId);
+                    boardPage = boardRepository.findAllByWriterMemberIdAndDeletedFalse(pageable, writer.getMemberId());
                     break;
 
                 case "참조":
