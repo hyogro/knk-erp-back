@@ -46,7 +46,10 @@ public class ScheduleService {
             String memberId = authentication.getName();
             List<Schedule> scheduleList = new ArrayList<>();
             Sort sort = Sort.by(Sort.Direction.ASC, "startDate");
-
+            if(option.getViewOption().isEmpty()){
+                scheduleList.addAll(scheduleRepository.findAllByMemberIdAndDeletedIsFalse(memberId,
+                        PageRequest.of(option.getPage(), option.getSize(), sort)).toList());
+            }
             if (option.getViewOption().contains("all")) {
                 scheduleList.addAll(scheduleRepository.findAllByViewOptionAndDeletedIsFalse("all"
                         , PageRequest.of(option.getPage(), option.getSize(), sort)).toList());
