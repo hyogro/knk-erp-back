@@ -73,10 +73,10 @@ public class ScheduleService {
     public RES_updateSchedule updateSchedule(ScheduleDTO scheduleDTO) {
         try {
             String memberId = getMemberId();
-
             Schedule schedule = scheduleRepository.getOne(scheduleDTO.getId());
-            //실패 - 본인이 아니면 수정불가
+
             if (!memberId.equals(schedule.getMemberId())) return new RES_updateSchedule("US003");
+
             util.DTOTOSchedule(schedule, scheduleDTO);
             scheduleRepository.save(schedule);
             return new RES_updateSchedule("US001");
@@ -89,7 +89,7 @@ public class ScheduleService {
         try {
             String memberId = getMemberId();
             Schedule schedule = scheduleRepository.getOne(scheduleDTO.getId());
-            //실패 - 본인이 아니면 삭제불가
+
             if (!memberId.equals(schedule.getMemberId())) return new RES_deleteSchedule("DS003");
 
             schedule.setDeleted(true);

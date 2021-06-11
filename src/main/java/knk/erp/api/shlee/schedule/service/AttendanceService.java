@@ -6,6 +6,7 @@ import knk.erp.api.shlee.account.entity.Member;
 import knk.erp.api.shlee.account.entity.MemberRepository;
 import knk.erp.api.shlee.common.util.CommonUtil;
 import knk.erp.api.shlee.schedule.dto.Attendance.*;
+import knk.erp.api.shlee.schedule.dto.Schedule.ScheduleDTO;
 import knk.erp.api.shlee.schedule.entity.Attendance;
 import knk.erp.api.shlee.schedule.entity.RectifyAttendance;
 import knk.erp.api.shlee.schedule.repository.AttendanceRepository;
@@ -39,17 +40,15 @@ public class AttendanceService {
     //출근 기록
     public RES_onWork onWork() {
         try {
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            String memberId = authentication.getName();
+            String memberId = getMemberId();
             LocalDate today = LocalDate.now();
             LocalTime onWorkTime = LocalTime.now();
-            System.out.println(onWorkTime);
 
             //실패 - 기존 출근기록 있으면 리턴
             boolean isOnWorked = attendanceRepository.countByAttendanceDateAndMemberIdAndDeletedIsFalse(today, memberId) != 0;
             if (isOnWorked) return new RES_onWork("ON003");
 
-            AttendanceDTO attendanceDTO = new AttendanceDTO(memberId, today, onWorkTime, getDepartmentIdByMemberId(memberId));
+            AttendanceDTO attendanceDTO = new AttendanceDTO(memberId, today, onWorkTime, getDepartmentId(memberId));
             attendanceRepository.save(attendanceDTO.toEntity());
             return new RES_onWork("ON001");
 
@@ -62,10 +61,9 @@ public class AttendanceService {
     //퇴근 기록
     public RES_offWork offWork() {
         try {
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            String memberId = authentication.getName();
+            String memberId = getMemberId();
             LocalDate today = LocalDate.now();
-            LocalTime onWorkTime = LocalTime.now();
+            LocalTime offWorkTime = LocalTime.now();
 
             Optional<Attendance> attendanceOptional = attendanceRepository.findByAttendanceDateAndMemberIdAndDeletedIsFalse(today, memberId);
             if (!attendanceOptional.isPresent()) return new RES_offWork("OFF005");
@@ -75,7 +73,7 @@ public class AttendanceService {
             if (attendance.getOffWork() != null) return new RES_offWork("OFF003");
 
             //성공 - 기존 퇴근기록 없으면 생성 후 응답
-            attendance.setOffWork(onWorkTime);
+            attendance.setOffWork(offWorkTime);
             attendanceRepository.save(attendance);
             return new RES_offWork("OFF001");
         } catch (Exception e) {
@@ -87,8 +85,7 @@ public class AttendanceService {
     //출, 퇴근기록 조회
     public RES_readAttendanceList readAttendanceList() {
         try {
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            String memberId = authentication.getName();
+            String memberId = getMemberId();
 
             //성공 - 삭제되지 않은 기록 중 본인의 것만 조회
             List<Attendance> attendanceList = attendanceRepository.findAllByMemberIdAndDeletedIsFalse(memberId);
@@ -102,17 +99,14 @@ public class AttendanceService {
     //출,퇴근기록 정정 요청 -> 정정요청 신규 생성
     public RES_createRectifyAttendance createRectifyAttendance(RectifyAttendanceDTO rectifyAttendanceDTO) {
         try {
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            String memberId = authentication.getName();
-
-            rectifyAttendanceDTO.setMemberId(memberId);
-            rectifyAttendanceDTO.setDepartmentId(getDepartmentIdByMemberId(memberId));
+            //맴버아이디 및 부서아디 세팅
+            setMemberIdAndDepartmentId(rectifyAttendanceDTO);
 
             //성공 - 생성 후 응답
             RectifyAttendance rectifyAttendance = rectifyAttendanceDTO.toEntity();
 
             //레벨에 따른 1,2차 승인여부 변경
-            rectifyApproved(authentication, rectifyAttendance);
+            rectifyApproved(rectifyAttendance);
             RectifyAttendance done = rectifyAttendanceRepository.save(rectifyAttendance);
 
             //1,2차 승인시 출,퇴근 정보 등록
@@ -128,8 +122,7 @@ public class AttendanceService {
     //출,퇴근기록 정정 요청 -> 출퇴근 기록으로 정정요청 생성
     public RES_updateRectifyAttendance updateRectifyAttendance(RectifyAttendanceDTO rectifyAttendanceDTO) {
         try {
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            String memberId = authentication.getName();
+            String memberId = getMemberId();
 
             Attendance attendance = attendanceRepository.findByIdAndDeletedIsFalse(rectifyAttendanceDTO.getId());
 
@@ -137,10 +130,10 @@ public class AttendanceService {
             if (!attendance.getMemberId().equals(memberId)) return new RES_updateRectifyAttendance("URA003");
 
             RectifyAttendance rectifyAttendance = util.AttendanceToRectify(attendance, rectifyAttendanceDTO);
-            rectifyAttendance.setDepartmentId(getDepartmentIdByMemberId(memberId));
+            rectifyAttendance.setDepartmentId(getDepartmentId(memberId));
 
             //레벨에 따른 1,2차 승인여부 변경
-            rectifyApproved(authentication, rectifyAttendance);
+            rectifyApproved(rectifyAttendance);
             RectifyAttendance done = rectifyAttendanceRepository.save(rectifyAttendance);
 
             attendance.setDeleted(true);
@@ -171,7 +164,7 @@ public class AttendanceService {
     }
 
     //맴버 아이디로 부서 아이디 가져오기
-    private Long getDepartmentIdByMemberId(String memberId) {
+    private Long getDepartmentId(String memberId) {
         try {
             return memberRepository.findAllByMemberIdAndDeletedIsFalse(memberId).getDepartment().getId();
         } catch (Exception e) {
@@ -180,28 +173,23 @@ public class AttendanceService {
     }
 
     //요청 시 권한에 따라서 1, 2차 승인 여부 변경
-    private boolean rectifyApproved(Authentication authentication, RectifyAttendance rectifyAttendance) {
-        String leaderId = authentication.getName();
-        String memberId = rectifyAttendance.getMemberId();
+    private boolean rectifyApproved(RectifyAttendance rectifyAttendance) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        String leaderId = getMemberId();
 
         //LVL2(부서장) 인 경우 승인하려는 맴버가 부서원인지 확인 후 승인 진행
         if (commonUtil.checkMaster(authentication) == 2) {
-            Member member = memberRepository.findAllByMemberIdAndDeletedIsFalse(memberId);
+            Department department_m = memberRepository.findAllByMemberIdAndDeletedIsFalse(rectifyAttendance.getMemberId()).getDepartment();
             Department department_l = departmentRepository.findByLeader_MemberId(leaderId);
-            if (member.getDepartment().getId().equals(department_l.getId())) {
-                rectifyAttendance.setApproval1(true);
-                rectifyAttendance.setApprover1(leaderId);
+            if (department_m.equals(department_l)) {
+                setApprovalAndApprover(rectifyAttendance, 1, leaderId);
                 return true;
             }
         }
         //LVL3(부장)이상인 경우 모두 승인
         else if (3 <= commonUtil.checkMaster(authentication)) {
-            if (!rectifyAttendance.isApproval1()) {
-                rectifyAttendance.setApproval1(true);
-                rectifyAttendance.setApprover1(leaderId);
-            }
-            rectifyAttendance.setApproval2(true);
-            rectifyAttendance.setApprover2(leaderId);
+            setApprovalAndApprover(rectifyAttendance, 2, leaderId);
             return true;
         }
         return false;
@@ -263,11 +251,9 @@ public class AttendanceService {
     //출,퇴근 정정 승인 레벨 2, 레벨 3만 접근 가능.
     public RES_approveRectifyAttendance approveRectifyAttendance(RectifyAttendanceDTO rectifyAttendanceDTO) {
         try {
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
             RectifyAttendance rectifyAttendance = rectifyAttendanceRepository.getOne(rectifyAttendanceDTO.getId());
             if (rectifyAttendance.isDeleted()) return new RES_approveRectifyAttendance("ARA004");
-            if (!rectifyApproved(authentication, rectifyAttendance)) return new RES_approveRectifyAttendance("ARA003");
+            if (!rectifyApproved(rectifyAttendance)) return new RES_approveRectifyAttendance("ARA003");
             RectifyAttendance done = rectifyAttendanceRepository.save(rectifyAttendance);
             rectifyToAttendance(done.getId());
             return new RES_approveRectifyAttendance("ARA001");
@@ -309,16 +295,43 @@ public class AttendanceService {
     }
 
     //개인 출,퇴근 당일정보 조회
-    public RES_readAttendance readAttendanceToday(){
+    public RES_readAttendance readAttendanceToday() {
         try {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             String memberId = authentication.getName();
             LocalDate today = LocalDate.now();
             Optional<Attendance> attendance = attendanceRepository.findByAttendanceDateAndMemberIdAndDeletedIsFalse(today, memberId);
             return attendance.map(value -> new RES_readAttendance("RA001", new AttendanceDTO(value))).orElseGet(() -> new RES_readAttendance("RA003"));
-        }catch (Exception e){
+        } catch (Exception e) {
             return new RES_readAttendance("RA002", e.getMessage());
         }
+    }
+
+    private void setApprovalAndApprover(RectifyAttendance rectifyAttendance, int degree, String approver) {
+        if (degree == 1) {
+            rectifyAttendance.setApproval1(true);
+            rectifyAttendance.setApprover1(approver);
+        } else if (degree == 2) {
+            if (!rectifyAttendance.isApproval1()) {
+                rectifyAttendance.setApproval1(true);
+                rectifyAttendance.setApprover1(approver);
+            }
+            rectifyAttendance.setApproval2(true);
+            rectifyAttendance.setApprover2(approver);
+        }
+    }
+
+    //권한 정보 얻어 맴버 아이디 가져오기
+    private String getMemberId() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return authentication.getName();
+    }
+
+    //RectifyAttendanceDTO 에 맴버 아이디 및 부서아이디 입력
+    private void setMemberIdAndDepartmentId(RectifyAttendanceDTO rectifyAttendanceDTO) {
+        String memberId = getMemberId();
+        rectifyAttendanceDTO.setMemberId(memberId);
+        rectifyAttendanceDTO.setDepartmentId(getDepartmentId(memberId));
     }
 
 
