@@ -4,6 +4,7 @@ import knk.erp.api.shlee.account.dto.department.*;
 import knk.erp.api.shlee.account.service.DepartmentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -41,6 +42,18 @@ public class DepartmentController {
     @PostMapping("/updateLeader")
     public ResponseEntity<UpdateLeader_DepartmentDTO_RES> updateLeader(@RequestBody Update_DepartmentLeaderDTO_REQ updateDepartmentLeaderDTOReq){
         return ResponseEntity.ok(departmentService.updateLeader(updateDepartmentLeaderDTOReq));
+    }
+
+    // 부서 멤버 추가
+    @PostMapping("/addMemberToDepartment")
+    public ResponseEntity<Add_DepartmentMemberDTO_RES> addMemberToDepartment(@RequestBody DepartmentMemberDTO_REQ departmentMemberDTOReq){
+        return ResponseEntity.ok(departmentService.addMemberToDepartment(departmentMemberDTOReq));
+    }
+
+    // 부서 멤버 삭제
+    @PostMapping("/deleteMemberToDepartment")
+    public ResponseEntity<Delete_DepartmentMemberDTO_RES> deleteMemberToDepartment(@RequestBody DepartmentMemberDTO_REQ departmentMemberDTOReq){
+        return ResponseEntity.ok(departmentService.deleteMemberToDepartment(departmentMemberDTOReq));
     }
 
     /**2021-06-07 15:07 이상훈 추가

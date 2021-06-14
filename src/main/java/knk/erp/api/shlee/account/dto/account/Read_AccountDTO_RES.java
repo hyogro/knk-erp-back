@@ -20,6 +20,7 @@ public class Read_AccountDTO_RES {
     private void createCodeList(){
         this.help_codeList.put("RA001", "회원정보 목록 읽어오기 성공");
         this.help_codeList.put("RA002", "회원정보 목록 읽어오기 실패");
+        this.help_codeList.put("RA003", "회원정보 목록 읽어오기 실패 - ");
     }
 
     //error

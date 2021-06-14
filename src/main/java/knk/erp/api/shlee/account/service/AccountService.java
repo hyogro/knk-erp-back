@@ -1,6 +1,7 @@
 package knk.erp.api.shlee.account.service;
 
 import knk.erp.api.shlee.account.dto.account.*;
+import knk.erp.api.shlee.account.dto.department.DepartmentDTO_REQ;
 import knk.erp.api.shlee.account.dto.member.MemberDTO_REQ;
 import knk.erp.api.shlee.account.dto.member.Update_AccountDTO_REQ;
 import knk.erp.api.shlee.account.entity.*;
@@ -17,6 +18,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -79,10 +81,16 @@ public class AccountService {
     }
 
     // 회원 목록 읽어오기
-    @Transactional(readOnly = true)
-    public Read_AccountDTO_RES readMember(){
+    @Transactional
+    public Read_AccountDTO_RES readMember(DepartmentDTO_REQ departmentDTOReq){
         try{
-            List<Member> memberList = memberRepository.findAllByDeletedIsFalse();
+            List<Member> memberList;
+            if(departmentDTOReq.getDepartmentName() != null){
+                Department department = departmentRepository.findByDepartmentName(departmentDTOReq.getDepartmentName());
+                memberList = memberRepository.findAllByDepartmentAndDeletedIsFalse(department);
+                if(memberList.isEmpty()) return new Read_AccountDTO_RES("RA003", "입력한 부서가 존재하지않거나 부서에 멤버가 없음");
+            }
+            else memberList = memberRepository.findAllByDeletedIsFalse();
 
             return new Read_AccountDTO_RES("RA001", accountUtil.getMemberList(memberList));
         }catch(Exception e){

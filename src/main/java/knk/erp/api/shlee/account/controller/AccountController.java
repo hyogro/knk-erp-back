@@ -1,6 +1,7 @@
 package knk.erp.api.shlee.account.controller;
 
 import knk.erp.api.shlee.account.dto.account.*;
+import knk.erp.api.shlee.account.dto.department.DepartmentDTO_REQ;
 import knk.erp.api.shlee.account.dto.member.MemberDTO_REQ;
 import knk.erp.api.shlee.account.dto.member.Update_AccountDTO_REQ;
 import knk.erp.api.shlee.account.service.AccountService;
@@ -29,8 +30,8 @@ public class AccountController {
 
     // 회원 정보 읽어오기
     @PostMapping("/readMember")
-    public ResponseEntity<Read_AccountDTO_RES> readMember(){
-        return ResponseEntity.ok(accountService.readMember());
+    public ResponseEntity<Read_AccountDTO_RES> readMember(@RequestBody DepartmentDTO_REQ departmentDTOReq){
+        return ResponseEntity.ok(accountService.readMember(departmentDTOReq));
     }
 
     // 회원 정보 수정
