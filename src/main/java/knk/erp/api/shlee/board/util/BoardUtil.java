@@ -20,7 +20,7 @@ public class BoardUtil {
     public Page<Board> findAllByReferenceMemberId(Authentication authentication, Page<Board> boardPage, Pageable pageable){
         List<Board> ref_BoardList = new ArrayList<>();
         for(Board b : boardPage.getContent()){
-            if(b.getReferenceMemberId().contains(authentication.getName()))ref_BoardList.add(b);
+            if(b.getReferenceMemberId() != null &&b.getReferenceMemberId().contains(authentication.getName()))ref_BoardList.add(b);
         }
 
         return new PageImpl<>(ref_BoardList, pageable, ref_BoardList.size());

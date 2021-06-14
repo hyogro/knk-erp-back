@@ -28,7 +28,7 @@ public class StringListConverter implements AttributeConverter<List<String>, Str
         try {
             list = Arrays.asList(dbData.split(","));
         }catch (Exception e){
-            list.add(null);
+            list = null;
         }
         return list;
     }
