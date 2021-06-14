@@ -14,44 +14,68 @@ public class ScheduleController {
         this.scheduleService = scheduleService;
     }
 
+//    @PostMapping("/createSchedule")
+//    public ResponseEntity<RES_createSchedule> createSchedule(@RequestBody ScheduleDTO scheduleDTO) {
+//        return ResponseEntity.ok(scheduleService.createSchedule(scheduleDTO));
+//    }
+
+//    @PostMapping("/readScheduleList")
+//    public ResponseEntity<RES_readScheduleList> readScheduleList(@RequestBody REQ_readScheduleListOption readScheduleListOption) {
+//        return ResponseEntity.ok(scheduleService.readScheduleList(readScheduleListOption));
+//    }
+
+//    @PostMapping("/readScheduleDetail")
+//    public ResponseEntity<RES_readScheduleDetail> readScheduleDetail(@RequestBody ScheduleDTO scheduleDTO) {
+//        return ResponseEntity.ok(scheduleService.readScheduleDetail(scheduleDTO));
+//    }
+
+//    @PostMapping("/updateSchedule")
+//    public ResponseEntity<RES_updateSchedule> updateSchedule(@RequestBody ScheduleDTO scheduleDTO) {
+//        return ResponseEntity.ok(scheduleService.updateSchedule(scheduleDTO));
+//    }
+
+//    @PostMapping("/deleteSchedule")
+//    public ResponseEntity<RES_deleteSchedule> deleteSchedule(@RequestBody ScheduleDTO scheduleDTO) {
+//        return ResponseEntity.ok(scheduleService.deleteSchedule(scheduleDTO));
+//    }
+
     /**
      * 일정 생성
      **/
-    @PostMapping("/createSchedule")
-    public ResponseEntity<RES_createSchedule> createSchedule(@RequestBody ScheduleDTO scheduleDTO) {
+    @PostMapping("")
+    public ResponseEntity<RES_createSchedule> createSchedule_t(@RequestBody ScheduleDTO scheduleDTO) {
         return ResponseEntity.ok(scheduleService.createSchedule(scheduleDTO));
     }
 
     /**
      * 일정 목록 읽기
      **/
-    @PostMapping("/readScheduleList")
-    public ResponseEntity<RES_readScheduleList> readScheduleList(@RequestBody REQ_readScheduleListOption readScheduleListOption) {
+    @GetMapping("")
+    public ResponseEntity<RES_readScheduleList> readScheduleList_t(@RequestBody REQ_readScheduleListOption readScheduleListOption) {
         return ResponseEntity.ok(scheduleService.readScheduleList(readScheduleListOption));
     }
 
     /**
      * 일정 상세 읽기
      **/
-    @PostMapping("/readScheduleDetail")
-    public ResponseEntity<RES_readScheduleDetail> readScheduleDetail(@RequestBody ScheduleDTO scheduleDTO) {
-        return ResponseEntity.ok(scheduleService.readScheduleDetail(scheduleDTO));
+    @GetMapping("/{sid}")
+    public ResponseEntity<RES_readScheduleDetail> readScheduleDetail_t(@PathVariable("sid") Long sid) {
+        return ResponseEntity.ok(scheduleService.readScheduleDetail(sid));
     }
 
     /**
      * 일정 수정
      **/
-    @PostMapping("/updateSchedule")
-    public ResponseEntity<RES_updateSchedule> updateSchedule(@RequestBody ScheduleDTO scheduleDTO) {
-        return ResponseEntity.ok(scheduleService.updateSchedule(scheduleDTO));
+    @PutMapping("/{sid}")
+    public ResponseEntity<RES_updateSchedule> updateSchedule_t(@PathVariable("sid") Long sid, @RequestBody ScheduleDTO scheduleDTO) {
+        return ResponseEntity.ok(scheduleService.updateSchedule(sid, scheduleDTO));
     }
 
     /**
      * 일정 삭제
      **/
-    @PostMapping("/deleteSchedule")
-    public ResponseEntity<RES_deleteSchedule> deleteSchedule(@RequestBody ScheduleDTO scheduleDTO) {
-        return ResponseEntity.ok(scheduleService.deleteSchedule(scheduleDTO));
+    @DeleteMapping("/{sid}")
+    public ResponseEntity<RES_deleteSchedule> deleteSchedule_t(@PathVariable("sid") Long sid) {
+        return ResponseEntity.ok(scheduleService.deleteSchedule(sid));
     }
-
 }
