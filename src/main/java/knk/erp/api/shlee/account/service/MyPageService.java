@@ -22,7 +22,7 @@ public class MyPageService {
     private final AccountUtil accountUtil;
 
     // 회원 본인 정보 불러오기
-    @Transactional(readOnly = true)
+    @Transactional
     public GetMyInfo_MyPageDTO_RES getMyInfo(){
         try{
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
