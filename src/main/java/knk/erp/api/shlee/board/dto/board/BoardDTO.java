@@ -13,17 +13,16 @@ import java.util.List;
 public class BoardDTO {
     private Long idx;
     private String title;
-    //private String target_department;
     private String content;
     private List<String> referenceMemberId;  // 참조 대상 memberId
     private String boardType;
     private String writerMemberId;
     private Long writerDepId;
+    private List<String> fileName;
 
     public Board toBoard(){
         return Board.builder()
                 .title(title)
-                //.target_department(target_department)
                 .content(content)
                 .referenceMemberId(referenceMemberId)
                 .boardType(boardType)

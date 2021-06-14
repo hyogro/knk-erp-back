@@ -1,6 +1,7 @@
 package knk.erp.api.shlee.board.entity;
 
 import knk.erp.api.shlee.board.util.StringListConverter;
+import knk.erp.api.shlee.file.entity.File;
 import knk.erp.api.shlee.schedule.entity.Time;
 import lombok.Builder;
 import lombok.Getter;
@@ -25,12 +26,6 @@ public class Board extends Time {
     @Column(nullable = false)
     private String title;
 
-    /*
-    // 게시글 타겟 부서
-    @Column(nullable = false)
-    private String target_department;
-    */
-
     // 게시글 내용
     @Column(nullable = false, length = 2000)
     private String content;
@@ -52,11 +47,14 @@ public class Board extends Time {
     @Column
     private Long writerDepId;
 
+    @OneToMany
+    @JoinColumn(name = "board_idx")
+    private List<File> file;
+
     @Builder
     public Board(String title, String content, List<String> referenceMemberId, String boardType, String writerMemberId,
                  Long writerDepId){
         this.title = title;
-        //this.target_department = target_department;
         this.content = content;
         this.referenceMemberId = referenceMemberId;
         this.boardType = boardType;

@@ -10,6 +10,8 @@ import knk.erp.api.shlee.board.entity.Board;
 import knk.erp.api.shlee.board.entity.BoardRepository;
 import knk.erp.api.shlee.board.util.BoardUtil;
 import knk.erp.api.shlee.common.util.CommonUtil;
+import knk.erp.api.shlee.file.entity.File;
+import knk.erp.api.shlee.file.repository.FileRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -19,6 +21,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -28,6 +31,7 @@ public class BoardService {
     private final BoardRepository boardRepository;
     private final BoardUtil boardUtil;
     private final CommonUtil commonUtil;
+    private final FileRepository fileRepository;
 
     // 게시글 생성
     @Transactional
@@ -41,6 +45,13 @@ public class BoardService {
             boardDTO.setWriterMemberId(writer.getMemberId());
             boardDTO.setWriterDepId(writer.getDepartment().getId());
             Board board = boardDTO.toBoard();
+            List<File> file = new ArrayList<>();
+            if(boardDTO.getFileName() != null){
+                for(String f : boardDTO.getFileName()){
+                    file.add(fileRepository.findByFileName(f));
+                }
+                board.setFile(file);
+            }
             boardRepository.save(board);
 
             return new Create_BoardDTO_RES("CB001");
@@ -65,7 +76,7 @@ public class BoardService {
             else {
                 return new Read_BoardDTO_RES("RB001", new Read_BoardDTO(target.getTitle(), target.getReferenceMemberId(),
                         target.getContent(), target.getBoardType(), writer.getMemberName(),
-                        writer.getDepartment().getDepartmentName(), target.getCreateDate(), target.getUpdateDate()));
+                        writer.getDepartment().getDepartmentName(), target.getCreateDate(), target.getUpdateDate(), target.getFile()));
             }
         }catch(Exception e){
             return new Read_BoardDTO_RES("RB002", e.getMessage());
@@ -90,7 +101,7 @@ public class BoardService {
                 }
             }
 
-            boardUtil.updateSetBoard(target, boardDTO);
+            boardUtil.updateSetBoard(target, boardDTO, fileRepository);
 
             boardRepository.save(target);
 

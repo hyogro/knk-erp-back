@@ -1,5 +1,6 @@
 package knk.erp.api.shlee.board.dto.board;
 
+import knk.erp.api.shlee.file.entity.File;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -19,4 +20,5 @@ public class Read_BoardDTO {
     private String writer_department;
     private LocalDateTime create_date;
     private LocalDateTime update_date;
+    private List<File> file;
 }
