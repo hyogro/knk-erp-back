@@ -18,7 +18,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -70,6 +69,7 @@ public class AccountService {
             //    authenticate 메서드가 실행이 될 때 CustomUserDetailsService 에서 만들었던 loadUserByMemberId 메서드가 실행됨
             Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
 
+            System.out.println(authentication.getAuthorities().toString().replace("[ROLE_","").replace("]",""));
             // 3. 인증 정보를 기반으로 JWT 토큰 생성
             TokenDto tokenDto = tokenProvider.generateTokenDto(authentication);
 

@@ -1,5 +1,6 @@
 package knk.erp.api.shlee.board.dto.boardlist;
 
+import knk.erp.api.shlee.file.entity.File;
 import lombok.*;
 
 import java.time.LocalDateTime;

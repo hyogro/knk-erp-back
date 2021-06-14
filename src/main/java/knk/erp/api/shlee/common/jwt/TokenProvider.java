@@ -60,6 +60,7 @@ public class TokenProvider {
                 .grantType(BEARER_TYPE)
                 .accessToken(accessToken)
                 .accessTokenExpiresIn(accessTokenExpiresIn.getTime())
+                .authority(authentication.getAuthorities().toString().replace("[ROLE_","").replace("]",""))
                 .build();
     }
 
