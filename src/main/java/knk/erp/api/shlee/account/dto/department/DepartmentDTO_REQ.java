@@ -8,8 +8,8 @@ import lombok.*;
 @ToString
 @AllArgsConstructor
 public class DepartmentDTO_REQ {
-    private Long dep_id;
     private String departmentName;
+    private boolean dummy;
 
     public Department toDepartment(){
         return Department.builder()

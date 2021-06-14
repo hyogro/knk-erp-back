@@ -10,6 +10,6 @@ import lombok.ToString;
 @ToString
 @AllArgsConstructor
 public class Update_DepartmentLeaderDTO_REQ {
-    private Long dep_id;
     private String memberId;
+    private boolean dummy;
 }

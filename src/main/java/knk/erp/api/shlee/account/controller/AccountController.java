@@ -28,22 +28,29 @@ public class AccountController {
         return ResponseEntity.ok(accountService.login(memberDTOReq));
     }
 
-    // 회원 정보 읽어오기
-    @PostMapping("/readMember")
-    public ResponseEntity<Read_AccountDTO_RES> readMember(@RequestBody DepartmentDTO_REQ departmentDTOReq){
-        return ResponseEntity.ok(accountService.readMember(departmentDTOReq));
+    // 회원 목록 읽어오기
+    @GetMapping("")
+    public ResponseEntity<Read_AccountDTO_RES> readMember(@RequestParam("departmentName") String departmentName){
+        return ResponseEntity.ok(accountService.readMember(departmentName));
     }
 
-    // 회원 정보 수정
-    @PostMapping("/updateMember")
-    public ResponseEntity<Update_AccountDTO_RES> updateMember(@RequestBody Update_AccountDTO_REQ updateAccountDTOReq){
-        return ResponseEntity.ok(accountService.updateMember(updateAccountDTOReq));
+    // 회원 정보 상세보기
+    @GetMapping("/{memberId}")
+    public ResponseEntity<ReadDetail_AccountDTO_RES> readMemberDetail(@PathVariable String memberId){
+        return ResponseEntity.ok(accountService.readMemberDetail(memberId));
+    }
+
+   // 회원 정보 수정
+    @PutMapping("/{memberId}")
+    public ResponseEntity<Update_AccountDTO_RES> updateMember(@PathVariable String memberId,
+                                                              @RequestBody Update_AccountDTO_REQ updateAccountDTOReq){
+        return ResponseEntity.ok(accountService.updateMember(memberId, updateAccountDTOReq));
     }
 
     // 회원 정보 삭제
-    @PostMapping("/deleteMember")
-    public ResponseEntity<Delete_AccountDTO_RES> deleteMember(@RequestBody MemberDTO_REQ memberDTOReq){
-        return ResponseEntity.ok(accountService.deleteMember(memberDTOReq));
+    @DeleteMapping("/{memberId}")
+    public ResponseEntity<Delete_AccountDTO_RES> deleteMember(@PathVariable String memberId){
+        return ResponseEntity.ok(accountService.deleteMember(memberId));
     }
 
 }

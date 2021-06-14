@@ -4,7 +4,6 @@ import knk.erp.api.shlee.account.entity.Member;
 import knk.erp.api.shlee.account.entity.MemberRepository;
 import knk.erp.api.shlee.board.dto.board.*;
 import knk.erp.api.shlee.board.dto.boardlist.BoardListDTO_RES;
-import knk.erp.api.shlee.board.dto.boardlist.BoardListSearchDTO_REQ;
 import knk.erp.api.shlee.board.dto.boardlist.NoticeListDTO_RES;
 import knk.erp.api.shlee.board.dto.boardlist.Search_BoardListDTO_RES;
 import knk.erp.api.shlee.board.entity.Board;
@@ -21,7 +20,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -62,11 +60,11 @@ public class BoardService {
 
     // 게시글 읽기
     @Transactional
-    public Read_BoardDTO_RES readBoard(BoardDTO boardDTO){
+    public Read_BoardDTO_RES readBoard(Long board_idx){
         try{
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             Member reader = memberRepository.findAllByMemberIdAndDeletedIsFalse(authentication.getName());
-            Board target = boardRepository.findByIdx(boardDTO.getIdx());
+            Board target = boardRepository.findByIdx(board_idx);
             Member writer = memberRepository.findAllByMemberIdAndDeletedIsFalse(target.getWriterMemberId());
             List<String> reference_memberId = target.getReferenceMemberId();
 
@@ -85,11 +83,11 @@ public class BoardService {
 
     // 게시글 수정
     @Transactional
-    public Update_BoardDTO_RES updateBoard(BoardDTO boardDTO){
+    public Update_BoardDTO_RES updateBoard(Long board_idx, BoardDTO boardDTO){
         try{
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             Member updater = memberRepository.findAllByMemberIdAndDeletedIsFalse(authentication.getName());
-            Board target = boardRepository.findByIdx(boardDTO.getIdx());
+            Board target = boardRepository.findByIdx(board_idx);
 
             if(!target.getWriterMemberId().equals(updater.getMemberId())) {
                 return new Update_BoardDTO_RES("UB003", "게시글 작성자가 아님");
@@ -113,11 +111,11 @@ public class BoardService {
 
     // 게시글 삭제
     @Transactional
-    public Delete_BoardDTO_RES deleteBoard(BoardDTO boardDTO){
+    public Delete_BoardDTO_RES deleteBoard(Long board_idx){
         try{
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             Member deleter = memberRepository.findAllByMemberIdAndDeletedIsFalse(authentication.getName());
-            Board target = boardRepository.findByIdx(boardDTO.getIdx());
+            Board target = boardRepository.findByIdx(board_idx);
 
             if(!target.getWriterMemberId().equals(deleter.getMemberId())) {
                 return new Delete_BoardDTO_RES("DB003", "게시글 작성자가 아님");
@@ -135,29 +133,28 @@ public class BoardService {
 
     // 게시글 목록 보기
     @Transactional
-    public Search_BoardListDTO_RES boardList(Pageable pageable, BoardListSearchDTO_REQ boardListSearchDTOReq){
+    public Search_BoardListDTO_RES boardList(Pageable pageable, String searchType, String keyword){
         try{
-            if(boardListSearchDTOReq.getSearchType() == null) boardListSearchDTOReq.setSearchType("");
+            if(searchType == null) searchType = "";
 
-            if(boardListSearchDTOReq.getKeyword() == null) boardListSearchDTOReq.setKeyword("");
+            if(keyword == null) keyword = "";
 
             pageable = PageRequest.of(pageable.getPageNumber() <= 0 ? 0 : pageable.getPageNumber() - 1, pageable.getPageSize(),
                     Sort.by("createDate").descending());
 
             Page<Board> boardPage;
 
-            switch (boardListSearchDTOReq.getSearchType()) {
+            switch (searchType) {
                 case "제목검색":
-                    boardPage = boardRepository.findAllByTitleContainingAndDeletedFalse(pageable, boardListSearchDTOReq.getKeyword());
+                    boardPage = boardRepository.findAllByTitleContainingAndDeletedFalse(pageable, keyword);
                     break;
 
                 case "태그검색":
-                    boardPage = boardRepository.findAllByBoardTypeAndDeletedFalse(boardListSearchDTOReq.getKeyword(), pageable);
+                    boardPage = boardRepository.findAllByBoardTypeAndDeletedFalse(keyword, pageable);
                     break;
 
                 case "작성자검색":
-                    String target_memberId = boardListSearchDTOReq.getKeyword();
-                    Member writer = memberRepository.findAllByMemberIdAndDeletedIsFalse(target_memberId);
+                    Member writer = memberRepository.findAllByMemberIdAndDeletedIsFalse(keyword);
                     boardPage = boardRepository.findAllByWriterMemberIdAndDeletedFalse(pageable, writer.getMemberId());
                     break;
 
