@@ -61,19 +61,19 @@ public class ScheduleService {
         }
     }
 
-    public RES_readScheduleDetail readScheduleDetail(ScheduleDTO scheduleDTO) {
+    public RES_readScheduleDetail readScheduleDetail(Long sid) {
         try {
-            Schedule schedule = scheduleRepository.getOne(scheduleDTO.getId());
+            Schedule schedule = scheduleRepository.getOne(sid);
             return new RES_readScheduleDetail("RSD001", util.ScheduleToDTO(schedule));
         } catch (Exception e) {
             return new RES_readScheduleDetail("RSD002", e.getMessage());
         }
     }
 
-    public RES_updateSchedule updateSchedule(ScheduleDTO scheduleDTO) {
+    public RES_updateSchedule updateSchedule(Long sid, ScheduleDTO scheduleDTO) {
         try {
             String memberId = getMemberId();
-            Schedule schedule = scheduleRepository.getOne(scheduleDTO.getId());
+            Schedule schedule = scheduleRepository.getOne(sid);
 
             if (!memberId.equals(schedule.getMemberId())) return new RES_updateSchedule("US003");
 
@@ -85,10 +85,10 @@ public class ScheduleService {
         }
     }
 
-    public RES_deleteSchedule deleteSchedule(ScheduleDTO scheduleDTO) {
+    public RES_deleteSchedule deleteSchedule(Long sid) {
         try {
             String memberId = getMemberId();
-            Schedule schedule = scheduleRepository.getOne(scheduleDTO.getId());
+            Schedule schedule = scheduleRepository.getOne(sid);
 
             if (!memberId.equals(schedule.getMemberId())) return new RES_deleteSchedule("DS003");
 
