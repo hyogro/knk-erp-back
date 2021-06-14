@@ -19,8 +19,13 @@ public class MyPageController {
         return ResponseEntity.ok(myPageService.getMyInfo());
     }
 
+    // 회원 본인 정보 수정
     @PostMapping("/updateSelf")
     public ResponseEntity<UpdateSelf_MyPageDTO_RES> updateSelf(@RequestBody Update_AccountDTO_REQ updateAccountDTOReq){
         return ResponseEntity.ok(myPageService.updateSelf(updateAccountDTOReq));
     }
+
+    // 잔여 연차 일수
+    @PostMapping("/getMyVacation")
+    public ResponseEntity<GetMyVacation_MyPageDTO_RES> getMyVacation(){return ResponseEntity.ok(myPageService.getMyVacation());}
 }

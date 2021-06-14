@@ -3,6 +3,7 @@ package knk.erp.api.shlee.account.service;
 import knk.erp.api.shlee.account.dto.member.Read_MemberDTO;
 import knk.erp.api.shlee.account.dto.member.Update_AccountDTO_REQ;
 import knk.erp.api.shlee.account.dto.my.GetMyInfo_MyPageDTO_RES;
+import knk.erp.api.shlee.account.dto.my.GetMyVacation_MyPageDTO_RES;
 import knk.erp.api.shlee.account.dto.my.UpdateSelf_MyPageDTO_RES;
 import knk.erp.api.shlee.account.entity.Member;
 import knk.erp.api.shlee.account.entity.MemberRepository;
@@ -47,6 +48,18 @@ public class MyPageService {
             return new UpdateSelf_MyPageDTO_RES("USM001");
         }catch (Exception e){
             return new UpdateSelf_MyPageDTO_RES("USM002", e.getMessage());
+        }
+    }
+
+    // 회원 본인 잔여 연차일수 보기
+    @Transactional
+    public GetMyVacation_MyPageDTO_RES getMyVacation(){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Member me = memberRepository.findByMemberIdAndDeletedIsFalse(authentication.getName());
+        try{
+            return new GetMyVacation_MyPageDTO_RES("GMV001", me.getVacation());
+        }catch(Exception e){
+            return new GetMyVacation_MyPageDTO_RES("GMV002", e.getMessage());
         }
     }
 }
