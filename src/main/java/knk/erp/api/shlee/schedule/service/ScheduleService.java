@@ -8,6 +8,7 @@ import knk.erp.api.shlee.schedule.repository.ScheduleRepository;
 import knk.erp.api.shlee.schedule.util.ScheduleUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -36,23 +37,23 @@ public class ScheduleService {
         }
     }
 
-    public RES_readScheduleList readScheduleList(REQ_readScheduleListOption option) {
+    public RES_readScheduleList readScheduleList(Pageable pageable, String viewOption) {
         try {
             String memberId = getMemberId();
             Long departmentId = getDepartmentId(memberId);
-            String viewOption = option.getViewOption();
+            //String viewOption = option.getViewOption();
             List<Schedule> scheduleList = new ArrayList<>();
             if (viewOption.isEmpty()) {
-                scheduleList.addAll(scheduleRepository.findAllByMemberIdAndDeletedIsFalse(memberId,getPageRequest(option)).toList());
+                scheduleList.addAll(scheduleRepository.findAllByMemberIdAndDeletedIsFalse(memberId,getPageRequest(pageable)).toList());
             }
             if (parseViewOption(viewOption, "all")) {
-                scheduleList.addAll(scheduleRepository.findAllByViewOptionAndDeletedIsFalse("all", getPageRequest(option)).toList());
+                scheduleList.addAll(scheduleRepository.findAllByViewOptionAndDeletedIsFalse("all", getPageRequest(pageable)).toList());
             }
             if (parseViewOption(viewOption, "dep")) {
-                scheduleList.addAll(scheduleRepository.findAllByViewOptionAndDepartmentIdAndDeletedIsFalse("dep", departmentId, getPageRequest(option)).toList());
+                scheduleList.addAll(scheduleRepository.findAllByViewOptionAndDepartmentIdAndDeletedIsFalse("dep", departmentId, getPageRequest(pageable)).toList());
             }
             if (parseViewOption(viewOption, "own")) {
-                scheduleList.addAll(scheduleRepository.findAllByViewOptionAndMemberIdAndDeletedIsFalse("own", memberId, getPageRequest(option)).toList());
+                scheduleList.addAll(scheduleRepository.findAllByViewOptionAndMemberIdAndDeletedIsFalse("own", memberId, getPageRequest(pageable)).toList());
             }
 
             return new RES_readScheduleList("RSL001", util.ScheduleListToDTO(scheduleList));
@@ -102,9 +103,9 @@ public class ScheduleService {
     }
 
     //옵션으로 페이지정보 생성
-    private PageRequest getPageRequest(REQ_readScheduleListOption option) {
+    private PageRequest getPageRequest(Pageable pageable) {
         Sort sort = Sort.by(Sort.Direction.ASC, "startDate");
-        return PageRequest.of(option.getPage(), option.getSize(), sort);
+        return PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sort);
     }
 
     //뷰 옵션 체크
