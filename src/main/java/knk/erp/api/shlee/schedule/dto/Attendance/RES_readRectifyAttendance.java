@@ -10,33 +10,32 @@ import java.util.List;
 @Getter
 @Setter
 @ToString
-public class RES_readAttendance {
+public class RES_readRectifyAttendance {
     private String code;
     private String message;
-    private AttendanceDTO data;
+    private RectifyAttendanceDTO data;
     private LinkedHashMap<String, String> help_codeList = new LinkedHashMap<>();
 
     private void createCodeList(){
-        this.help_codeList.put("RA001", "출근기록 조회 성공");
-        this.help_codeList.put("RA002", "출근기록 조회 실패");
-        this.help_codeList.put("RA003", "출근기록 조회 실패(출근정보 존재하지 않음)");
-        this.help_codeList.put("RA004", "출근기록 조회 실패(본인정보 아님)");
+        this.help_codeList.put("RRA001", "출,퇴근 정정요청 조회 성공");
+        this.help_codeList.put("RRA002", "출,퇴근 정정요청 조회 실패");
+        this.help_codeList.put("RRA003", "출,퇴근 정정요청 조회 실패(권한 없음)");
     }
     //error
-    public RES_readAttendance(String code) {
+    public RES_readRectifyAttendance(String code) {
         createCodeList();
         this.code = code;
     }
 
     //error
-    public RES_readAttendance(String code, String message) {
+    public RES_readRectifyAttendance(String code, String message) {
         createCodeList();
         this.code = code;
         this.message = message;
     }
 
     //ok
-    public RES_readAttendance(String code, AttendanceDTO data) {
+    public RES_readRectifyAttendance(String code, RectifyAttendanceDTO data) {
         createCodeList();
         this.code = code;
         this.data = data;

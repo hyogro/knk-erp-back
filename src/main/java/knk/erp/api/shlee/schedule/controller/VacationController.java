@@ -13,46 +13,72 @@ import org.springframework.web.bind.annotation.RestController;
 public class VacationController {
     VacationService vacationService;
 
-    VacationController(VacationService vacationService){
+    VacationController(VacationService vacationService) {
         this.vacationService = vacationService;
     }
 
-    /** 휴가 생성 **/
+    /**
+     * 휴가 생성
+     **/
     @PostMapping("/createVacation")
-    public ResponseEntity<RES_createVacation> createVacation(@RequestBody VacationDTO vacationDTO){
+    public ResponseEntity<RES_createVacation> createVacation(@RequestBody VacationDTO vacationDTO) {
         return ResponseEntity.ok(vacationService.createVacation(vacationDTO));
     }
 
-    /** 휴가 목록 읽기 **/
+    /**
+     * 휴가 목록 읽기
+     **/
     @PostMapping("/readVacationList")
-    public ResponseEntity<RES_readVacationList> readVacationList(){
+    public ResponseEntity<RES_readVacationList> readVacationList() {
         return ResponseEntity.ok(vacationService.readVacationList());
     }
 
-    /**휴가 삭제**/
+
+    /**
+     * 휴가 상세 읽기
+     **/
+    @PostMapping("/readVacation")
+    public ResponseEntity<RES_readVacation> readVacation(@RequestBody VacationDTO vacationDTO) {
+        return ResponseEntity.ok(vacationService.readVacation(vacationDTO));
+    }
+
+    /**
+     * 휴가 삭제
+     **/
     @PostMapping("/deleteVacation")
-    public ResponseEntity<RES_deleteVacation> deleteVacation(@RequestBody VacationDTO VacationDTO){
+    public ResponseEntity<RES_deleteVacation> deleteVacation(@RequestBody VacationDTO VacationDTO) {
         return ResponseEntity.ok(vacationService.deleteVacation(VacationDTO));
     }
 
-    /**메인화면 휴가 목록 읽기**/
+    /**
+     * 메인화면 휴가 목록 읽기
+     **/
     @PostMapping("/readVacationListForApprove")
-    public ResponseEntity<RES_readVacationList> readVacationListForApprove(){
+    public ResponseEntity<RES_readVacationList> readVacationListForApprove() {
         return ResponseEntity.ok(vacationService.readVacationListForApprove());
     }
-    /**휴가 승인**/
+
+    /**
+     * 휴가 승인
+     **/
     @PostMapping("/approveVacation")
-    public ResponseEntity<RES_approveVacation> approveVacation(@RequestBody VacationDTO vacationDTO){
+    public ResponseEntity<RES_approveVacation> approveVacation(@RequestBody VacationDTO vacationDTO) {
         return ResponseEntity.ok(vacationService.approveVacation(vacationDTO));
     }
-    /**휴가 거절**/
+
+    /**
+     * 휴가 거절
+     **/
     @PostMapping("/rejectVacation")
-    public ResponseEntity<RES_rejectVacation> rejectVacation(@RequestBody REQ_rejectVacation reject){
+    public ResponseEntity<RES_rejectVacation> rejectVacation(@RequestBody REQ_rejectVacation reject) {
         return ResponseEntity.ok(vacationService.rejectVacation(reject));
     }
-    /**휴가 요약정보 조회**/
+
+    /**
+     * 휴가 요약정보 조회
+     **/
     @PostMapping("/readVacationSummary")
-    public ResponseEntity<RES_readVacationSummary> rejectVacation(){
+    public ResponseEntity<RES_readVacationSummary> rejectVacation() {
         return ResponseEntity.ok(vacationService.readVacationSummary());
     }
 

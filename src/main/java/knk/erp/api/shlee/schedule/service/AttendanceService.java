@@ -95,6 +95,20 @@ public class AttendanceService {
         }
     }
 
+    //개인 출,퇴근 당일정보 조회
+    public RES_readAttendance readAttendance(AttendanceDTO attendanceDTO) {
+        try {
+            String memberId = getMemberId();
+            Attendance attendance = attendanceRepository.getOne(attendanceDTO.getId());
+            if(!memberId.equals(attendance.getMemberId())){
+                return new RES_readAttendance("RA004");
+            }
+            return new RES_readAttendance("RA001", new AttendanceDTO(attendance));
+        } catch (Exception e) {
+            return new RES_readAttendance("RA002", e.getMessage());
+        }
+    }
+
     //출,퇴근기록 정정 요청 -> 정정요청 신규 생성
     public RES_createRectifyAttendance createRectifyAttendance(RectifyAttendanceDTO rectifyAttendanceDTO) {
         try {
@@ -163,8 +177,7 @@ public class AttendanceService {
     //출,퇴근 정정요청목록 조회
     public RES_readRectifyAttendanceList readRectifyAttendanceList() {
         try {
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            String memberId = authentication.getName();
+            String memberId = getMemberId();
 
             List<RectifyAttendance> rectifyAttendanceList = rectifyAttendanceRepository.findAllByMemberIdAndDeletedIsFalse(memberId);
             return new RES_readRectifyAttendanceList("RRAL001", util.RectifyAttendanceListToDTO(rectifyAttendanceList));
@@ -173,12 +186,27 @@ public class AttendanceService {
             return new RES_readRectifyAttendanceList("RRAL002", e.getMessage());
         }
     }
+    
+    //출,퇴근 정정요청상세 조회
+    public RES_readRectifyAttendance readRectifyAttendance(RectifyAttendanceDTO rectifyAttendanceDTO) {
+        try {
+            String memberId = getMemberId();
+
+            RectifyAttendance rectifyAttendance = rectifyAttendanceRepository.getOne(rectifyAttendanceDTO.getId());
+            if(!memberId.equals(rectifyAttendance.getMemberId())){
+                return new RES_readRectifyAttendance("RRA003");
+            }
+            return new RES_readRectifyAttendance("RRA001", new RectifyAttendanceDTO(rectifyAttendance));
+        } catch (Exception e) {
+            //실패 - Exception 발생
+            return new RES_readRectifyAttendance("RRA002", e.getMessage());
+        }
+    }
 
     //출,퇴근 정정요청 삭제
     public RES_deleteRectifyAttendance deleteRectifyAttendance(RectifyAttendanceDTO rectifyAttendanceDTO) {
         try {
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            String memberId = authentication.getName();
+            String memberId = getMemberId();
 
             RectifyAttendance rectifyAttendance = rectifyAttendanceRepository.getOne(rectifyAttendanceDTO.getId());
 
@@ -196,8 +224,7 @@ public class AttendanceService {
     //승인해야할 출,퇴근 정정요청목록 조회
     public RES_readRectifyAttendanceList readRectifyAttendanceListForApprove() {
         try {
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            String memberId = authentication.getName();
+            String memberId = getMemberId();
             List<RectifyAttendance> rectifyAttendanceList = new ArrayList<>();
             if (commonUtil.checkLevel() == 2) {
                 Member member = memberRepository.findAllByMemberIdAndDeletedIsFalse(memberId);
@@ -230,8 +257,7 @@ public class AttendanceService {
     //출,퇴근 요약정보 조회
     public RES_readAttendanceSummary readAttendanceSummary() {
         try {
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            String memberId = authentication.getName();
+            String memberId = getMemberId();
             int onWork;//출근
             int yetWork;//미출근
             int lateWork;//지각
@@ -260,8 +286,7 @@ public class AttendanceService {
     //개인 출,퇴근 당일정보 조회
     public RES_readAttendance readAttendanceToday() {
         try {
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            String memberId = authentication.getName();
+            String memberId = getMemberId();
             LocalDate today = LocalDate.now();
             Optional<Attendance> attendance = attendanceRepository.findByAttendanceDateAndMemberIdAndDeletedIsFalse(today, memberId);
             return attendance.map(value -> new RES_readAttendance("RA001", new AttendanceDTO(value))).orElseGet(() -> new RES_readAttendance("RA003"));

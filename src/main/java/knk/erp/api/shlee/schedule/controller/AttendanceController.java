@@ -42,6 +42,14 @@ public class AttendanceController {
     }
 
     /**
+     * 출,퇴근 기록 조회
+     **/
+    @PostMapping("/readAttendance")
+    public ResponseEntity<RES_readAttendance> readAttendance(@RequestBody AttendanceDTO attendanceDTO) {
+        return ResponseEntity.ok(attendanceService.readAttendance(attendanceDTO));
+    }
+
+    /**
      * 출,퇴근 기록 정정 요청
      **/
     @PostMapping("createRectifyAttendance")
@@ -63,6 +71,14 @@ public class AttendanceController {
     @PostMapping("readRectifyAttendanceList")
     public ResponseEntity<RES_readRectifyAttendanceList> readRectifyAttendanceList() {
         return ResponseEntity.ok(attendanceService.readRectifyAttendanceList());
+    }
+
+    /**
+     * 출,퇴근 기록 정정요청상세 조회
+     **/
+    @PostMapping("readRectifyAttendance")
+    public ResponseEntity<RES_readRectifyAttendance> readRectifyAttendance(@RequestBody RectifyAttendanceDTO rectifyAttendanceDTO) {
+        return ResponseEntity.ok(attendanceService.readRectifyAttendance(rectifyAttendanceDTO));
     }
 
     /**
