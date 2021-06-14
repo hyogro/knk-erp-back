@@ -41,7 +41,7 @@ public class DepartmentService {
     }
 
     // 부서 목록 읽어오기
-    @Transactional(readOnly = true)
+    @Transactional
     public Read_DepartmentDTO_RES readDepartment() {
         try {
             List<Department> departmentList = departmentRepository.findAllByDeletedIsFalse();
@@ -133,6 +133,41 @@ public class DepartmentService {
             return new Delete_DepartmentDTO_RES("DD001");
         } catch (Exception e) {
             return new Delete_DepartmentDTO_RES("DD002", e.getMessage());
+        }
+    }
+
+    // 부서 멤버 추가
+    @Transactional
+    public Add_DepartmentMemberDTO_RES addMemberToDepartment(DepartmentMemberDTO_REQ departmentMemberDTOReq){
+        try{
+            Department targetDepartment = departmentRepository.findByDepartmentName(departmentMemberDTOReq.getDepartmentName());
+            Member targetMember = memberRepository.findByMemberIdAndDeletedIsFalse(departmentMemberDTOReq.getMemberId());
+            targetMember.setDepartment(targetDepartment);
+            memberRepository.save(targetMember);
+
+            return new Add_DepartmentMemberDTO_RES("ADM001");
+        }catch(Exception e){
+            return new Add_DepartmentMemberDTO_RES("ADM002", e.getMessage());
+        }
+    }
+
+    // 부서 멤버 삭제
+    @Transactional
+    public Delete_DepartmentMemberDTO_RES deleteMemberToDepartment(DepartmentMemberDTO_REQ departmentMemberDTOReq){
+        try{
+            Department targetDepartment = departmentRepository.findByDepartmentName(departmentMemberDTOReq.getDepartmentName());
+            Member targetMember = memberRepository.findByMemberIdAndDeletedIsFalse(departmentMemberDTOReq.getMemberId());
+
+            if(targetDepartment.getLeader() == targetMember){
+                return new Delete_DepartmentMemberDTO_RES("DDM003","해당 부서의 리더");
+            }
+
+            targetMember.setDepartment(departmentRepository.findByDepartmentName("부서미지정"));
+            memberRepository.save(targetMember);
+
+            return new Delete_DepartmentMemberDTO_RES("DDM001");
+        }catch(Exception e){
+            return new Delete_DepartmentMemberDTO_RES("DDm002", e.getMessage());
         }
     }
 
