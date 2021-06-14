@@ -2,11 +2,14 @@ package knk.erp.api.shlee.board.controller;
 
 import knk.erp.api.shlee.board.dto.board.*;
 import knk.erp.api.shlee.board.dto.boardlist.BoardListSearchDTO_REQ;
+import knk.erp.api.shlee.board.dto.boardlist.NoticeListDTO_RES;
 import knk.erp.api.shlee.board.dto.boardlist.Search_BoardListDTO_RES;
 import knk.erp.api.shlee.board.service.BoardService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.data.web.SortDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -44,7 +47,13 @@ public class BoardController {
     // 게시글 목록 보기
     @PostMapping("/list")
     public ResponseEntity<Search_BoardListDTO_RES> boardList(@PageableDefault Pageable pageable,
-                                                                   @RequestBody BoardListSearchDTO_REQ boardListSearchDTOReq){
+                                                             @RequestBody BoardListSearchDTO_REQ boardListSearchDTOReq){
         return ResponseEntity.ok(boardService.boardList(pageable, boardListSearchDTOReq));
+    }
+
+    // 공지사항 최신순 5개 보기
+    @PostMapping("/noticeList")
+    public ResponseEntity<NoticeListDTO_RES> noticeList(@PageableDefault(size = 5) Pageable pageable){
+        return ResponseEntity.ok(boardService.noticeList(pageable));
     }
 }

@@ -8,6 +8,6 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
     Board findByIdx(Long idx);
     Page<Board> findAllByDeletedIsFalse(Pageable pageable);
     Page<Board> findAllByTitleContainingAndDeletedFalse(Pageable pageable, String title);
-    Page<Board> findAllByBoardTypeContainingAndDeletedFalse(String boardType, Pageable pageable);
+    Page<Board> findAllByBoardTypeAndDeletedFalse(String boardType, Pageable pageable);
     Page<Board> findAllByWriterMemberIdAndDeletedFalse(Pageable pageable, String memberId);
 }

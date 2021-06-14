@@ -5,6 +5,7 @@ import knk.erp.api.shlee.account.entity.MemberRepository;
 import knk.erp.api.shlee.board.dto.board.*;
 import knk.erp.api.shlee.board.dto.boardlist.BoardListDTO_RES;
 import knk.erp.api.shlee.board.dto.boardlist.BoardListSearchDTO_REQ;
+import knk.erp.api.shlee.board.dto.boardlist.NoticeListDTO_RES;
 import knk.erp.api.shlee.board.dto.boardlist.Search_BoardListDTO_RES;
 import knk.erp.api.shlee.board.entity.Board;
 import knk.erp.api.shlee.board.entity.BoardRepository;
@@ -13,15 +14,14 @@ import knk.erp.api.shlee.common.util.CommonUtil;
 import knk.erp.api.shlee.file.entity.File;
 import knk.erp.api.shlee.file.repository.FileRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.*;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -141,7 +141,8 @@ public class BoardService {
 
             if(boardListSearchDTOReq.getKeyword() == null) boardListSearchDTOReq.setKeyword("");
 
-            pageable = PageRequest.of(pageable.getPageNumber() <= 0 ? 0 : pageable.getPageNumber() - 1, pageable.getPageSize());
+            pageable = PageRequest.of(pageable.getPageNumber() <= 0 ? 0 : pageable.getPageNumber() - 1, pageable.getPageSize(),
+                    Sort.by("createDate").descending());
 
             Page<Board> boardPage;
 
@@ -151,7 +152,7 @@ public class BoardService {
                     break;
 
                 case "태그검색":
-                    boardPage = boardRepository.findAllByBoardTypeContainingAndDeletedFalse(boardListSearchDTOReq.getKeyword(), pageable);
+                    boardPage = boardRepository.findAllByBoardTypeAndDeletedFalse(boardListSearchDTOReq.getKeyword(), pageable);
                     break;
 
                 case "작성자검색":
@@ -177,4 +178,25 @@ public class BoardService {
             return new Search_BoardListDTO_RES("SBL002", e.getMessage());
         }
     }
+
+    // 공지사항 최신순 5개 보기
+    @Transactional
+    public NoticeListDTO_RES noticeList(Pageable pageable){
+        pageable = PageRequest.of(pageable.getPageNumber() <= 0 ? 0 : pageable.getPageNumber() - 1, pageable.getPageSize(),
+                Sort.by("createDate").descending());
+        Page<Board> all = boardRepository.findAllByBoardTypeAndDeletedFalse("공지사항", pageable);
+        List<Board> latest = new ArrayList<>();
+        try{
+            for(int i = 0; i < all.getContent().size(); i++){
+                if(i<5) latest.add(all.getContent().get(i));
+            }
+            Page<Board> boardPage = new PageImpl<>(latest, pageable, latest.size());
+            Page<BoardListDTO_RES> page = boardPage.map(board -> new BoardListDTO_RES(board.getTitle(), board.getContent(),
+                    board.getWriterMemberId(), board.getWriterDepId(), board.getCreateDate(), board.getUpdateDate(), board.getReferenceMemberId()));
+            return new NoticeListDTO_RES("NBL001", page);
+        }catch(Exception e){
+            return new NoticeListDTO_RES("NBL002", e.getMessage());
+        }
+    }
+
 }
