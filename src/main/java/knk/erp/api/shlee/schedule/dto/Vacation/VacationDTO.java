@@ -26,6 +26,7 @@ public class VacationDTO {
     private LocalDateTime endDate;
     private String memberId;
     private Long departmentId;
+    private LocalDateTime requestDate;
 
     public Vacation toEntity(){
         return Vacation.builder().title(title).memo(memo).approval1(approval1).approval2(approval2)
@@ -47,5 +48,6 @@ public class VacationDTO {
         this.endDate = vacation.getEndDate();
         this.memberId = vacation.getMemberId();
         this.departmentId = vacation.getDepartmentId();
+        this.requestDate = vacation.getCreateDate();
     }
 }

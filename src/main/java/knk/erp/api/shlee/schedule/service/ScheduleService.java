@@ -41,7 +41,6 @@ public class ScheduleService {
         try {
             String memberId = getMemberId();
             Long departmentId = getDepartmentId(memberId);
-            //String viewOption = option.getViewOption();
             List<Schedule> scheduleList = new ArrayList<>();
             if (viewOption.isEmpty()) {
                 scheduleList.addAll(scheduleRepository.findAllByMemberIdAndDeletedIsFalse(memberId,getPageRequest(pageable)).toList());

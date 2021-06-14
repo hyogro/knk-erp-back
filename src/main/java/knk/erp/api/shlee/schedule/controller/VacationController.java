@@ -3,10 +3,7 @@ package knk.erp.api.shlee.schedule.controller;
 import knk.erp.api.shlee.schedule.dto.Vacation.*;
 import knk.erp.api.shlee.schedule.service.VacationService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/vacation")
@@ -20,7 +17,7 @@ public class VacationController {
     /**
      * 휴가 생성
      **/
-    @PostMapping("/createVacation")
+    @PostMapping("")
     public ResponseEntity<RES_createVacation> createVacation(@RequestBody VacationDTO vacationDTO) {
         return ResponseEntity.ok(vacationService.createVacation(vacationDTO));
     }
@@ -28,7 +25,7 @@ public class VacationController {
     /**
      * 휴가 목록 읽기
      **/
-    @PostMapping("/readVacationList")
+    @GetMapping("")
     public ResponseEntity<RES_readVacationList> readVacationList() {
         return ResponseEntity.ok(vacationService.readVacationList());
     }
@@ -37,23 +34,23 @@ public class VacationController {
     /**
      * 휴가 상세 읽기
      **/
-    @PostMapping("/readVacation")
-    public ResponseEntity<RES_readVacation> readVacation(@RequestBody VacationDTO vacationDTO) {
-        return ResponseEntity.ok(vacationService.readVacation(vacationDTO));
+    @GetMapping("/{vid}")
+    public ResponseEntity<RES_readVacation> readVacation(@PathVariable("vid") Long vid) {
+        return ResponseEntity.ok(vacationService.readVacation(vid));
     }
 
     /**
      * 휴가 삭제
      **/
-    @PostMapping("/deleteVacation")
-    public ResponseEntity<RES_deleteVacation> deleteVacation(@RequestBody VacationDTO VacationDTO) {
-        return ResponseEntity.ok(vacationService.deleteVacation(VacationDTO));
+    @DeleteMapping("/{vid}")
+    public ResponseEntity<RES_deleteVacation> deleteVacation(@PathVariable("vid") Long vid) {
+        return ResponseEntity.ok(vacationService.deleteVacation(vid));
     }
 
     /**
-     * 메인화면 휴가 목록 읽기
+     * 승인해야 할 휴가목록 읽기
      **/
-    @PostMapping("/readVacationListForApprove")
+    @GetMapping("/approve")
     public ResponseEntity<RES_readVacationList> readVacationListForApprove() {
         return ResponseEntity.ok(vacationService.readVacationListForApprove());
     }
@@ -61,23 +58,23 @@ public class VacationController {
     /**
      * 휴가 승인
      **/
-    @PostMapping("/approveVacation")
-    public ResponseEntity<RES_approveVacation> approveVacation(@RequestBody VacationDTO vacationDTO) {
-        return ResponseEntity.ok(vacationService.approveVacation(vacationDTO));
+    @PutMapping("/approve/{vid}")
+    public ResponseEntity<RES_approveVacation> approveVacation(@PathVariable Long vid) {
+        return ResponseEntity.ok(vacationService.approveVacation(vid));
     }
 
     /**
      * 휴가 거절
      **/
-    @PostMapping("/rejectVacation")
-    public ResponseEntity<RES_rejectVacation> rejectVacation(@RequestBody REQ_rejectVacation reject) {
-        return ResponseEntity.ok(vacationService.rejectVacation(reject));
+    @PutMapping("/reject/{vid}")
+    public ResponseEntity<RES_rejectVacation> rejectVacation(@PathVariable Long vid , @RequestBody REQ_rejectVacation reject) {
+        return ResponseEntity.ok(vacationService.rejectVacation(vid, reject));
     }
 
     /**
      * 휴가 요약정보 조회
      **/
-    @PostMapping("/readVacationSummary")
+    @GetMapping("/summary")
     public ResponseEntity<RES_readVacationSummary> rejectVacation() {
         return ResponseEntity.ok(vacationService.readVacationSummary());
     }

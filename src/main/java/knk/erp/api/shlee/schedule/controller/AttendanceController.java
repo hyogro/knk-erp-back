@@ -3,10 +3,7 @@ package knk.erp.api.shlee.schedule.controller;
 import knk.erp.api.shlee.schedule.dto.Attendance.*;
 import knk.erp.api.shlee.schedule.service.AttendanceService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/attendance")
@@ -36,7 +33,7 @@ public class AttendanceController {
     /**
      * 출,퇴근 기록목록 조회
      **/
-    @PostMapping("/readAttendanceList")
+    @GetMapping("")
     public ResponseEntity<RES_readAttendanceList> readAttendanceList() {
         return ResponseEntity.ok(attendanceService.readAttendanceList());
     }
@@ -44,15 +41,15 @@ public class AttendanceController {
     /**
      * 출,퇴근 기록 조회
      **/
-    @PostMapping("/readAttendance")
-    public ResponseEntity<RES_readAttendance> readAttendance(@RequestBody AttendanceDTO attendanceDTO) {
-        return ResponseEntity.ok(attendanceService.readAttendance(attendanceDTO));
+    @PostMapping("/{aid}")
+    public ResponseEntity<RES_readAttendance> readAttendance(@PathVariable("aid") Long aid) {
+        return ResponseEntity.ok(attendanceService.readAttendance(aid));
     }
 
     /**
      * 출,퇴근 기록 정정 요청
      **/
-    @PostMapping("createRectifyAttendance")
+    @PostMapping("/rectifyAttendance")
     public ResponseEntity<RES_createRectifyAttendance> createRectifyAttendance(@RequestBody RectifyAttendanceDTO rectifyAttendanceDTO) {
         return ResponseEntity.ok(attendanceService.createRectifyAttendance(rectifyAttendanceDTO));
     }
@@ -60,15 +57,15 @@ public class AttendanceController {
     /**
      * 퇴근 기록 정정 요청
      **/
-    @PostMapping("updateRectifyAttendance")
-    public ResponseEntity<RES_updateRectifyAttendance> updateRectifyAttendance(@RequestBody RectifyAttendanceDTO rectifyAttendanceDTO) {
-        return ResponseEntity.ok(attendanceService.updateRectifyAttendance(rectifyAttendanceDTO));
+    @PostMapping("/rectifyAttendance/{rid}")
+    public ResponseEntity<RES_updateRectifyAttendance> updateRectifyAttendance(@PathVariable("rid") Long rid, @RequestBody RectifyAttendanceDTO rectifyAttendanceDTO) {
+        return ResponseEntity.ok(attendanceService.updateRectifyAttendance(rid, rectifyAttendanceDTO));
     }
 
     /**
      * 출,퇴근 기록 정정요청목록 조회
      **/
-    @PostMapping("readRectifyAttendanceList")
+    @GetMapping("/rectify")
     public ResponseEntity<RES_readRectifyAttendanceList> readRectifyAttendanceList() {
         return ResponseEntity.ok(attendanceService.readRectifyAttendanceList());
     }
@@ -76,23 +73,23 @@ public class AttendanceController {
     /**
      * 출,퇴근 기록 정정요청상세 조회
      **/
-    @PostMapping("readRectifyAttendance")
-    public ResponseEntity<RES_readRectifyAttendance> readRectifyAttendance(@RequestBody RectifyAttendanceDTO rectifyAttendanceDTO) {
-        return ResponseEntity.ok(attendanceService.readRectifyAttendance(rectifyAttendanceDTO));
+    @GetMapping("/rectify/{rid}")
+    public ResponseEntity<RES_readRectifyAttendance> readRectifyAttendance(@PathVariable("rid") Long rid) {
+        return ResponseEntity.ok(attendanceService.readRectifyAttendance(rid));
     }
 
     /**
      * 출,퇴근 기록 정정요청 삭제
      **/
-    @PostMapping("deleteRectifyAttendance")
-    public ResponseEntity<RES_deleteRectifyAttendance> deleteRectifyAttendance(@RequestBody RectifyAttendanceDTO rectifyAttendanceDTO) {
-        return ResponseEntity.ok(attendanceService.deleteRectifyAttendance(rectifyAttendanceDTO));
+    @DeleteMapping("/rectify/{rid}")
+    public ResponseEntity<RES_deleteRectifyAttendance> deleteRectifyAttendance(@PathVariable Long rid) {
+        return ResponseEntity.ok(attendanceService.deleteRectifyAttendance(rid));
     }
 
     /**
      * 승인해야할 출,퇴근 정정요청목록 조회
      **/
-    @PostMapping("readRectifyAttendanceListForApprove")
+    @GetMapping("/rectify/approve")
     public ResponseEntity<RES_readRectifyAttendanceList> readRectifyAttendanceListForApprove() {
         return ResponseEntity.ok(attendanceService.readRectifyAttendanceListForApprove());
     }
@@ -100,15 +97,15 @@ public class AttendanceController {
     /**
      * 출,퇴근 기록 정정요청 승인
      **/
-    @PostMapping("approveRectifyAttendance")
-    public ResponseEntity<RES_approveRectifyAttendance> approveRectifyAttendance(@RequestBody RectifyAttendanceDTO rectifyAttendanceDTO) {
-        return ResponseEntity.ok(attendanceService.approveRectifyAttendance(rectifyAttendanceDTO));
+    @PutMapping("/rectify/approve/{rid}")
+    public ResponseEntity<RES_approveRectifyAttendance> approveRectifyAttendance(@PathVariable Long rid) {
+        return ResponseEntity.ok(attendanceService.approveRectifyAttendance(rid));
     }
 
     /**
      * 출,퇴근 기록 요약정보 조회
      **/
-    @PostMapping("readAttendanceSummary")
+    @GetMapping("summary")
     public ResponseEntity<RES_readAttendanceSummary> readAttendanceSummary() {
         return ResponseEntity.ok(attendanceService.readAttendanceSummary());
     }
@@ -116,7 +113,7 @@ public class AttendanceController {
     /**
      * 개인 출,퇴근 당일정보 조회
      **/
-    @PostMapping("readAttendanceToday")
+    @GetMapping("today")
     public ResponseEntity<RES_readAttendance> readAttendanceToday() {
         return ResponseEntity.ok(attendanceService.readAttendanceToday());
     }

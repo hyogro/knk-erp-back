@@ -61,11 +61,12 @@ public class VacationService {
             return new RES_readVacationList("RVL002", e.getMessage());
         }
     }
+
     //내 휴가상세 조회
-    public RES_readVacation readVacation(VacationDTO vacationDTO) {
+    public RES_readVacation readVacation(Long vid) {
         try {
             String memberId = getMemberId();
-            Vacation vacation = vacationRepository.getOne(vacationDTO.getId());
+            Vacation vacation = vacationRepository.getOne(vid);
             if(!memberId.equals(vacation.getMemberId())){
                 return new RES_readVacation("RV003");
             }
@@ -76,11 +77,11 @@ public class VacationService {
     }
 
     //내 휴가 삭제
-    public RES_deleteVacation deleteVacation(VacationDTO vacationDTO) {
+    public RES_deleteVacation deleteVacation(Long vid) {
         try {
             String memberId = getMemberId();
 
-            Vacation vacation = vacationRepository.getOne(vacationDTO.getId());
+            Vacation vacation = vacationRepository.getOne(vid);
             if (vacation.isApproval1() && vacation.isApproval2()) return new RES_deleteVacation("DV003");
             if (vacation.getMemberId().equals(memberId)) return new RES_deleteVacation("DV004");
 
@@ -113,10 +114,10 @@ public class VacationService {
     }
 
     //휴가 승인
-    public RES_approveVacation approveVacation(VacationDTO vacationDTO) {
+    public RES_approveVacation approveVacation(Long vid) {
         try {
             String memberId = getMemberId();
-            Vacation vacation = vacationRepository.getOne(vacationDTO.getId());
+            Vacation vacation = vacationRepository.getOne(vid);
 
             if (commonUtil.checkLevel() == 2) {
                 Member member = memberRepository.findAllByMemberIdAndDeletedIsFalse(memberId);
@@ -135,13 +136,13 @@ public class VacationService {
     }
 
     //휴가 거절
-    public RES_rejectVacation rejectVacation(REQ_rejectVacation reject) {
+    public RES_rejectVacation rejectVacation(Long vid, REQ_rejectVacation reject) {
         try {
             String memberId = getMemberId();
 
             if (2 <= commonUtil.checkLevel()) {
 
-                Vacation vacation = vacationRepository.getOne(reject.getId());
+                Vacation vacation = vacationRepository.getOne(vid);
                 vacation.setReject(true);
                 vacation.setRejectMemo(reject.getRejectMemo());
 

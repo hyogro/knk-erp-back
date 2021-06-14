@@ -96,10 +96,10 @@ public class AttendanceService {
     }
 
     //개인 출,퇴근 당일정보 조회
-    public RES_readAttendance readAttendance(AttendanceDTO attendanceDTO) {
+    public RES_readAttendance readAttendance(Long aid) {
         try {
             String memberId = getMemberId();
-            Attendance attendance = attendanceRepository.getOne(attendanceDTO.getId());
+            Attendance attendance = attendanceRepository.getOne(aid);
             if(!memberId.equals(attendance.getMemberId())){
                 return new RES_readAttendance("RA004");
             }
@@ -133,11 +133,11 @@ public class AttendanceService {
     }
 
     //출,퇴근기록 정정 요청 -> 출퇴근 기록으로 정정요청 생성
-    public RES_updateRectifyAttendance updateRectifyAttendance(RectifyAttendanceDTO rectifyAttendanceDTO) {
+    public RES_updateRectifyAttendance updateRectifyAttendance(Long rid, RectifyAttendanceDTO rectifyAttendanceDTO) {
         try {
             String memberId = getMemberId();
             setMemberIdAndDepartmentId(rectifyAttendanceDTO);
-            Attendance attendance = attendanceRepository.findByIdAndDeletedIsFalse(rectifyAttendanceDTO.getId());
+            Attendance attendance = attendanceRepository.findByIdAndDeletedIsFalse(rid);
 
             //실패 - 본인이 아니면 정정요청 불가
             if (!attendance.getMemberId().equals(memberId)) return new RES_updateRectifyAttendance("URA003");
@@ -188,11 +188,11 @@ public class AttendanceService {
     }
     
     //출,퇴근 정정요청상세 조회
-    public RES_readRectifyAttendance readRectifyAttendance(RectifyAttendanceDTO rectifyAttendanceDTO) {
+    public RES_readRectifyAttendance readRectifyAttendance(Long rid) {
         try {
             String memberId = getMemberId();
 
-            RectifyAttendance rectifyAttendance = rectifyAttendanceRepository.getOne(rectifyAttendanceDTO.getId());
+            RectifyAttendance rectifyAttendance = rectifyAttendanceRepository.getOne(rid);
             if(!memberId.equals(rectifyAttendance.getMemberId())){
                 return new RES_readRectifyAttendance("RRA003");
             }
@@ -204,11 +204,11 @@ public class AttendanceService {
     }
 
     //출,퇴근 정정요청 삭제
-    public RES_deleteRectifyAttendance deleteRectifyAttendance(RectifyAttendanceDTO rectifyAttendanceDTO) {
+    public RES_deleteRectifyAttendance deleteRectifyAttendance(Long rid) {
         try {
             String memberId = getMemberId();
 
-            RectifyAttendance rectifyAttendance = rectifyAttendanceRepository.getOne(rectifyAttendanceDTO.getId());
+            RectifyAttendance rectifyAttendance = rectifyAttendanceRepository.getOne(rid);
 
             if (!rectifyAttendance.getMemberId().equals(memberId)) return new RES_deleteRectifyAttendance("DRA003");
 
@@ -241,9 +241,9 @@ public class AttendanceService {
     }
 
     //출,퇴근 정정 승인 레벨 2, 레벨 3만 접근 가능.
-    public RES_approveRectifyAttendance approveRectifyAttendance(RectifyAttendanceDTO rectifyAttendanceDTO) {
+    public RES_approveRectifyAttendance approveRectifyAttendance(Long rid) {
         try {
-            RectifyAttendance rectifyAttendance = rectifyAttendanceRepository.getOne(rectifyAttendanceDTO.getId());
+            RectifyAttendance rectifyAttendance = rectifyAttendanceRepository.getOne(rid);
             if (rectifyAttendance.isDeleted()) return new RES_approveRectifyAttendance("ARA004");
             if (!rectifyApproved(rectifyAttendance)) return new RES_approveRectifyAttendance("ARA003");
             RectifyAttendance done = rectifyAttendanceRepository.save(rectifyAttendance);
