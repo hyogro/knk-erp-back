@@ -61,6 +61,19 @@ public class VacationService {
             return new RES_readVacationList("RVL002", e.getMessage());
         }
     }
+    //내 휴가상세 조회
+    public RES_readVacation readVacation(VacationDTO vacationDTO) {
+        try {
+            String memberId = getMemberId();
+            Vacation vacation = vacationRepository.getOne(vacationDTO.getId());
+            if(!memberId.equals(vacation.getMemberId())){
+                return new RES_readVacation("RV003");
+            }
+            return new RES_readVacation("RV001", new VacationDTO(vacation));
+        } catch (Exception e) {
+            return new RES_readVacation("RV002", e.getMessage());
+        }
+    }
 
     //내 휴가 삭제
     public RES_deleteVacation deleteVacation(VacationDTO vacationDTO) {
