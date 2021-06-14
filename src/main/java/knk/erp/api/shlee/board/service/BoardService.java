@@ -70,7 +70,7 @@ public class BoardService {
             Member writer = memberRepository.findAllByMemberIdAndDeletedIsFalse(target.getWriterMemberId());
             List<String> reference_memberId = target.getReferenceMemberId();
 
-            if(reference_memberId.size() > 0 && !boardUtil.checkReference(reference_memberId, reader)){
+            if(reference_memberId != null && !boardUtil.checkReference(reference_memberId, reader)){
                 return new Read_BoardDTO_RES("RB003", "참조 대상이 아님");
             }
             else {

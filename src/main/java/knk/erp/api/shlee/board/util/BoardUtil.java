@@ -58,6 +58,7 @@ public class BoardUtil {
     public boolean checkReference(List<String> reference_memberId, Member reader){
         for(String memberId : reference_memberId){
             if(memberId.equals(reader.getMemberId())) return true;
+            else if(memberId.equals("null")) return true;
         }
         return false;
     }
