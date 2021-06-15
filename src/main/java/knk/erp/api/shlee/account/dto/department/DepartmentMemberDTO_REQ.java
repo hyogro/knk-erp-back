@@ -11,5 +11,5 @@ import lombok.ToString;
 @AllArgsConstructor
 public class DepartmentMemberDTO_REQ {
     private String memberId;
-    private String departmentName;
+    private boolean dummy;
 }

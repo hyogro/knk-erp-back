@@ -54,13 +54,13 @@ public class DepartmentService {
 
     // 부서 목록 수정
     @Transactional
-    public Update_DepartmentDTO_RES updateDepartment(DepartmentDTO_REQ departmentDTOReq) {
+    public Update_DepartmentDTO_RES updateDepartment(Long dep_id, DepartmentDTO_REQ departmentDTOReq) {
         try {
             if(departmentRepository.existsByDepartmentNameAndDeletedIsFalse(departmentDTOReq.getDepartmentName())){
                 return new Update_DepartmentDTO_RES("UD003", "이미 존재하는 부서입니다.");
             }
 
-            Department department = departmentRepository.getOne(departmentDTOReq.getDep_id());
+            Department department = departmentRepository.getOne(dep_id);
             department.setDepartmentName(departmentDTOReq.getDepartmentName());
             departmentRepository.save(department);
 
@@ -72,9 +72,9 @@ public class DepartmentService {
 
     // 부서 리더 수정
     @Transactional
-    public UpdateLeader_DepartmentDTO_RES updateLeader(Update_DepartmentLeaderDTO_REQ updateDepartmentLeaderDTOReq){
+    public UpdateLeader_DepartmentDTO_RES updateLeader(Long dep_id, Update_DepartmentLeaderDTO_REQ updateDepartmentLeaderDTOReq){
         try{
-            Department department = departmentRepository.getOne(updateDepartmentLeaderDTOReq.getDep_id());
+            Department department = departmentRepository.getOne(dep_id);
             Member leader;
 
             if(memberRepository.existsByMemberId(updateDepartmentLeaderDTOReq.getMemberId())){
@@ -112,9 +112,9 @@ public class DepartmentService {
 
     // 부서 목록에서 부서 삭제
     @Transactional
-    public Delete_DepartmentDTO_RES deleteDepartment(DepartmentDTO_REQ departmentDTOReq) {
+    public Delete_DepartmentDTO_RES deleteDepartment(Long dep_id) {
         try {
-            Department target = departmentRepository.getOne(departmentDTOReq.getDep_id());
+            Department target = departmentRepository.getOne(dep_id);
             List<Member> memberList =  target.getMemberList();
 
             for(Member m : memberList){
@@ -138,9 +138,9 @@ public class DepartmentService {
 
     // 부서 멤버 추가
     @Transactional
-    public Add_DepartmentMemberDTO_RES addMemberToDepartment(DepartmentMemberDTO_REQ departmentMemberDTOReq){
+    public Add_DepartmentMemberDTO_RES addMemberToDepartment(Long dep_id, DepartmentMemberDTO_REQ departmentMemberDTOReq){
         try{
-            Department targetDepartment = departmentRepository.findByDepartmentName(departmentMemberDTOReq.getDepartmentName());
+            Department targetDepartment = departmentRepository.findByIdAndDeletedFalse(dep_id);
             Member targetMember = memberRepository.findByMemberIdAndDeletedIsFalse(departmentMemberDTOReq.getMemberId());
             targetMember.setDepartment(targetDepartment);
             memberRepository.save(targetMember);
@@ -153,10 +153,10 @@ public class DepartmentService {
 
     // 부서 멤버 삭제
     @Transactional
-    public Delete_DepartmentMemberDTO_RES deleteMemberToDepartment(DepartmentMemberDTO_REQ departmentMemberDTOReq){
+    public Delete_DepartmentMemberDTO_RES deleteMemberToDepartment(Long dep_id, String memberId){
         try{
-            Department targetDepartment = departmentRepository.findByDepartmentName(departmentMemberDTOReq.getDepartmentName());
-            Member targetMember = memberRepository.findByMemberIdAndDeletedIsFalse(departmentMemberDTOReq.getMemberId());
+            Department targetDepartment = departmentRepository.findByIdAndDeletedFalse(dep_id);
+            Member targetMember = memberRepository.findByMemberIdAndDeletedIsFalse(memberId);
 
             if(targetDepartment.getLeader() == targetMember){
                 return new Delete_DepartmentMemberDTO_RES("DDM003","해당 부서의 리더");

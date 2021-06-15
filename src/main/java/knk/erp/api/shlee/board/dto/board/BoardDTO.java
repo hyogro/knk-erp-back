@@ -11,7 +11,6 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class BoardDTO {
-    private Long idx;
     private String title;
     private String content;
     private List<String> referenceMemberId;  // 참조 대상 memberId

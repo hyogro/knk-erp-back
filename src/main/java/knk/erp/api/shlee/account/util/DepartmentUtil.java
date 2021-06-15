@@ -14,7 +14,7 @@ public class DepartmentUtil {
         List<DepartmentDTO_REQ> Department_List = new ArrayList<>();
 
         for(Department department : departmentList){
-            Department_List.add(new DepartmentDTO_REQ(department.getId(), department.getDepartmentName()));
+            Department_List.add(new DepartmentDTO_REQ(department.getDepartmentName(), true));
         }
 
         return Department_List;

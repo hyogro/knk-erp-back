@@ -69,7 +69,6 @@ public class AccountService {
             //    authenticate 메서드가 실행이 될 때 CustomUserDetailsService 에서 만들었던 loadUserByMemberId 메서드가 실행됨
             Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
 
-            System.out.println(authentication.getAuthorities().toString().replace("[ROLE_","").replace("]",""));
             // 3. 인증 정보를 기반으로 JWT 토큰 생성
             TokenDto tokenDto = tokenProvider.generateTokenDto(authentication);
 
@@ -82,13 +81,13 @@ public class AccountService {
 
     // 회원 목록 읽어오기
     @Transactional
-    public Read_AccountDTO_RES readMember(DepartmentDTO_REQ departmentDTOReq){
+    public Read_AccountDTO_RES readMember(String departmentName){
         try{
             List<Member> memberList;
-            if(departmentDTOReq.getDepartmentName() != null){
-                Department department = departmentRepository.findByDepartmentName(departmentDTOReq.getDepartmentName());
+            if(departmentName != null){
+                Department department = departmentRepository.findByDepartmentName(departmentName);
                 memberList = memberRepository.findAllByDepartmentAndDeletedIsFalse(department);
-                if(memberList.isEmpty()) return new Read_AccountDTO_RES("RA003", "입력한 부서가 존재하지않거나 부서에 멤버가 없음");
+                if(memberList == null) return new Read_AccountDTO_RES("RA003", "입력한 부서가 존재하지않거나 부서에 멤버가 없음");
             }
             else memberList = memberRepository.findAllByDeletedIsFalse();
 
@@ -98,25 +97,33 @@ public class AccountService {
         }
     }
 
+    // 회원 정보 상세 보기
+    @Transactional
+    public ReadDetail_AccountDTO_RES readMemberDetail(String memberId){
+        try{
+            Member target = memberRepository.findByMemberIdAndDeletedIsFalse(memberId);
+            return new ReadDetail_AccountDTO_RES("RDA001", new ReadDetail_AccountDTO(target.getMemberId(), target.getMemberName(),null,
+                    target.getAuthority().toString(), target.getPhone(), target.getVacation(), target.getDepartment().getDepartmentName(),
+                    target.getJoiningDate()));
+        }catch(Exception e){
+            return new ReadDetail_AccountDTO_RES("RDA002", e.getMessage());
+        }
+    }
+
     // 회원 정보 수정
     @Transactional
-    public Update_AccountDTO_RES updateMember(Update_AccountDTO_REQ updateAccountDTOReq){
+    public Update_AccountDTO_RES updateMember(String memberId, Update_AccountDTO_REQ updateAccountDTOReq){
         try{
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             String level = authentication.getAuthorities().toString();
-            Member target;
-
-            if(memberRepository.existsByMemberId(updateAccountDTOReq.getMemberId())) {
-                target = memberRepository.findAllByMemberIdAndDeletedIsFalse(updateAccountDTOReq.getMemberId());
-            }
-            else return new Update_AccountDTO_RES("UA004", "정보를 수정할 멤버가 존재하지 않습니다.");
+            Member target= memberRepository.findAllByMemberIdAndDeletedIsFalse(memberId);
 
             if(securityUtil.checkAuthority(updateAccountDTOReq, level, target)){
                 Department department = null;
 
                 if(departmentRepository.existsByDepartmentNameAndDeletedIsFalse(updateAccountDTOReq.getDepartmentName())){
                     if(departmentRepository.getOne(target.getDepartment().getId()).getLeader() == target){
-                        return new Update_AccountDTO_RES("UA005", "수정할 대상이 부서의 리더입니다.");
+                        return new Update_AccountDTO_RES("UA004", "수정할 대상이 부서의 리더입니다.");
                     }
                     department = departmentRepository.findByDepartmentName(updateAccountDTOReq.getDepartmentName());
                 }
@@ -135,16 +142,11 @@ public class AccountService {
 
     // 회원 정보 삭제
     @Transactional
-    public Delete_AccountDTO_RES deleteMember(MemberDTO_REQ memberDTOReq){
+    public Delete_AccountDTO_RES deleteMember(String memberId){
         try{
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             String level = authentication.getAuthorities().toString();
-            Member target;
-
-            if(memberRepository.existsByMemberId(memberDTOReq.getMemberId())) {
-                target = memberRepository.findAllByMemberIdAndDeletedIsFalse(memberDTOReq.getMemberId());
-            }
-            else return new Delete_AccountDTO_RES("DA004", "대상 회원이 존재하지 않습니다.");
+            Member target = memberRepository.findAllByMemberIdAndDeletedIsFalse(memberId);
 
             if(securityUtil.checkTargetAuthority(level, target)){
                 if(target.getDepartment().getLeader() != null){
