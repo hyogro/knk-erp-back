@@ -17,6 +17,6 @@ public class Read_MemberDTO {
     private String memberName;
     private float vacation;
     private String departmentName;
-    private Authority authority;
+    private String authority;
     private LocalDate joiningDate;
 }

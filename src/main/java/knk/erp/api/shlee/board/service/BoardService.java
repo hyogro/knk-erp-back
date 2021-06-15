@@ -168,8 +168,8 @@ public class BoardService {
                     boardPage = boardRepository.findAllByDeletedIsFalse(pageable);
                     break;
             }
-            Page<BoardListDTO_RES> page = boardPage.map(board -> new BoardListDTO_RES(board.getTitle(), board.getContent(),
-                    board.getWriterMemberId(), board.getWriterDepId(), board.getCreateDate(), board.getUpdateDate(), board.getReferenceMemberId()));
+            Page<BoardListDTO_RES> page = boardPage.map(board -> new BoardListDTO_RES(board.getTitle(), board.getWriterMemberId(),
+                    board.getCreateDate(), board.getBoardType()));
             return new Search_BoardListDTO_RES("SBL001", page);
         }catch(Exception e){
             return new Search_BoardListDTO_RES("SBL002", e.getMessage());
@@ -188,9 +188,8 @@ public class BoardService {
                 if(i<5) latest.add(all.getContent().get(i));
             }
             Page<Board> boardPage = new PageImpl<>(latest, pageable, latest.size());
-            Page<BoardListDTO_RES> page = boardPage.map(board -> new BoardListDTO_RES(board.getTitle(), board.getContent(),
-                    board.getWriterMemberId(), board.getWriterDepId(), board.getCreateDate(), board.getUpdateDate(),
-                    board.getReferenceMemberId()));
+            Page<BoardListDTO_RES> page = boardPage.map(board -> new BoardListDTO_RES(board.getTitle(), board.getWriterMemberId(),
+                    board.getCreateDate(), board.getBoardType()));
             return new NoticeListDTO_RES("NBL001", page);
         }catch(Exception e){
             return new NoticeListDTO_RES("NBL002", e.getMessage());
