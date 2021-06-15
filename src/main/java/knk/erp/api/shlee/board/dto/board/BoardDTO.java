@@ -29,6 +29,7 @@ public class BoardDTO {
                 .writerMemberId(writerMemberId)
                 .writerDepId(writerDepId)
                 .writerMemberName(writerMemberName)
+                .count(0)
                 .build();
     }
 }

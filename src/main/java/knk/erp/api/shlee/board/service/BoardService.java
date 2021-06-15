@@ -72,11 +72,30 @@ public class BoardService {
             if(reference_memberId != null && !boardUtil.checkReference(reference_memberId, reader)){
                 return new Read_BoardDTO_RES("RB003", "참조 대상이 아님");
             }
-            else {
-                return new Read_BoardDTO_RES("RB001", new Read_BoardDTO(target.getTitle(), target.getReferenceMemberId(),
-                        target.getContent(), target.getBoardType(), writer.getMemberName(), writer.getMemberId(),
-                        writer.getDepartment().getDepartmentName(), target.getCreateDate(), target.getUpdateDate(), target.getFile()));
+            List<String> visitors = target.getVisitors();
+
+
+            if(visitors != null){
+                if(!visitors.contains(reader.getMemberId())){
+                    visitors.add(reader.getMemberId());
+                }
             }
+            else {
+                visitors = new ArrayList<>();
+                visitors.add(reader.getMemberId());
+            }
+
+            target.setVisitors(visitors);
+            int count = target.getCount() + 1;
+            target.setCount(count);
+            System.out.println(target.getIdx());
+            boardRepository.save(target);
+            System.out.println(target.getTitle());
+
+            return new Read_BoardDTO_RES("RB001", new Read_BoardDTO(target.getTitle(), target.getReferenceMemberId(),
+                    target.getContent(), target.getBoardType(), writer.getMemberName(), writer.getMemberId(),
+                    writer.getDepartment().getDepartmentName(), target.getCreateDate(), target.getUpdateDate(), target.getFile(),
+                    target.getCount(), target.getVisitors()));
         }catch(Exception e){
             return new Read_BoardDTO_RES("RB002", e.getMessage());
         }
@@ -155,12 +174,8 @@ public class BoardService {
                     break;
 
                 case "작성자검색":
-                    if(keyword.length()>=5){
-                        boardPage = boardRepository.findAllByWriterMemberIdAndDeletedFalse(pageable, keyword);
-                    }
-                    else{
-                        boardPage = boardRepository.findAllByWriterMemberNameAndDeletedFalse(pageable, keyword);
-                    }
+                    if(keyword.length()>=5) boardPage = boardRepository.findAllByWriterMemberIdAndDeletedFalse(pageable, keyword);
+                    else boardPage = boardRepository.findAllByWriterMemberNameAndDeletedFalse(pageable, keyword);
                     break;
 
                 case "참조":

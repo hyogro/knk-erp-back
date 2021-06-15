@@ -22,4 +22,6 @@ public class Read_BoardDTO {
     private LocalDateTime create_date;
     private LocalDateTime update_date;
     private List<File> file;
+    private int count;
+    private List<String> visitors;
 }
