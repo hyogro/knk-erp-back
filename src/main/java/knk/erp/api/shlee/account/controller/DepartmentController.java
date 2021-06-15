@@ -26,7 +26,7 @@ public class DepartmentController {
         return ResponseEntity.ok(departmentService.readDepartment());
     }
 
-    // 부서 목록 수정
+    // 부서 이름 수정
     @PutMapping("/{dep_id}")
     public ResponseEntity<Update_DepartmentDTO_RES> updateDepartment(@PathVariable Long dep_id, @RequestBody DepartmentDTO_REQ departmentDTOReq){
         return ResponseEntity.ok(departmentService.updateDepartment(dep_id, departmentDTOReq));
