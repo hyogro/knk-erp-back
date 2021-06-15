@@ -47,11 +47,13 @@ public class DepartmentService {
         try {
             List<Department> departmentList = departmentRepository.findAllByDeletedIsFalse();
             List<String> departmentName = new ArrayList<>();
+            List<Long> dep_id = new ArrayList<>();
             for(Department d : departmentList){
                 departmentName.add(d.getDepartmentName());
+                dep_id.add(d.getId());
             }
 
-            return new Read_DepartmentDTO_RES("RD001", departmentName);
+            return new Read_DepartmentDTO_RES("RD001", new Read_DepartmentDTO(dep_id, departmentName));
         } catch (Exception e) {
             return new Read_DepartmentDTO_RES("RD002", e.getMessage());
         }

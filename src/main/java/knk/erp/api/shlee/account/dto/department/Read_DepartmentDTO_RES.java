@@ -13,7 +13,7 @@ import java.util.List;
 public class Read_DepartmentDTO_RES {
     private String code;
     private String message;
-    List<String> departmentName;
+    private Read_DepartmentDTO readDepartmentDTO;
     private LinkedHashMap<String, String> help_codeList = new LinkedHashMap<>();
 
     private void createCodeList(){
@@ -29,9 +29,9 @@ public class Read_DepartmentDTO_RES {
     }
 
     //ok
-    public Read_DepartmentDTO_RES(String code, List<String> departmentName) {
+    public Read_DepartmentDTO_RES(String code, Read_DepartmentDTO readDepartmentDTO) {
         createCodeList();
         this.code = code;
-        this.departmentName = departmentName;
+        this.readDepartmentDTO = readDepartmentDTO;
     }
 }

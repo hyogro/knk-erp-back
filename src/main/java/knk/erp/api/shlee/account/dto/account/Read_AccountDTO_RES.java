@@ -14,7 +14,7 @@ public class Read_AccountDTO_RES {
     private String code;
     private String message;
     private LinkedHashMap<String, String> help_codeList = new LinkedHashMap<>();
-    List<String> memberName;
+    private Read_AccountDTO readAccountDTO;
 
     private void createCodeList(){
         this.help_codeList.put("RA001", "회원정보 목록 읽어오기 성공");
@@ -29,9 +29,9 @@ public class Read_AccountDTO_RES {
     }
 
     //ok
-    public Read_AccountDTO_RES(String code, List<String> memberName) {
+    public Read_AccountDTO_RES(String code, Read_AccountDTO readAccountDTO) {
         createCodeList();
         this.code = code;
-        this.memberName = memberName;
+        this.readAccountDTO = readAccountDTO;
     }
 }

@@ -17,6 +17,7 @@ public class Read_BoardDTO {
     private String content;
     private String boardType;
     private String writer_name;
+    private String writerMemberId;
     private String writer_department;
     private LocalDateTime create_date;
     private LocalDateTime update_date;

@@ -41,6 +41,7 @@ public class BoardService {
                 return new Create_BoardDTO_RES("CB003", "권한 부족");
             }
             boardDTO.setWriterMemberId(writer.getMemberId());
+            boardDTO.setWriterMemberName(writer.getMemberName());
             boardDTO.setWriterDepId(writer.getDepartment().getId());
             Board board = boardDTO.toBoard();
             List<File> file = new ArrayList<>();
@@ -73,7 +74,7 @@ public class BoardService {
             }
             else {
                 return new Read_BoardDTO_RES("RB001", new Read_BoardDTO(target.getTitle(), target.getReferenceMemberId(),
-                        target.getContent(), target.getBoardType(), writer.getMemberName(),
+                        target.getContent(), target.getBoardType(), writer.getMemberName(), writer.getMemberId(),
                         writer.getDepartment().getDepartmentName(), target.getCreateDate(), target.getUpdateDate(), target.getFile()));
             }
         }catch(Exception e){
@@ -154,8 +155,12 @@ public class BoardService {
                     break;
 
                 case "작성자검색":
-                    Member writer = memberRepository.findAllByMemberIdAndDeletedIsFalse(keyword);
-                    boardPage = boardRepository.findAllByWriterMemberIdAndDeletedFalse(pageable, writer.getMemberId());
+                    if(keyword.length()>=5){
+                        boardPage = boardRepository.findAllByWriterMemberIdAndDeletedFalse(pageable, keyword);
+                    }
+                    else{
+                        boardPage = boardRepository.findAllByWriterMemberNameAndDeletedFalse(pageable, keyword);
+                    }
                     break;
 
                 case "참조":
@@ -168,8 +173,9 @@ public class BoardService {
                     boardPage = boardRepository.findAllByDeletedIsFalse(pageable);
                     break;
             }
-            Page<BoardListDTO_RES> page = boardPage.map(board -> new BoardListDTO_RES(board.getTitle(), board.getWriterMemberId(),
+            Page<BoardListDTO_RES> page = boardPage.map(board -> new BoardListDTO_RES(board.getTitle(), board.getWriterMemberName(),
                     board.getCreateDate(), board.getBoardType()));
+
             return new Search_BoardListDTO_RES("SBL001", page);
         }catch(Exception e){
             return new Search_BoardListDTO_RES("SBL002", e.getMessage());
@@ -188,7 +194,7 @@ public class BoardService {
                 if(i<5) latest.add(all.getContent().get(i));
             }
             Page<Board> boardPage = new PageImpl<>(latest, pageable, latest.size());
-            Page<BoardListDTO_RES> page = boardPage.map(board -> new BoardListDTO_RES(board.getTitle(), board.getWriterMemberId(),
+            Page<BoardListDTO_RES> page = boardPage.map(board -> new BoardListDTO_RES(board.getTitle(), board.getWriterMemberName(),
                     board.getCreateDate(), board.getBoardType()));
             return new NoticeListDTO_RES("NBL001", page);
         }catch(Exception e){

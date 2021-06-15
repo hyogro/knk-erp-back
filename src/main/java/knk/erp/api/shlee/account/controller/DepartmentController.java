@@ -4,7 +4,6 @@ import knk.erp.api.shlee.account.dto.department.*;
 import knk.erp.api.shlee.account.service.DepartmentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 
 @RestController

@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class BoardListDTO_RES {
     private String title;
-    private String writerMemberId;
+    private String writerMemberName;
     private LocalDateTime createDate;
     private String boardType;
 }
