@@ -1,6 +1,6 @@
 package knk.erp.api.shlee.schedule.responseEntity.schedule;
 
-import knk.erp.api.shlee.schedule.dto.Schedule.ScheduleDTO;
+import knk.erp.api.shlee.schedule.dto.Schedule.ScheduleListData;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -14,7 +14,7 @@ import java.util.List;
 public class RES_readScheduleList {
     private String code;
     private String message;
-    private List<ScheduleDTO> data;
+    private List<ScheduleListData> data;
     private LinkedHashMap<String, String> help_codeList = new LinkedHashMap<>();
 
     private void createCodeList(){
@@ -30,7 +30,7 @@ public class RES_readScheduleList {
     }
 
     //ok
-    public RES_readScheduleList(String code, List<ScheduleDTO> data) {
+    public RES_readScheduleList(String code, List<ScheduleListData> data) {
         createCodeList();
         this.code = code;
         this.data = data;

@@ -39,13 +39,9 @@ public class ScheduleService {
         try {
             String memberId = getMemberId();
             Long departmentId = getDepartmentId(memberId);
-            List<Schedule> scheduleList = new ArrayList<>();
-            if (viewOption.isEmpty()) {
-                scheduleList.addAll(scheduleRepository.findAll(SS.mid(memberId).and(SS.delFalse())));
-            }
-            else {
-                scheduleList.addAll(scheduleRepository.findAll(SS.delFalse().and(SS.viewOption(viewOption, memberId, departmentId))));
-            }
+            List<Schedule> scheduleList = (viewOption.isEmpty())
+                    ? scheduleRepository.findAll(SS.mid(memberId).and(SS.delFalse()))
+                    : scheduleRepository.findAll(SS.delFalse().and(SS.viewOption(viewOption, memberId, departmentId)));
 
             return new RES_readScheduleList("RSL001", util.ScheduleListToDTO(scheduleList));
         } catch (Exception e) {
@@ -91,17 +87,6 @@ public class ScheduleService {
         } catch (Exception e) {
             return new RES_deleteSchedule("DS002", e.getMessage());
         }
-    }
-
-    //옵션으로 페이지정보 생성
-    private PageRequest getPageRequest(Pageable pageable) {
-        Sort sort = Sort.by(Sort.Direction.ASC, "startDate");
-        return PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sort);
-    }
-
-    //뷰 옵션 체크
-    private boolean parseViewOption(String viewOption, String target) {
-        return viewOption.contains(target);
     }
 
     //ScheduleDTO 에 맴버 아이디 및 부서아이디 입력
