@@ -43,7 +43,7 @@ public class AccountService {
             Department department;
 
             if(memberDTOReq.getDepartmentId() != null) department = departmentRepository.getOne(memberDTOReq.getDepartmentId());
-            else department = departmentRepository.findByDepartmentName("부서미지정");
+            else department = departmentRepository.findByDepartmentNameAndDeletedFalse("부서미지정");
 
             member.setDepartment(department);
             department.getMemberList().add(member);
@@ -84,7 +84,7 @@ public class AccountService {
         try{
             List<Member> memberList;
             if(departmentName != null){
-                Department department = departmentRepository.findByDepartmentName(departmentName);
+                Department department = departmentRepository.findByDepartmentNameAndDeletedFalse(departmentName);
                 memberList = memberRepository.findAllByDepartmentAndDeletedIsFalse(department);
                 if(memberList == null) return new Read_AccountDTO_RES("RA003", "입력한 부서가 존재하지않거나 부서에 멤버가 없음");
             }
@@ -124,7 +124,7 @@ public class AccountService {
                     if(departmentRepository.getOne(target.getDepartment().getId()).getLeader() == target){
                         return new Update_AccountDTO_RES("UA004", "수정할 대상이 부서의 리더입니다.");
                     }
-                    department = departmentRepository.findByDepartmentName(updateAccountDTOReq.getDepartmentName());
+                    department = departmentRepository.findByDepartmentNameAndDeletedFalse(updateAccountDTOReq.getDepartmentName());
                 }
 
                 accountUtil.updateSetMember(target, department, updateAccountDTOReq, passwordEncoder);

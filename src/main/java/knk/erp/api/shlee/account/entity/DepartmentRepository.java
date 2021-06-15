@@ -8,8 +8,8 @@ import java.util.Optional;
 
 @Repository
 public interface DepartmentRepository extends JpaRepository<Department, Long> {
-    Department findByLeader_MemberId(String leaderId);
-    Department findByDepartmentName(String departmentName);
+    Department findByLeader_MemberIdAAndDeletedFalse(String leaderId);
+    Department findByDepartmentNameAndDeletedFalse(String departmentName);
     List<Department> findAllByDeletedIsFalse();
     boolean existsByDepartmentNameAndDeletedIsFalse(String departmentName);
     Department findByIdAndDeletedFalse(Long id);

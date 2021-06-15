@@ -118,7 +118,7 @@ public class DepartmentService {
             List<Member> memberList =  target.getMemberList();
 
             for(Member m : memberList){
-                m.setDepartment(departmentRepository.findByDepartmentName("부서미지정"));
+                m.setDepartment(departmentRepository.findByDepartmentNameAndDeletedFalse("부서미지정"));
             }
 
             if(target.getLeader().getAuthority().equals(Authority.ROLE_LVL2)){
@@ -162,7 +162,7 @@ public class DepartmentService {
                 return new Delete_DepartmentMemberDTO_RES("DDM003","해당 부서의 리더");
             }
 
-            targetMember.setDepartment(departmentRepository.findByDepartmentName("부서미지정"));
+            targetMember.setDepartment(departmentRepository.findByDepartmentNameAndDeletedFalse("부서미지정"));
             memberRepository.save(targetMember);
 
             return new Delete_DepartmentMemberDTO_RES("DDM001");
