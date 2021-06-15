@@ -40,8 +40,14 @@ public class VacationService {
     public RES_createVacation createVacation(VacationDTO vacationDTO) {
         try {
             String memberId = getMemberId();
+            Department department = getDepartment(memberId);
+
             vacationDTO.setMemberId(memberId);
-            vacationDTO.setDepartmentId(getDepartmentId(memberId));
+            vacationDTO.setMemberName(getMemberName(memberId));
+
+            assert department != null;
+            vacationDTO.setDepartmentId(department.getId());
+            vacationDTO.setDepartmentName(department.getDepartmentName());
 
             Vacation vacation = vacationDTO.toEntity();
             approveCheck(vacation);
@@ -69,7 +75,7 @@ public class VacationService {
         try {
             String memberId = getMemberId();
             Vacation vacation = vacationRepository.getOne(vid);
-            if(!memberId.equals(vacation.getMemberId())){
+            if (!memberId.equals(vacation.getMemberId())) {
                 return new RES_readVacation("RV003");
             }
             return new RES_readVacation("RV001", new VacationDTO(vacation));
@@ -128,7 +134,7 @@ public class VacationService {
             }
 
             boolean isChange = approveCheck(vacation);
-            if(isChange) vacationRepository.save(vacation);
+            if (isChange) vacationRepository.save(vacation);
 
             return isChange ? new RES_approveVacation("AV001") : new RES_approveVacation("AV003");
 
@@ -167,12 +173,12 @@ public class VacationService {
     }
 
     //휴가 요약정보 조회
-    public RES_readVacationSummary readVacationSummary(){
+    public RES_readVacationSummary readVacationSummary() {
         try {
             String memberId = getMemberId();
             int vacation; //휴가
-            LocalDateTime todayS = LocalDateTime.of(LocalDate.now(), LocalTime.of(0,0,0));
-            LocalDateTime todayE = LocalDateTime.of(LocalDate.now(), LocalTime.of(23,59,59));
+            LocalDateTime todayS = LocalDateTime.of(LocalDate.now(), LocalTime.of(0, 0, 0));
+            LocalDateTime todayE = LocalDateTime.of(LocalDate.now(), LocalTime.of(23, 59, 59));
 
             if (commonUtil.checkLevel() == 2) {
                 Member member = memberRepository.findAllByMemberIdAndDeletedIsFalse(memberId);
@@ -209,11 +215,20 @@ public class VacationService {
     }
 
     //맴버 아이디로 부서 아이디 가져오기
-    private Long getDepartmentId(String memberId) {
+    private Department getDepartment(String memberId) {
         try {
-            return memberRepository.findAllByMemberIdAndDeletedIsFalse(memberId).getDepartment().getId();
+            return memberRepository.findAllByMemberIdAndDeletedIsFalse(memberId).getDepartment();
         } catch (Exception e) {
-            return -1L;
+            return null;
+        }
+    }
+
+    //맴버 아이디로 맴어 이름 가져오기
+    private String getMemberName(String memberId) {
+        try {
+            return memberRepository.findAllByMemberIdAndDeletedIsFalse(memberId).getMemberName();
+        } catch (Exception e) {
+            return "UnFoundMember";
         }
     }
 
@@ -222,7 +237,6 @@ public class VacationService {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         return authentication.getName();
     }
-
 
 
 }

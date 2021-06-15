@@ -1,5 +1,6 @@
 package knk.erp.api.shlee.schedule.service;
 
+import knk.erp.api.shlee.account.entity.Member;
 import knk.erp.api.shlee.account.entity.MemberRepository;
 import knk.erp.api.shlee.schedule.dto.Schedule.*;
 import knk.erp.api.shlee.schedule.entity.Schedule;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -27,8 +29,9 @@ public class ScheduleService {
 
     public RES_createSchedule createSchedule(ScheduleDTO scheduleDTO) {
         try {
-            setMemberIdAndDepartmentId(scheduleDTO);
-            scheduleRepository.save(scheduleDTO.toEntity());
+            Schedule schedule = scheduleDTO.toEntity();
+            schedule.setAuthor(getMember());
+            scheduleRepository.save(schedule);
             return new RES_createSchedule("CS001");
         } catch (Exception e) {
             return new RES_createSchedule("CS002", e.getMessage());
@@ -38,7 +41,7 @@ public class ScheduleService {
     public RES_readScheduleList readScheduleList(String viewOption) {
         try {
             String memberId = getMemberId();
-            Long departmentId = getDepartmentId(memberId);
+            Long departmentId = Objects.requireNonNull(getMember()).getDepartment().getId();
             List<Schedule> scheduleList = (viewOption.isEmpty())
                     ? scheduleRepository.findAll(SS.mid(memberId).and(SS.delFalse()))
                     : scheduleRepository.findAll(SS.delFalse().and(SS.viewOption(viewOption, memberId, departmentId)));
@@ -63,7 +66,7 @@ public class ScheduleService {
             String memberId = getMemberId();
             Schedule schedule = scheduleRepository.getOne(sid);
 
-            if (!memberId.equals(schedule.getMemberId())) return new RES_updateSchedule("US003");
+            if (!memberId.equals(schedule.getAuthor().getMemberId())) return new RES_updateSchedule("US003");
 
             util.DTOTOSchedule(schedule, scheduleDTO);
             scheduleRepository.save(schedule);
@@ -78,7 +81,7 @@ public class ScheduleService {
             String memberId = getMemberId();
             Schedule schedule = scheduleRepository.getOne(sid);
 
-            if (!memberId.equals(schedule.getMemberId())) return new RES_deleteSchedule("DS003");
+            if (!memberId.equals(schedule.getAuthor().getMemberId())) return new RES_deleteSchedule("DS003");
 
             schedule.setDeleted(true);
             scheduleRepository.save(schedule);
@@ -89,26 +92,20 @@ public class ScheduleService {
         }
     }
 
-    //ScheduleDTO 에 맴버 아이디 및 부서아이디 입력
-    private void setMemberIdAndDepartmentId(ScheduleDTO scheduleDTO) {
-        String memberId = getMemberId();
-        scheduleDTO.setMemberId(memberId);
-        scheduleDTO.setDepartmentId(getDepartmentId(memberId));
-    }
-
-    //맴버 아이디로 부서 아이디 가져오기
-    private Long getDepartmentId(String memberId) {
-        try {
-            return memberRepository.findAllByMemberIdAndDeletedIsFalse(memberId).getDepartment().getId();
-        } catch (Exception e) {
-            return -1L;
-        }
-    }
-
     //권한 정보 얻어 맴버 아이디 가져오기
     private String getMemberId() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         return authentication.getName();
+    }
+
+    private Member getMember(){
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String memberId = authentication.getName();
+            return memberRepository.findAllByMemberIdAndDeletedIsFalse(memberId);
+        } catch (Exception e) {
+            return null;
+        }
     }
 
 }

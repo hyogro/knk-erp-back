@@ -1,11 +1,9 @@
 package knk.erp.api.shlee.schedule.entity;
 
+import knk.erp.api.shlee.account.entity.Member;
 import lombok.*;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Getter
@@ -34,20 +32,16 @@ public class Schedule extends Time {
     @Column(nullable = false)
     private LocalDateTime endDate;
 
-    @Column(nullable = false, length = 30)
-    private String memberId;
-
-    @Column
-    private Long departmentId;
+    @ManyToOne
+    @JoinColumn(name = "member_id")
+    private Member author;
 
     @Builder
-    public Schedule(String title, String memo, String viewOption, LocalDateTime startDate, LocalDateTime endDate, String memberId, Long departmentId) {
+    public Schedule(String title, String memo, String viewOption, LocalDateTime startDate, LocalDateTime endDate) {
         this.title = title;
         this.memo = memo;
         this.viewOption = viewOption;
         this.startDate = startDate;
         this.endDate = endDate;
-        this.memberId = memberId;
-        this.departmentId = departmentId;
     }
 }
