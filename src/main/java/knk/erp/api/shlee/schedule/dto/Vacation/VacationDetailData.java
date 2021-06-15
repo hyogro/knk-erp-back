@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @Setter
 @ToString
 @AllArgsConstructor
-public class VacationDTO {
+public class VacationDetailData {
     private Long id;
     private String type;
     private String memo;
@@ -30,12 +30,7 @@ public class VacationDTO {
     private String departmentName;
     private LocalDateTime requestDate;
 
-    public Vacation toEntity(){
-        return Vacation.builder().type(type).memo(memo).startDate(startDate).endDate(endDate).memberId(memberId).memberName(memberName)
-                .departmentId(departmentId).departmentName(departmentName).build();
-    }
-
-    public VacationDTO(Vacation vacation){
+    public VacationDetailData(Vacation vacation){
         this.id = vacation.getId();
         this.type = vacation.getType();
         this.memo = vacation.getMemo();

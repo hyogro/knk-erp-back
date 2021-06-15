@@ -1,12 +1,11 @@
 package knk.erp.api.shlee.schedule.specification;
 
+import knk.erp.api.shlee.account.entity.Department;
+import knk.erp.api.shlee.account.entity.Member;
 import knk.erp.api.shlee.schedule.entity.Schedule;
 import org.springframework.data.jpa.domain.Specification;
 
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
+import javax.persistence.criteria.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,8 +15,11 @@ public class SS {//ScheduleSpecification
         return (root, query, builder) -> builder.isFalse(root.get("deleted"));
     }
 
-    public static Specification<Schedule> mid(String memberId){//memberId
-        return (root, query, builder) -> builder.equal(root.get("memberId"), memberId);
+    public static Specification<Schedule> mid(String mid){//memberId
+        return ((root, query, builder) -> {
+            Join<Schedule, Member> sm = root.join("author");
+            return builder.equal(sm.get("memberId"), mid);
+        });
     }
 
     public static Specification<Schedule> viewOption(String viewOption, String mid, Long did){//viewOption
@@ -47,20 +49,28 @@ public class SS {//ScheduleSpecification
         return ((root, query, builder) -> builder.equal(root.get("viewOption"), "all"));
     }
 
-    private static Specification<Schedule> VOP_DEP(Long did){
-        return ((root, query, builder) -> {
+
+    public static Specification<Schedule> VOP_DEP(Long did) {
+        return (root, query, builder) -> {
             List<Predicate> predicates = new ArrayList<>();
             predicates.add(builder.equal(root.get("viewOption"), "dep"));
-            predicates.add(builder.equal(root.get("departmentId"), did));
+
+            Join<Schedule, Member> sm = root.join("author");
+
+            predicates.add(builder.equal(sm.get("department").get("id"), did));
+
             return builder.and(predicates.toArray(new Predicate[0]));
-        });
+        };
     }
 
     private static Specification<Schedule> VOP_OWN(String mid){
         return ((root, query, builder) -> {
             List<Predicate> predicates = new ArrayList<>();
             predicates.add(builder.equal(root.get("viewOption"), "own"));
-            predicates.add(builder.equal(root.get("memberId"), mid));
+
+            Join<Schedule, Member> sm = root.join("author");
+
+            predicates.add(builder.equal(sm.get("memberId"), mid));
             return builder.and(predicates.toArray(new Predicate[0]));
         });
     }

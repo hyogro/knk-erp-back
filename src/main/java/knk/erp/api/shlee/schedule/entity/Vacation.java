@@ -19,8 +19,8 @@ public class Vacation extends Time {
     @GeneratedValue
     private Long id;
 
-    @Column(length = 50, nullable = false)
-    private String title;
+    @Column(length = 10, nullable = false)
+    private String type;
 
     @Column
     private String memo;
@@ -53,18 +53,23 @@ public class Vacation extends Time {
     private String memberId;
 
     @Column(nullable = false)
+    private String memberName;
+
+    @Column(nullable = false)
     private Long departmentId;
 
+    @Column(nullable = false)
+    private String departmentName;
+
     @Builder
-    public Vacation(String title, String memo, boolean approval1, boolean approval2, String rejectMemo, LocalDateTime startDate, LocalDateTime endDate, String memberId, Long departmentId) {
-        this.title = title;
+    public Vacation(String type, String memo, LocalDateTime startDate, LocalDateTime endDate, String memberId, String memberName, Long departmentId, String departmentName) {
+        this.type = type;
         this.memo = memo;
-        this.approval1 = approval1;
-        this.approval2 = approval2;
-        this.rejectMemo = rejectMemo;
         this.startDate = startDate;
         this.endDate = endDate;
         this.memberId = memberId;
+        this.memberName = memberName;
         this.departmentId = departmentId;
+        this.departmentName = departmentName;
     }
 }
