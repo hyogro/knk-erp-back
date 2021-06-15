@@ -1,10 +1,16 @@
 package knk.erp.api.shlee.schedule.specification;
 
 
+import knk.erp.api.shlee.account.entity.Member;
+import knk.erp.api.shlee.schedule.entity.Schedule;
 import knk.erp.api.shlee.schedule.entity.Vacation;
 import org.springframework.data.jpa.domain.Specification;
 
+import javax.persistence.criteria.Join;
+import javax.persistence.criteria.Predicate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 public class VS {//VacationSpecification
 
@@ -12,12 +18,21 @@ public class VS {//VacationSpecification
         return (root, query, builder) -> builder.isFalse(root.get("deleted"));
     }
 
-    public static Specification<Vacation> mid(String memberId){//memberId
-        return (root, query, builder) -> builder.equal(root.get("memberId"), memberId);
+    public static Specification<Vacation> mid(String mid){//memberId
+        return ((root, query, builder) -> {
+            Join<Schedule, Member> sm = root.join("author");
+            return builder.equal(sm.get("memberId"), mid);
+        });
     }
 
-    public static Specification<Vacation> did(Long departmentId){//memberId
-        return (root, query, builder) -> builder.equal(root.get("departmentId"), departmentId);
+    public static Specification<Vacation> did(Long did){//memberId
+        return (root, query, builder) -> {
+
+            Join<Schedule, Member> sm = root.join("author");
+
+            return builder.equal(sm.get("department").get("id"), did);
+
+        };
     }
 
     public static Specification<Vacation> approve1Is(boolean t){//approval1 is

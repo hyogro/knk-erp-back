@@ -1,11 +1,9 @@
 package knk.erp.api.shlee.schedule.entity;
 
+import knk.erp.api.shlee.account.entity.Member;
 import lombok.*;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Getter
@@ -31,11 +29,13 @@ public class Vacation extends Time {
     @Column
     boolean approval2;
 
-    @Column(length = 30)
-    private String approver1;
+    @ManyToOne
+    @JoinColumn(name = "approver_1_id")
+    private Member approver1;
 
-    @Column(length = 30)
-    private String approver2;
+    @ManyToOne
+    @JoinColumn(name = "approver_2_id")
+    private Member approver2;
 
     @Column
     boolean reject;
@@ -49,27 +49,15 @@ public class Vacation extends Time {
     @Column(nullable = false)
     private LocalDateTime endDate;
 
-    @Column(nullable = false)
-    private String memberId;
-
-    @Column(nullable = false)
-    private String memberName;
-
-    @Column(nullable = false)
-    private Long departmentId;
-
-    @Column(nullable = false)
-    private String departmentName;
+    @ManyToOne
+    @JoinColumn(name = "member_id")
+    private Member author;
 
     @Builder
-    public Vacation(String type, String memo, LocalDateTime startDate, LocalDateTime endDate, String memberId, String memberName, Long departmentId, String departmentName) {
+    public Vacation(String type, String memo, LocalDateTime startDate, LocalDateTime endDate) {
         this.type = type;
         this.memo = memo;
         this.startDate = startDate;
         this.endDate = endDate;
-        this.memberId = memberId;
-        this.memberName = memberName;
-        this.departmentId = departmentId;
-        this.departmentName = departmentName;
     }
 }

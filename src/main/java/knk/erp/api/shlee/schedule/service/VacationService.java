@@ -39,17 +39,10 @@ public class VacationService {
     //휴가 생성
     public RES_createVacation createVacation(VacationDTO vacationDTO) {
         try {
-            String memberId = getMemberId();
-            Department department = getDepartment(memberId);
-
-            vacationDTO.setMemberId(memberId);
-            vacationDTO.setMemberName(getMemberName(memberId));
-
-            assert department != null;
-            vacationDTO.setDepartmentId(department.getId());
-            vacationDTO.setDepartmentName(department.getDepartmentName());
+            Member member = getMember();
 
             Vacation vacation = vacationDTO.toEntity();
+            vacation.setAuthor(member);
             approveCheck(vacation);
 
             vacationRepository.save(vacation);
@@ -73,11 +66,7 @@ public class VacationService {
     //내 휴가상세 조회
     public RES_readVacation readVacation(Long vid) {
         try {
-            String memberId = getMemberId();
             Vacation vacation = vacationRepository.getOne(vid);
-            if (!memberId.equals(vacation.getMemberId())) {
-                return new RES_readVacation("RV003");
-            }
             return new RES_readVacation("RV001", new VacationDTO(vacation));
         } catch (Exception e) {
             return new RES_readVacation("RV002", e.getMessage());
@@ -91,7 +80,7 @@ public class VacationService {
 
             Vacation vacation = vacationRepository.getOne(vid);
             if (vacation.isApproval1() && vacation.isApproval2()) return new RES_deleteVacation("DV003");
-            if (vacation.getMemberId().equals(memberId)) return new RES_deleteVacation("DV004");
+            if (vacation.getAuthor().getMemberId().equals(memberId)) return new RES_deleteVacation("DV004");
 
             vacation.setDeleted(true);
             vacationRepository.save(vacation);
@@ -130,7 +119,7 @@ public class VacationService {
             if (commonUtil.checkLevel() == 2) {
                 Member member = memberRepository.findAllByMemberIdAndDeletedIsFalse(memberId);
                 Long departmentId = member.getDepartment().getId();
-                if (!vacation.getDepartmentId().equals(departmentId)) return new RES_approveVacation("AV003");
+                if (!vacation.getAuthor().getDepartment().getId().equals(departmentId)) return new RES_approveVacation("AV003");
             }
 
             boolean isChange = approveCheck(vacation);
@@ -159,7 +148,7 @@ public class VacationService {
                 if (commonUtil.checkLevel() == 2) {
                     Member member = memberRepository.findAllByMemberIdAndDeletedIsFalse(memberId);
                     Long departmentId = member.getDepartment().getId();
-                    if (!vacation.getDepartmentId().equals(departmentId)) return new RES_rejectVacation("RV003");
+                    if (!vacation.getAuthor().getDepartment().getId().equals(departmentId)) return new RES_rejectVacation("RV003");
                 }
 
                 vacationRepository.save(vacation);
@@ -200,15 +189,15 @@ public class VacationService {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (commonUtil.checkLevel() == 2) {
             vacation.setApproval1(true);
-            vacation.setApprover1(authentication.getName());
+            vacation.setApprover1(getMember());
             return true;
         } else if (3 <= commonUtil.checkLevel()) {
             if (!vacation.isApproval1()) {
                 vacation.setApproval1(true);
-                vacation.setApprover1(authentication.getName());
+                vacation.setApprover1(getMember());
             }
             vacation.setApproval2(true);
-            vacation.setApprover2(authentication.getName());
+            vacation.setApprover2(getMember());
             return true;
         }
         return false;
@@ -238,6 +227,15 @@ public class VacationService {
         return authentication.getName();
     }
 
+    private Member getMember(){
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String memberId = authentication.getName();
+            return memberRepository.findAllByMemberIdAndDeletedIsFalse(memberId);
+        } catch (Exception e) {
+            return null;
+        }
+    }
 
 }
 
