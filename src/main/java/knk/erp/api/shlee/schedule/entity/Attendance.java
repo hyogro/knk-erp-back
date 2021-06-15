@@ -1,12 +1,10 @@
 package knk.erp.api.shlee.schedule.entity;
 
+import knk.erp.api.shlee.account.entity.Member;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
@@ -21,8 +19,9 @@ public class Attendance extends Time {
     @GeneratedValue
     private Long id;
 
-    @Column(nullable = false, length = 30)
-    private String memberId;
+    @ManyToOne
+    @JoinColumn(name = "member_id")
+    private Member author;
 
     @Column(nullable = false)
     private Long departmentId;
@@ -37,8 +36,7 @@ public class Attendance extends Time {
     private LocalTime offWork;
 
     @Builder
-    public Attendance(String memberId, Long departmentId, LocalDate attendanceDate, LocalTime onWork, LocalTime offWork) {
-        this.memberId = memberId;
+    public Attendance(Long departmentId, LocalDate attendanceDate, LocalTime onWork, LocalTime offWork) {
         this.departmentId = departmentId;
         this.attendanceDate = attendanceDate;
         this.onWork = onWork;

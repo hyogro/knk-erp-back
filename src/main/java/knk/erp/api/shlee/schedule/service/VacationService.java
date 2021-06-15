@@ -78,7 +78,7 @@ public class VacationService {
 
             Vacation vacation = vacationRepository.getOne(vid);
             if (vacation.isApproval1() && vacation.isApproval2()) return new RES_deleteVacation("DV003");
-            if (vacation.getAuthor().getMemberId().equals(memberId)) return new RES_deleteVacation("DV004");
+            if (!vacation.getAuthor().getMemberId().equals(memberId)) return new RES_deleteVacation("DV004");
 
             vacation.setDeleted(true);
             vacationRepository.save(vacation);

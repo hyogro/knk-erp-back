@@ -50,8 +50,10 @@ public class AttendanceService {
             boolean isOnWorked = (int) attendanceRepository.count(AS.delFalse().and(AS.mid(memberId)).and(AS.atteDate(today))) != 0;
             if (isOnWorked) return new RES_onWork("ON003");
 
-            AttendanceDTO attendanceDTO = new AttendanceDTO(memberId, today, onWorkTime, getDepartmentId(memberId));
-            attendanceRepository.save(attendanceDTO.toEntity());
+            AttendanceDTO attendanceDTO = new AttendanceDTO(today, onWorkTime, getDepartmentId(memberId));
+            Attendance attendance = attendanceDTO.toEntity();
+            attendance.setAuthor(getMember());
+            attendanceRepository.save(attendance);
             return new RES_onWork("ON001");
 
         } catch (Exception e) {
@@ -103,9 +105,6 @@ public class AttendanceService {
         try {
             String memberId = getMemberId();
             Attendance attendance = attendanceRepository.getOne(aid);
-            if(!memberId.equals(attendance.getMemberId())){
-                return new RES_readAttendance("RA004");
-            }
             return new RES_readAttendance("RA001", new AttendanceDTO(attendance));
         } catch (Exception e) {
             return new RES_readAttendance("RA002", e.getMessage());
@@ -136,19 +135,17 @@ public class AttendanceService {
     }
 
     //출,퇴근기록 정정 요청 -> 출퇴근 기록으로 정정요청 생성
-    public RES_updateRectifyAttendance updateRectifyAttendance(Long rid, RectifyAttendanceDTO rectifyAttendanceDTO) {
+    public RES_updateRectifyAttendance updateRectifyAttendance(Long aid, RectifyAttendanceDTO rectifyAttendanceDTO) {
         try {
             String memberId = getMemberId();
             setMemberIdAndDepartmentId(rectifyAttendanceDTO);
-            Optional<Attendance> attendanceOptional = attendanceRepository.findOne(AS.delFalse().and(AS.id(rectifyAttendanceDTO.getId())));
+            Optional<Attendance> attendanceOptional = attendanceRepository.findOne(AS.delFalse().and(AS.id(aid)));
 
             if(!attendanceOptional.isPresent()){
                 return new RES_updateRectifyAttendance("URA002");
             }
 
             Attendance attendance = attendanceOptional.get();
-            //실패 - 본인이 아니면 정정요청 불가
-            if (!attendance.getMemberId().equals(memberId)) return new RES_updateRectifyAttendance("URA003");
 
             RectifyAttendance rectifyAttendance = util.AttendanceToRectify(attendance, rectifyAttendanceDTO);
 
@@ -201,9 +198,6 @@ public class AttendanceService {
             String memberId = getMemberId();
 
             RectifyAttendance rectifyAttendance = rectifyAttendanceRepository.getOne(rid);
-            if(!memberId.equals(rectifyAttendance.getMemberId())){
-                return new RES_readRectifyAttendance("RRA003");
-            }
             return new RES_readRectifyAttendance("RRA001", new RectifyAttendanceDTO(rectifyAttendance));
         } catch (Exception e) {
             //실패 - Exception 발생
@@ -217,8 +211,6 @@ public class AttendanceService {
             String memberId = getMemberId();
 
             RectifyAttendance rectifyAttendance = rectifyAttendanceRepository.getOne(rid);
-
-            if (!rectifyAttendance.getMemberId().equals(memberId)) return new RES_deleteRectifyAttendance("DRA003");
 
             rectifyAttendance.setDeleted(true);
             rectifyAttendanceRepository.save(rectifyAttendance);
@@ -320,33 +312,34 @@ public class AttendanceService {
 
         //LVL2(부서장) 인 경우 승인하려는 맴버가 부서원인지 확인 후 승인 진행
         if (commonUtil.checkLevel() == 2) {
-            Department department_m = memberRepository.findAllByMemberIdAndDeletedIsFalse(rectifyAttendance.getMemberId()).getDepartment();
+            Department department_m = rectifyAttendance.getAuthor().getDepartment();
             Department department_l = departmentRepository.findByLeader_MemberIdAndDeletedFalse(leaderId);
             if (department_m.equals(department_l)) {
-                setApprovalAndApprover(rectifyAttendance, 1, leaderId);
+                setApprovalAndApprover(rectifyAttendance, 1);
                 return true;
             }
         }
         //LVL3(부장)이상인 경우 모두 승인
         else if (3 <= commonUtil.checkLevel()) {
-            setApprovalAndApprover(rectifyAttendance, 2, leaderId);
+            setApprovalAndApprover(rectifyAttendance, 2);
             return true;
         }
         return false;
     }
 
     //승인및 승인자 설정
-    private void setApprovalAndApprover(RectifyAttendance rectifyAttendance, int degree, String approver) {
+    private void setApprovalAndApprover(RectifyAttendance rectifyAttendance, int degree) {
+        Member member = getMember();
         if (degree == 1) {
             rectifyAttendance.setApproval1(true);
-            rectifyAttendance.setApprover1(approver);
+            rectifyAttendance.setApprover1(getMember());
         } else if (degree == 2) {
             if (!rectifyAttendance.isApproval1()) {
                 rectifyAttendance.setApproval1(true);
-                rectifyAttendance.setApprover1(approver);
+                rectifyAttendance.setApprover1(member);
             }
             rectifyAttendance.setApproval2(true);
-            rectifyAttendance.setApprover2(approver);
+            rectifyAttendance.setApprover2(member);
         }
     }
 
@@ -354,6 +347,16 @@ public class AttendanceService {
     private String getMemberId() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         return authentication.getName();
+    }
+
+    private Member getMember(){
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String memberId = authentication.getName();
+            return memberRepository.findAllByMemberIdAndDeletedIsFalse(memberId);
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     //RectifyAttendanceDTO 에 맴버 아이디 및 부서아이디 입력
