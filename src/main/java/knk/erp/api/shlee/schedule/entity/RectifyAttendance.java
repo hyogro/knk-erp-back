@@ -1,11 +1,9 @@
 package knk.erp.api.shlee.schedule.entity;
 
+import knk.erp.api.shlee.account.entity.Member;
 import lombok.*;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
@@ -20,8 +18,9 @@ public class RectifyAttendance extends Time {
     @GeneratedValue
     private Long id;
 
-    @Column(nullable = false, length = 30)
-    private String memberId;
+    @ManyToOne
+    @JoinColumn(name = "member_id")
+    private Member author;
 
     @Column(nullable = false)
     private Long departmentId;
@@ -41,11 +40,13 @@ public class RectifyAttendance extends Time {
     @Column
     private boolean approval2;
 
-    @Column(length = 30)
-    private String approver1;
+    @ManyToOne
+    @JoinColumn(name = "approver_1_id")
+    private Member approver1;
 
-    @Column(length = 30)
-    private String approver2;
+    @ManyToOne
+    @JoinColumn(name = "approver_2_id")
+    private Member approver2;
 
     @Column(length = 100)
     private String memo;
@@ -54,8 +55,7 @@ public class RectifyAttendance extends Time {
     private Long targetId;
 
     @Builder
-    public RectifyAttendance(String memberId, Long departmentId, LocalDate attendanceDate, LocalTime onWork, LocalTime offWork, String memo, Long targetId) {
-        this.memberId = memberId;
+    public RectifyAttendance(Long departmentId, LocalDate attendanceDate, LocalTime onWork, LocalTime offWork, String memo, Long targetId) {
         this.departmentId = departmentId;
         this.attendanceDate = attendanceDate;
         this.onWork = onWork;

@@ -16,7 +16,6 @@ import java.time.LocalTime;
 public class AttendanceDTO{
 
     private Long id;
-    private String memberId;
     private Long departmentId;
     private LocalDate attendanceDate;
     private LocalTime onWork;
@@ -24,20 +23,18 @@ public class AttendanceDTO{
 
     public AttendanceDTO(Attendance attendance){
         this.id = attendance.getId();
-        this.memberId = attendance.getMemberId();
         this.departmentId = attendance.getDepartmentId();
         this.attendanceDate = attendance.getAttendanceDate();
         this.onWork = attendance.getOnWork();
         this.offWork = attendance.getOffWork();
     }
-    public AttendanceDTO(String memberId, LocalDate attendanceDate, LocalTime onWork, Long departmentId){
-        this.memberId = memberId;
+    public AttendanceDTO(LocalDate attendanceDate, LocalTime onWork, Long departmentId){
         this.attendanceDate = attendanceDate;
         this.onWork = onWork;
         this.departmentId = departmentId;
     }
 
     public Attendance toEntity(){
-        return Attendance.builder().memberId(memberId).departmentId(departmentId).attendanceDate(attendanceDate).onWork(onWork).offWork(offWork).build();
+        return Attendance.builder().departmentId(departmentId).attendanceDate(attendanceDate).onWork(onWork).offWork(offWork).build();
     }
 }

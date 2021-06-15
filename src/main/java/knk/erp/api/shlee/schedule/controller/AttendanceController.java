@@ -58,9 +58,9 @@ public class AttendanceController {
     /**
      * 퇴근 기록 정정 요청
      **/
-    @PostMapping("/rectifyAttendance/{rid}")
-    public ResponseEntity<RES_updateRectifyAttendance> updateRectifyAttendance(@PathVariable("rid") Long rid, @RequestBody RectifyAttendanceDTO rectifyAttendanceDTO) {
-        return ResponseEntity.ok(attendanceService.updateRectifyAttendance(rid, rectifyAttendanceDTO));
+    @PostMapping("/rectifyAttendance/{aid}")
+    public ResponseEntity<RES_updateRectifyAttendance> updateRectifyAttendance(@PathVariable("aid") Long aid, @RequestBody RectifyAttendanceDTO rectifyAttendanceDTO) {
+        return ResponseEntity.ok(attendanceService.updateRectifyAttendance(aid, rectifyAttendanceDTO));
     }
 
     /**
