@@ -16,12 +16,6 @@ public class ScheduleController {
     }
 
 
-    //일정 목록 읽기 테스트
-    @GetMapping("/test")
-    public ResponseEntity<RES_readScheduleList> readScheduleList_t(Pageable pageable, @RequestParam("viewOption") String viewOption) {
-        return ResponseEntity.ok(scheduleService.test());
-    }
-
     //일정 생성
     @PostMapping("")
     public ResponseEntity<RES_createSchedule> createSchedule(@RequestBody ScheduleDTO scheduleDTO) {
@@ -30,8 +24,8 @@ public class ScheduleController {
 
     //일정 목록 읽기
     @GetMapping("")
-    public ResponseEntity<RES_readScheduleList> readScheduleList(Pageable pageable, @RequestParam("viewOption") String viewOption) {
-        return ResponseEntity.ok(scheduleService.readScheduleList(pageable, viewOption));
+    public ResponseEntity<RES_readScheduleList> readScheduleList(@RequestParam("viewOption") String viewOption) {
+        return ResponseEntity.ok(scheduleService.readScheduleList(viewOption));
     }
 
     //일정 상세 읽기
