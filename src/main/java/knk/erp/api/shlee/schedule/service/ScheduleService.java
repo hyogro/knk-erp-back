@@ -5,6 +5,7 @@ import knk.erp.api.shlee.common.util.CommonUtil;
 import knk.erp.api.shlee.schedule.dto.Schedule.*;
 import knk.erp.api.shlee.schedule.entity.Schedule;
 import knk.erp.api.shlee.schedule.repository.ScheduleRepository;
+import knk.erp.api.shlee.schedule.specification.ScheduleSpecification;
 import knk.erp.api.shlee.schedule.util.ScheduleUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
@@ -26,6 +27,17 @@ public class ScheduleService {
     private final ScheduleRepository scheduleRepository;
     private final MemberRepository memberRepository;
     private final ScheduleUtil util;
+
+    public RES_readScheduleList test(){
+        try {
+            String memberId = getMemberId();
+            List<Schedule> scheduleList = scheduleRepository.findAll(ScheduleSpecification.withMemberId(memberId, "all dep"));
+
+            return new RES_readScheduleList("RSL001", util.ScheduleListToDTO(scheduleList));
+        } catch (Exception e) {
+            return new RES_readScheduleList("RSL002", e.getMessage());
+        }
+    }
 
     public RES_createSchedule createSchedule(ScheduleDTO scheduleDTO) {
         try {
