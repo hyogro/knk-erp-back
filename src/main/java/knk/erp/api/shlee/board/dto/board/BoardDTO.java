@@ -18,6 +18,7 @@ public class BoardDTO {
     private String writerMemberId;
     private Long writerDepId;
     private List<String> fileName;
+    private String writerMemberName;
 
     public Board toBoard(){
         return Board.builder()
@@ -27,6 +28,7 @@ public class BoardDTO {
                 .boardType(boardType)
                 .writerMemberId(writerMemberId)
                 .writerDepId(writerDepId)
+                .writerMemberName(writerMemberName)
                 .build();
     }
 }

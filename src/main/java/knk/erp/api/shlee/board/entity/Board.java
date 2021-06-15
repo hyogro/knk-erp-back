@@ -43,6 +43,10 @@ public class Board extends Time {
     @Column
     private String writerMemberId;
 
+    // 작성자 이름
+    @Column
+    private String writerMemberName;
+
     // 작성자 부서 id
     @Column
     private Long writerDepId;
@@ -53,12 +57,13 @@ public class Board extends Time {
 
     @Builder
     public Board(String title, String content, List<String> referenceMemberId, String boardType, String writerMemberId,
-                 Long writerDepId){
+                 Long writerDepId, String writerMemberName){
         this.title = title;
         this.content = content;
         this.referenceMemberId = referenceMemberId;
         this.boardType = boardType;
         this.writerMemberId = writerMemberId;
         this.writerDepId = writerDepId;
+        this.writerMemberName = writerMemberName;
     }
 }
