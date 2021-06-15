@@ -10,6 +10,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -52,7 +53,22 @@ public class DepartmentService {
         }
     }
 
-    // 부서 목록 수정
+    @Transactional
+    public ReadDetail_DepartmentDTO_RES readDetailDepartment(Long dep_id){
+        Department department = departmentRepository.getOne(dep_id);
+        try{
+            List<String> memberName = new ArrayList<>();
+            for(Member m : department.getMemberList()){
+                memberName.add(m.getMemberName());
+            }
+            return new ReadDetail_DepartmentDTO_RES("RDD001", new ReadDetail_DepartmentDTO(department.getDepartmentName(),
+                    memberName, department.getLeader().getMemberName()));
+        }catch(Exception e){
+            return new ReadDetail_DepartmentDTO_RES("RDD002", e.getMessage());
+        }
+    }
+
+    // 부서 이름 수정
     @Transactional
     public Update_DepartmentDTO_RES updateDepartment(Long dep_id, DepartmentDTO_REQ departmentDTOReq) {
         try {
