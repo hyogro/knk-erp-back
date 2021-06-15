@@ -50,8 +50,9 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .antMatchers("/account/readMember", "/account/{memberId}", "/account", "/account/signup")
                 .hasAnyRole("LVL3", "LVL4", "ADMIN")
 
-                // 부서 생성, 수정, 삭제, 부서 리더 수정, 부서 멤버 추가, 부서 멤버 삭제는 관리자 이상만 가능하도록 설정
-                .antMatchers("/department/**")
+                // 부서 관리는 관리자 이상만 가능하게 설정
+                .antMatchers("/department", "/department/{dep_id}", "/department/updateLeader/{dep_id}",
+                        "/department/addMember/{dep_id}", "/department/deleteMember/{dep_id}")
                 .hasAnyRole("LVL3", "LVL4", "ADMIN")
 
                 // 나머지 API 는 권한 인증 필요

@@ -189,11 +189,11 @@ public class BoardService {
             }
             Page<Board> boardPage = new PageImpl<>(latest, pageable, latest.size());
             Page<BoardListDTO_RES> page = boardPage.map(board -> new BoardListDTO_RES(board.getTitle(), board.getContent(),
-                    board.getWriterMemberId(), board.getWriterDepId(), board.getCreateDate(), board.getUpdateDate(), board.getReferenceMemberId()));
+                    board.getWriterMemberId(), board.getWriterDepId(), board.getCreateDate(), board.getUpdateDate(),
+                    board.getReferenceMemberId()));
             return new NoticeListDTO_RES("NBL001", page);
         }catch(Exception e){
             return new NoticeListDTO_RES("NBL002", e.getMessage());
         }
     }
-
 }
