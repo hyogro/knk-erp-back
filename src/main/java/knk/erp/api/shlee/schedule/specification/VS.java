@@ -28,10 +28,10 @@ public class VS {//VacationSpecification
         return (root, query, builder) -> builder.equal(root.get("approval2"), t);
     }
     public static Specification<Vacation> sda(LocalDateTime td){//startDate after
-        return (root, query, builder) -> builder.lessThan(root.get("startDate"), td);
+        return (root, query, builder) -> builder.greaterThan(root.get("startDate"), td);
     }
     public static Specification<Vacation> edb(LocalDateTime td){//endDate before
-        return (root, query, builder) -> builder.greaterThan(root.get("endDate"), td);
+        return (root, query, builder) -> builder.lessThan(root.get("endDate"), td);
     }
 
 }

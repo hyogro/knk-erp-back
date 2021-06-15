@@ -177,7 +177,6 @@ public class VacationService {
                 Member member = memberRepository.findAllByMemberIdAndDeletedIsFalse(memberId);
                 Department department = member.getDepartment();
                 vacation = (int) vacationRepository.count(VS.df().and(VS.did(department.getId())).and(VS.sda(todayS)).and(VS.edb(todayE).and(VS.a1is(true)).and(VS.a2is(true))));
-
             } else if (3 <= commonUtil.checkLevel()) {
                 vacation = (int) vacationRepository.count(VS.df().and(VS.sda(todayS)).and(VS.edb(todayE).and(VS.a1is(true)).and(VS.a2is(true))));
             } else {

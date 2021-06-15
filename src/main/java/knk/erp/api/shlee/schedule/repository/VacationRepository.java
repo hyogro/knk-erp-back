@@ -9,5 +9,4 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public interface VacationRepository extends JpaRepository<Vacation, Long>, JpaSpecificationExecutor<Vacation> {
-
 }
