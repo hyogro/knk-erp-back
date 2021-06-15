@@ -30,8 +30,8 @@ public class AccountController {
 
     // 회원 목록 읽어오기
     @GetMapping("")
-    public ResponseEntity<Read_AccountDTO_RES> readMember(@RequestParam("departmentName") String departmentName){
-        return ResponseEntity.ok(accountService.readMember(departmentName));
+    public ResponseEntity<Read_AccountDTO_RES> readMember(){
+        return ResponseEntity.ok(accountService.readMember());
     }
 
     // 회원 정보 상세보기

@@ -1,6 +1,5 @@
 package knk.erp.api.shlee.account.util;
 
-import knk.erp.api.shlee.account.dto.member.Read_MemberDTO;
 import knk.erp.api.shlee.account.dto.member.Update_AccountDTO_REQ;
 import knk.erp.api.shlee.account.entity.Authority;
 import knk.erp.api.shlee.account.entity.Department;
@@ -8,21 +7,8 @@ import knk.erp.api.shlee.account.entity.Member;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Component
 public class AccountUtil {
-
-    public List<Read_MemberDTO> getMemberList(List<Member> memberList){
-        List<Read_MemberDTO> member_List = new ArrayList<>();
-        for(Member member : memberList){
-            member_List.add(new Read_MemberDTO(member.getMemberId(), null, member.getPhone(), member.getMemberName(),
-                    member.getVacation(), member.getDepartment().getDepartmentName(), member.getAuthority(), member.getJoiningDate()));
-        }
-
-        return member_List;
-    }
 
     public void updateSetMember(Member member, Department department, Update_AccountDTO_REQ updateAccountDTOReq,
                                 BCryptPasswordEncoder passwordEncoder){

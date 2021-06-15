@@ -17,6 +17,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -80,17 +81,17 @@ public class AccountService {
 
     // 회원 목록 읽어오기
     @Transactional
-    public Read_AccountDTO_RES readMember(String departmentName){
+    public Read_AccountDTO_RES readMember(){
         try{
-            List<Member> memberList;
-            if(departmentName != null){
-                Department department = departmentRepository.findByDepartmentNameAndDeletedFalse(departmentName);
-                memberList = memberRepository.findAllByDepartmentAndDeletedIsFalse(department);
-                if(memberList == null) return new Read_AccountDTO_RES("RA003", "입력한 부서가 존재하지않거나 부서에 멤버가 없음");
-            }
-            else memberList = memberRepository.findAllByDeletedIsFalse();
+            List<Member> memberList = memberRepository.findAllByDeletedIsFalse();
 
-            return new Read_AccountDTO_RES("RA001", accountUtil.getMemberList(memberList));
+            List<String> memberName = new ArrayList<>();
+
+            for(Member m : memberList){
+                memberName.add(m.getMemberName());
+            }
+
+            return new Read_AccountDTO_RES("RA001", memberName);
         }catch(Exception e){
             return new Read_AccountDTO_RES("RA002", e.getMessage());
         }
