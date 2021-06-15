@@ -1,4 +1,4 @@
-package knk.erp.api.shlee.schedule.dto.Vacation;
+package knk.erp.api.shlee.schedule.responseEntity.schedule;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -9,25 +9,25 @@ import java.util.LinkedHashMap;
 @Getter
 @Setter
 @ToString
-public class RES_createVacation {
+public class RES_createSchedule {
     private String code;
     private String message;
     private LinkedHashMap<String, String> help_codeList = new LinkedHashMap<>();
 
     private void createCodeList(){
-        this.help_codeList.put("CV001", "휴가요청생성 성공");
-        this.help_codeList.put("CV002", "휴가요청생성 실패");
+        this.help_codeList.put("CS001", "일정생성 성공");
+        this.help_codeList.put("CS002", "일정생성 실패");
     }
 
     //error
-    public RES_createVacation(String code, String message) {
+    public RES_createSchedule(String code, String message) {
         createCodeList();
         this.code = code;
         this.message = message;
     }
 
     //ok
-    public RES_createVacation(String code) {
+    public RES_createSchedule(String code) {
         createCodeList();
         this.code = code;
     }

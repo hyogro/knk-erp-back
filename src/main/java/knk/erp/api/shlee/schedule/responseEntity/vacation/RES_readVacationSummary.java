@@ -1,6 +1,7 @@
-package knk.erp.api.shlee.schedule.dto.Vacation;
+package knk.erp.api.shlee.schedule.responseEntity.vacation;
 
 import knk.erp.api.shlee.schedule.dto.Attendance.AttendanceSummaryDTO;
+import knk.erp.api.shlee.schedule.dto.Vacation.VacationSummaryDTO;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;

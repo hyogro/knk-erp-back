@@ -1,5 +1,6 @@
-package knk.erp.api.shlee.schedule.dto.Attendance;
+package knk.erp.api.shlee.schedule.responseEntity.attendance;
 
+import knk.erp.api.shlee.schedule.dto.Attendance.AttendanceDTO;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;

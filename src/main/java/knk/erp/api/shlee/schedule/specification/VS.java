@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 
 public class VS {//VacationSpecification
 
-    public static Specification<Vacation> df(){//deleteFalse
+    public static Specification<Vacation> delFalse(){//deleteFalse
         return (root, query, builder) -> builder.isFalse(root.get("deleted"));
     }
 
@@ -20,17 +20,17 @@ public class VS {//VacationSpecification
         return (root, query, builder) -> builder.equal(root.get("departmentId"), departmentId);
     }
 
-    public static Specification<Vacation> a1is(boolean t){//approval1 is
+    public static Specification<Vacation> approve1Is(boolean t){//approval1 is
         return (root, query, builder) -> builder.equal(root.get("approval1"), t);
     }
 
-    public static Specification<Vacation> a2is(boolean t){//approval2 is
+    public static Specification<Vacation> approve2Is(boolean t){//approval2 is
         return (root, query, builder) -> builder.equal(root.get("approval2"), t);
     }
-    public static Specification<Vacation> sda(LocalDateTime td){//startDate after
+    public static Specification<Vacation> startDateAfter(LocalDateTime td){//startDate after
         return (root, query, builder) -> builder.greaterThan(root.get("startDate"), td);
     }
-    public static Specification<Vacation> edb(LocalDateTime td){//endDate before
+    public static Specification<Vacation> endDateBefore(LocalDateTime td){//endDate before
         return (root, query, builder) -> builder.lessThan(root.get("endDate"), td);
     }
 

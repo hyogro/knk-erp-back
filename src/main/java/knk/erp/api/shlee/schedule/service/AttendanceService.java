@@ -10,6 +10,7 @@ import knk.erp.api.shlee.schedule.entity.Attendance;
 import knk.erp.api.shlee.schedule.entity.RectifyAttendance;
 import knk.erp.api.shlee.schedule.repository.AttendanceRepository;
 import knk.erp.api.shlee.schedule.repository.RectifyAttendanceRepository;
+import knk.erp.api.shlee.schedule.responseEntity.attendance.*;
 import knk.erp.api.shlee.schedule.specification.AS;
 import knk.erp.api.shlee.schedule.specification.RAS;
 import knk.erp.api.shlee.schedule.util.AttendanceUtil;
@@ -46,7 +47,7 @@ public class AttendanceService {
             LocalTime onWorkTime = LocalTime.now();
 
             //실패 - 기존 출근기록 있으면 리턴
-            boolean isOnWorked = (int) attendanceRepository.count(AS.df().and(AS.mid(memberId)).and(AS.ad(today))) != 0;
+            boolean isOnWorked = (int) attendanceRepository.count(AS.delFalse().and(AS.mid(memberId)).and(AS.atteDate(today))) != 0;
             if (isOnWorked) return new RES_onWork("ON003");
 
             AttendanceDTO attendanceDTO = new AttendanceDTO(memberId, today, onWorkTime, getDepartmentId(memberId));
@@ -66,7 +67,7 @@ public class AttendanceService {
             LocalDate today = LocalDate.now();
             LocalTime offWorkTime = LocalTime.now();
 
-            Optional<Attendance> attendanceOptional = attendanceRepository.findOne(AS.df().and(AS.mid(memberId)).and(AS.ad(today)));
+            Optional<Attendance> attendanceOptional = attendanceRepository.findOne(AS.delFalse().and(AS.mid(memberId)).and(AS.atteDate(today)));
             if (!attendanceOptional.isPresent()) return new RES_offWork("OFF005");
 
             //실패 - 기존 퇴근기록 있으면 수정불가
@@ -89,7 +90,7 @@ public class AttendanceService {
             String memberId = getMemberId();
 
             //성공 - 삭제되지 않은 기록 중 본인의 것만 조회
-            List<Attendance> attendanceList = attendanceRepository.findAll(AS.df().and(AS.mid(memberId)));
+            List<Attendance> attendanceList = attendanceRepository.findAll(AS.delFalse().and(AS.mid(memberId)));
             return new RES_readAttendanceList("RAL001", util.AttendanceListToDTO(attendanceList));
         } catch (Exception e) {
             //실패 - Exception 발생
@@ -139,7 +140,7 @@ public class AttendanceService {
         try {
             String memberId = getMemberId();
             setMemberIdAndDepartmentId(rectifyAttendanceDTO);
-            Optional<Attendance> attendanceOptional = attendanceRepository.findOne(AS.df().and(AS.id(rectifyAttendanceDTO.getId())));
+            Optional<Attendance> attendanceOptional = attendanceRepository.findOne(AS.delFalse().and(AS.id(rectifyAttendanceDTO.getId())));
 
             if(!attendanceOptional.isPresent()){
                 return new RES_updateRectifyAttendance("URA002");
@@ -186,7 +187,7 @@ public class AttendanceService {
         try {
             String memberId = getMemberId();
 
-            List<RectifyAttendance> rectifyAttendanceList = rectifyAttendanceRepository.findAll(RAS.df().and(RAS.mid(memberId)));
+            List<RectifyAttendance> rectifyAttendanceList = rectifyAttendanceRepository.findAll(RAS.delFalse().and(RAS.mid(memberId)));
             return new RES_readRectifyAttendanceList("RRAL001", util.RectifyAttendanceListToDTO(rectifyAttendanceList));
         } catch (Exception e) {
             //실패 - Exception 발생
@@ -236,9 +237,9 @@ public class AttendanceService {
             if (commonUtil.checkLevel() == 2) {
                 Member member = memberRepository.findAllByMemberIdAndDeletedIsFalse(memberId);
                 Long departmentId = member.getDepartment().getId();
-                rectifyAttendanceList = rectifyAttendanceRepository.findAll(RAS.df().and(RAS.did(departmentId)));
+                rectifyAttendanceList = rectifyAttendanceRepository.findAll(RAS.delFalse().and(RAS.did(departmentId)));
             } else if (3 <= commonUtil.checkLevel()) {
-                rectifyAttendanceList = rectifyAttendanceRepository.findAll(RAS.df());
+                rectifyAttendanceList = rectifyAttendanceRepository.findAll(RAS.delFalse());
             }
             return new RES_readRectifyAttendanceList("RRAL001", util.RectifyAttendanceListToDTO(rectifyAttendanceList));
         } catch (Exception e) {
@@ -272,14 +273,15 @@ public class AttendanceService {
             LocalTime nine = LocalTime.of(9, 0, 0);
 
             if (commonUtil.checkLevel() == 2) {
+                Long departmentId = getDepartmentId(memberId);
                 Department department = memberRepository.findAllByMemberIdAndDeletedIsFalse(memberId).getDepartment();
-                onWork = (int) attendanceRepository.count(AS.df().and(AS.ad(today).and(AS.did(department.getId()))));
-                lateWork = (int) attendanceRepository.count(AS.df().and(AS.ad(today).and(AS.did(department.getId()).and(AS.ona(nine)))));
+                onWork = (int) attendanceRepository.count(AS.delFalse().and(AS.atteDate(today).and(AS.did(departmentId))));
+                lateWork = (int) attendanceRepository.count(AS.delFalse().and(AS.atteDate(today).and(AS.did(departmentId).and(AS.onWorkAfter(nine)))));
                 yetWork = department.getMemberList().size() - onWork;
             }
             else if (3 <= commonUtil.checkLevel()) {
-                onWork = (int) attendanceRepository.count(AS.df().and(AS.ad(today)));
-                lateWork = (int) attendanceRepository.count(AS.df().and(AS.ad(today).and(AS.ona(nine))));
+                onWork = (int) attendanceRepository.count(AS.delFalse().and(AS.atteDate(today)));
+                lateWork = (int) attendanceRepository.count(AS.delFalse().and(AS.atteDate(today).and(AS.onWorkAfter(nine))));
                 yetWork = (int) memberRepository.count() - onWork;
             } else {
                 return new RES_readAttendanceSummary("RSS003");
@@ -295,7 +297,7 @@ public class AttendanceService {
         try {
             String memberId = getMemberId();
             LocalDate today = LocalDate.now();
-            Optional<Attendance> attendance = attendanceRepository.findOne(AS.df().and(AS.ad(today).and(AS.mid(memberId))));
+            Optional<Attendance> attendance = attendanceRepository.findOne(AS.delFalse().and(AS.atteDate(today).and(AS.mid(memberId))));
             return attendance.map(value -> new RES_readAttendance("RA001", new AttendanceDTO(value))).orElseGet(() -> new RES_readAttendance("RA003"));
         } catch (Exception e) {
             return new RES_readAttendance("RA002", e.getMessage());
@@ -313,7 +315,6 @@ public class AttendanceService {
 
     //요청 시 권한에 따라서 1, 2차 승인 여부 변경
     private boolean rectifyApproved(RectifyAttendance rectifyAttendance) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         String leaderId = getMemberId();
 

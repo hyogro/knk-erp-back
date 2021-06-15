@@ -7,6 +7,7 @@ import knk.erp.api.shlee.common.util.CommonUtil;
 import knk.erp.api.shlee.schedule.dto.Vacation.*;
 import knk.erp.api.shlee.schedule.entity.Vacation;
 import knk.erp.api.shlee.schedule.repository.VacationRepository;
+import knk.erp.api.shlee.schedule.responseEntity.vacation.*;
 import knk.erp.api.shlee.schedule.specification.VS;
 import knk.erp.api.shlee.schedule.util.VacationUtil;
 import lombok.RequiredArgsConstructor;
@@ -56,7 +57,7 @@ public class VacationService {
     public RES_readVacationList readVacationList() {
         try {
             String memberId = getMemberId();
-            List<Vacation> vacationList = vacationRepository.findAll(VS.df().and(VS.mid(memberId)));
+            List<Vacation> vacationList = vacationRepository.findAll(VS.delFalse().and(VS.mid(memberId)));
             return new RES_readVacationList("RVL001", util.VacationListToDTO(vacationList));
         } catch (Exception e) {
             return new RES_readVacationList("RVL002", e.getMessage());
@@ -103,10 +104,10 @@ public class VacationService {
             if (commonUtil.checkLevel() == 2) {
                 Member member = memberRepository.findAllByMemberIdAndDeletedIsFalse(memberId);
                 Long departmentId = member.getDepartment().getId();
-                vacationList = vacationRepository.findAll(VS.df().and(VS.did(departmentId)).and(VS.a1is(false)));
+                vacationList = vacationRepository.findAll(VS.delFalse().and(VS.did(departmentId)).and(VS.approve1Is(false)));
 
             } else if (3 <= commonUtil.checkLevel()) {
-                vacationList = vacationRepository.findAll(VS.df().and(VS.a2is(false)));
+                vacationList = vacationRepository.findAll(VS.delFalse().and(VS.approve2Is(false)));
             }
             return new RES_readVacationList("RVL001", util.VacationListToDTO(vacationList));
         } catch (Exception e) {
@@ -176,9 +177,9 @@ public class VacationService {
             if (commonUtil.checkLevel() == 2) {
                 Member member = memberRepository.findAllByMemberIdAndDeletedIsFalse(memberId);
                 Department department = member.getDepartment();
-                vacation = (int) vacationRepository.count(VS.df().and(VS.did(department.getId())).and(VS.sda(todayS)).and(VS.edb(todayE).and(VS.a1is(true)).and(VS.a2is(true))));
+                vacation = (int) vacationRepository.count(VS.delFalse().and(VS.did(department.getId())).and(VS.startDateAfter(todayS)).and(VS.endDateBefore(todayE).and(VS.approve1Is(true)).and(VS.approve2Is(true))));
             } else if (3 <= commonUtil.checkLevel()) {
-                vacation = (int) vacationRepository.count(VS.df().and(VS.sda(todayS)).and(VS.edb(todayE).and(VS.a1is(true)).and(VS.a2is(true))));
+                vacation = (int) vacationRepository.count(VS.delFalse().and(VS.startDateAfter(todayS)).and(VS.endDateBefore(todayE).and(VS.approve1Is(true)).and(VS.approve2Is(true))));
             } else {
                 return new RES_readVacationSummary("RVS003");
             }

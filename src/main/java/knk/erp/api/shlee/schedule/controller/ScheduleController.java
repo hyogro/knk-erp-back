@@ -1,8 +1,8 @@
 package knk.erp.api.shlee.schedule.controller;
 
 import knk.erp.api.shlee.schedule.dto.Schedule.*;
+import knk.erp.api.shlee.schedule.responseEntity.schedule.*;
 import knk.erp.api.shlee.schedule.service.ScheduleService;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
