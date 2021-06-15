@@ -15,6 +15,11 @@ public class ScheduleController {
         this.scheduleService = scheduleService;
     }
 
+    @GetMapping("test")
+    public void test(){
+        scheduleService.test();
+    }
+
 
     //일정 생성
     @PostMapping("")
