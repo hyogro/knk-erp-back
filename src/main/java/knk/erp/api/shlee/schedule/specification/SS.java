@@ -15,8 +15,11 @@ public class SS {//ScheduleSpecification
         return (root, query, builder) -> builder.isFalse(root.get("deleted"));
     }
 
-    public static Specification<Schedule> mid(String memberId){//memberId
-        return (root, query, builder) -> builder.equal(root.get("memberId"), memberId);
+    public static Specification<Schedule> mid(String mid){//memberId
+        return ((root, query, builder) -> {
+            Join<Schedule, Member> sm = root.join("author");
+            return builder.equal(sm.get("memberId"), mid);
+        });
     }
 
     public static Specification<Schedule> viewOption(String viewOption, String mid, Long did){//viewOption
