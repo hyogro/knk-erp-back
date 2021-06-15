@@ -24,9 +24,7 @@ public class VacationDetailData {
     private String rejectMemo;
     private LocalDateTime startDate;
     private LocalDateTime endDate;
-    private String memberId;
     private String memberName;
-    private Long departmentId;
     private String departmentName;
     private LocalDateTime requestDate;
 
@@ -36,10 +34,14 @@ public class VacationDetailData {
         this.memo = vacation.getMemo();
         this.approval1 = vacation.isApproval1();
         this.approval2 = vacation.isApproval2();
+        this.approver1 = vacation.getApprover1().getMemberName();
+        this.approver2 = vacation.getApprover2().getMemberName();
         this.reject = vacation.isReject();
         this.rejectMemo = vacation.getRejectMemo();
         this.startDate = vacation.getStartDate();
         this.endDate = vacation.getEndDate();
+        this.memberName = vacation.getAuthor().getMemberName();
+        this.departmentName = vacation.getAuthor().getDepartment().getDepartmentName();
         this.requestDate = vacation.getCreateDate();
     }
 }

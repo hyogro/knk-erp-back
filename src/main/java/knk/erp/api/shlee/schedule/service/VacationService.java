@@ -39,10 +39,8 @@ public class VacationService {
     //휴가 생성
     public RES_createVacation createVacation(VacationDTO vacationDTO) {
         try {
-            Member member = getMember();
-
             Vacation vacation = vacationDTO.toEntity();
-            vacation.setAuthor(member);
+            vacation.setAuthor(getMember());
             approveCheck(vacation);
 
             vacationRepository.save(vacation);
@@ -67,7 +65,7 @@ public class VacationService {
     public RES_readVacation readVacation(Long vid) {
         try {
             Vacation vacation = vacationRepository.getOne(vid);
-            return new RES_readVacation("RV001", new VacationDTO(vacation));
+            return new RES_readVacation("RV001", new VacationDetailData(vacation));
         } catch (Exception e) {
             return new RES_readVacation("RV002", e.getMessage());
         }
@@ -93,13 +91,13 @@ public class VacationService {
     //승인, 거부할 휴가목록 조회
     public RES_readVacationList readVacationListForApprove() {
         try {
-            String memberId = getMemberId();
             List<Vacation> vacationList = new ArrayList<>();
 
             if (commonUtil.checkLevel() == 2) {
-                Member member = memberRepository.findAllByMemberIdAndDeletedIsFalse(memberId);
-                Long departmentId = member.getDepartment().getId();
-                vacationList = vacationRepository.findAll(VS.delFalse().and(VS.did(departmentId)).and(VS.approve1Is(false)));
+                Member member = getMember();
+                assert member != null;
+                Long did = member.getDepartment().getId();
+                vacationList = vacationRepository.findAll(VS.delFalse().and(VS.did(did)).and(VS.approve1Is(false)));
 
             } else if (3 <= commonUtil.checkLevel()) {
                 vacationList = vacationRepository.findAll(VS.delFalse().and(VS.approve2Is(false)));
@@ -113,11 +111,11 @@ public class VacationService {
     //휴가 승인
     public RES_approveVacation approveVacation(Long vid) {
         try {
-            String memberId = getMemberId();
             Vacation vacation = vacationRepository.getOne(vid);
 
             if (commonUtil.checkLevel() == 2) {
-                Member member = memberRepository.findAllByMemberIdAndDeletedIsFalse(memberId);
+                Member member = getMember();
+                assert member != null;
                 Long departmentId = member.getDepartment().getId();
                 if (!vacation.getAuthor().getDepartment().getId().equals(departmentId)) return new RES_approveVacation("AV003");
             }
@@ -186,7 +184,6 @@ public class VacationService {
 
     //권한 체크 및 승인여부 변경
     private boolean approveCheck(Vacation vacation) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (commonUtil.checkLevel() == 2) {
             vacation.setApproval1(true);
             vacation.setApprover1(getMember());
@@ -231,6 +228,7 @@ public class VacationService {
         try {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             String memberId = authentication.getName();
+
             return memberRepository.findAllByMemberIdAndDeletedIsFalse(memberId);
         } catch (Exception e) {
             return null;

@@ -21,6 +21,8 @@ public class VacationListData {
     private LocalDateTime startDate;
     private LocalDateTime endDate;
     private LocalDateTime requestDate;
+    private String memberName;
+    private String departmentName;
 
     public VacationListData(Vacation vacation){
         this.id = vacation.getId();
@@ -31,5 +33,7 @@ public class VacationListData {
         this.startDate = vacation.getStartDate();
         this.endDate = vacation.getEndDate();
         this.requestDate = vacation.getCreateDate();
+        this.memberName = vacation.getAuthor().getMemberName();
+        this.departmentName = vacation.getAuthor().getDepartment().getDepartmentName();
     }
 }
