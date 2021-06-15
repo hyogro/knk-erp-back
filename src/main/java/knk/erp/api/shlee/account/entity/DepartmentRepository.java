@@ -8,7 +8,7 @@ import java.util.Optional;
 
 @Repository
 public interface DepartmentRepository extends JpaRepository<Department, Long> {
-    Department findByLeader_MemberIdAAndDeletedFalse(String leaderId);
+    Department findByLeader_MemberIdAndDeletedFalse(String leaderId);
     Department findByDepartmentNameAndDeletedFalse(String departmentName);
     List<Department> findAllByDeletedIsFalse();
     boolean existsByDepartmentNameAndDeletedIsFalse(String departmentName);

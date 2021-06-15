@@ -313,7 +313,7 @@ public class AttendanceService {
         //LVL2(부서장) 인 경우 승인하려는 맴버가 부서원인지 확인 후 승인 진행
         if (commonUtil.checkLevel() == 2) {
             Department department_m = memberRepository.findAllByMemberIdAndDeletedIsFalse(rectifyAttendance.getMemberId()).getDepartment();
-            Department department_l = departmentRepository.findByLeader_MemberIdAAndDeletedFalse(leaderId);
+            Department department_l = departmentRepository.findByLeader_MemberIdAndDeletedFalse(leaderId);
             if (department_m.equals(department_l)) {
                 setApprovalAndApprover(rectifyAttendance, 1, leaderId);
                 return true;

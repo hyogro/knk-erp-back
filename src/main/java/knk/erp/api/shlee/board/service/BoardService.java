@@ -64,7 +64,7 @@ public class BoardService {
         try{
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             Member reader = memberRepository.findAllByMemberIdAndDeletedIsFalse(authentication.getName());
-            Board target = boardRepository.findByIdxAAndDeletedFalse(board_idx);
+            Board target = boardRepository.findByIdxAndDeletedFalse(board_idx);
             Member writer = memberRepository.findAllByMemberIdAndDeletedIsFalse(target.getWriterMemberId());
             List<String> reference_memberId = target.getReferenceMemberId();
 
@@ -87,7 +87,7 @@ public class BoardService {
         try{
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             Member updater = memberRepository.findAllByMemberIdAndDeletedIsFalse(authentication.getName());
-            Board target = boardRepository.findByIdxAAndDeletedFalse(board_idx);
+            Board target = boardRepository.findByIdxAndDeletedFalse(board_idx);
 
             if(!target.getWriterMemberId().equals(updater.getMemberId())) {
                 return new Update_BoardDTO_RES("UB003", "게시글 작성자가 아님");
@@ -115,7 +115,7 @@ public class BoardService {
         try{
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             Member deleter = memberRepository.findAllByMemberIdAndDeletedIsFalse(authentication.getName());
-            Board target = boardRepository.findByIdxAAndDeletedFalse(board_idx);
+            Board target = boardRepository.findByIdxAndDeletedFalse(board_idx);
 
             if(!target.getWriterMemberId().equals(deleter.getMemberId())) {
                 return new Delete_BoardDTO_RES("DB003", "게시글 작성자가 아님");
