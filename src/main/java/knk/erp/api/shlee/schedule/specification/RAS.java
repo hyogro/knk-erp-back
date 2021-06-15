@@ -13,7 +13,7 @@ public class RAS {//RectifyAttendanceSpecification
         return (root, query, builder) -> builder.equal(root.get("id"), id);
     }
     
-    public static Specification<RectifyAttendance> df(){//deleteFalse
+    public static Specification<RectifyAttendance> delFalse(){//deleteFalse
         return (root, query, builder) -> builder.isFalse(root.get("deleted"));
     }
 

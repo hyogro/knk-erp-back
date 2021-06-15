@@ -14,7 +14,7 @@ public class AS {//AttendanceSpecification
         return (root, query, builder) -> builder.equal(root.get("id"), id);
     }
 
-    public static Specification<Attendance> df(){//deleteFalse
+    public static Specification<Attendance> delFalse(){//deleteFalse
         return (root, query, builder) -> builder.isFalse(root.get("deleted"));
     }
 
@@ -22,7 +22,7 @@ public class AS {//AttendanceSpecification
         return (root, query, builder) -> builder.equal(root.get("memberId"), memberId);
     }
 
-    public static Specification<Attendance> ad(LocalDate t){//memberId
+    public static Specification<Attendance> atteDate(LocalDate t){//memberId
         return (root, query, builder) -> builder.equal(root.get("attendanceDate"), t);
     }
 
@@ -31,10 +31,10 @@ public class AS {//AttendanceSpecification
         return (root, query, builder) -> builder.equal(root.get("departmentId"), departmentId);
     }
 
-    public static Specification<Attendance> ona(LocalTime td){//startDate after
+    public static Specification<Attendance> onWorkAfter(LocalTime td){//startDate after
         return (root, query, builder) -> builder.greaterThan(root.get("onWork"), td);
     }
-    public static Specification<Attendance> ofb(LocalTime td){//endDate before
+    public static Specification<Attendance> offWorkBefore(LocalTime td){//endDate before
         return (root, query, builder) -> builder.lessThan(root.get("offWork"), td);
     }
 

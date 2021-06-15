@@ -1,6 +1,7 @@
 package knk.erp.api.shlee.schedule.controller;
 
 import knk.erp.api.shlee.schedule.dto.Vacation.*;
+import knk.erp.api.shlee.schedule.responseEntity.vacation.*;
 import knk.erp.api.shlee.schedule.service.VacationService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

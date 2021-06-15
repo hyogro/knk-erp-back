@@ -1,4 +1,4 @@
-package knk.erp.api.shlee.schedule.dto.Schedule;
+package knk.erp.api.shlee.schedule.responseEntity.schedule;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

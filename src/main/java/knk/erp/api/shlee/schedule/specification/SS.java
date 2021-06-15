@@ -12,15 +12,15 @@ import java.util.List;
 
 public class SS {//ScheduleSpecification
 
-    public static Specification<Schedule> DFS(){//deleteFalse
+    public static Specification<Schedule> delFalse(){//deleteFalse
         return (root, query, builder) -> builder.isFalse(root.get("deleted"));
     }
 
-    public static Specification<Schedule> MID(String memberId){//memberId
+    public static Specification<Schedule> mid(String memberId){//memberId
         return (root, query, builder) -> builder.equal(root.get("memberId"), memberId);
     }
 
-    public static Specification<Schedule> VOP(String viewOption, String mid, Long did){//viewOption
+    public static Specification<Schedule> viewOption(String viewOption, String mid, Long did){//viewOption
         return (root, query, builder) -> {
             List<Predicate> predicates = new ArrayList<>();
 

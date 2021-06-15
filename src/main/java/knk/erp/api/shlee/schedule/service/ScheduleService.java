@@ -4,6 +4,7 @@ import knk.erp.api.shlee.account.entity.MemberRepository;
 import knk.erp.api.shlee.schedule.dto.Schedule.*;
 import knk.erp.api.shlee.schedule.entity.Schedule;
 import knk.erp.api.shlee.schedule.repository.ScheduleRepository;
+import knk.erp.api.shlee.schedule.responseEntity.schedule.*;
 import knk.erp.api.shlee.schedule.specification.SS;
 import knk.erp.api.shlee.schedule.util.ScheduleUtil;
 import lombok.RequiredArgsConstructor;
@@ -40,10 +41,10 @@ public class ScheduleService {
             Long departmentId = getDepartmentId(memberId);
             List<Schedule> scheduleList = new ArrayList<>();
             if (viewOption.isEmpty()) {
-                scheduleList.addAll(scheduleRepository.findAll(SS.MID(memberId).and(SS.DFS())));
+                scheduleList.addAll(scheduleRepository.findAll(SS.mid(memberId).and(SS.delFalse())));
             }
             else {
-                scheduleList.addAll(scheduleRepository.findAll(SS.DFS().and(SS.VOP(viewOption, memberId, departmentId))));
+                scheduleList.addAll(scheduleRepository.findAll(SS.delFalse().and(SS.viewOption(viewOption, memberId, departmentId))));
             }
 
             return new RES_readScheduleList("RSL001", util.ScheduleListToDTO(scheduleList));
