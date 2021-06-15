@@ -19,9 +19,9 @@ public class RES_readVacation {
     private LinkedHashMap<String, String> help_codeList = new LinkedHashMap<>();
 
     private void createCodeList(){
-        this.help_codeList.put("RV001", "휴가목록 조회 성공");
-        this.help_codeList.put("RV002", "휴가목록 조회 실패");
-        this.help_codeList.put("RV003", "휴가목록 조회 실패(권한없음)");
+        this.help_codeList.put("RV001", "휴가상세 조회 성공");
+        this.help_codeList.put("RV002", "휴가상세 조회 실패");
+        this.help_codeList.put("RV003", "휴가상세 조회 실패(권한없음)");
     }
 
     //error

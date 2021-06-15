@@ -34,8 +34,10 @@ public class VacationDetailData {
         this.memo = vacation.getMemo();
         this.approval1 = vacation.isApproval1();
         this.approval2 = vacation.isApproval2();
-        this.approver1 = vacation.getApprover1().getMemberName();
-        this.approver2 = vacation.getApprover2().getMemberName();
+        if(this.approval1)
+            this.approver1 = vacation.getApprover1().getMemberName();
+        if(this.approval2)
+            this.approver2 = vacation.getApprover2().getMemberName();
         this.reject = vacation.isReject();
         this.rejectMemo = vacation.getRejectMemo();
         this.startDate = vacation.getStartDate();
