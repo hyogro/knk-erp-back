@@ -12,15 +12,4 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public interface ScheduleRepository extends JpaRepository<Schedule, Long>, JpaSpecificationExecutor<Schedule> {
-    List<Schedule> findAllByDeletedIsFalse();
-
-    Page<Schedule> findAllByMemberIdAndDeletedIsFalse(String memberId, Pageable pageable);
-
-    Page<Schedule> findAllByViewOptionAndDeletedIsFalse(String viewOption, Pageable pageable);
-
-    Page<Schedule> findAllByViewOptionAndDepartmentIdAndDeletedIsFalse(String viewOption, Long departmentId, Pageable pageable);
-
-    Page<Schedule> findAllByViewOptionAndMemberIdAndDeletedIsFalse(String viewOption, String memberId, Pageable pageable);
-
-    Page<Schedule> findAllByDeletedIsFalseAndMemberIdAndEndDateAfter(String memberId, LocalDateTime today, Pageable pageable);
 }

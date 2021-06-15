@@ -1,11 +1,10 @@
 package knk.erp.api.shlee.schedule.service;
 
 import knk.erp.api.shlee.account.entity.MemberRepository;
-import knk.erp.api.shlee.common.util.CommonUtil;
 import knk.erp.api.shlee.schedule.dto.Schedule.*;
 import knk.erp.api.shlee.schedule.entity.Schedule;
 import knk.erp.api.shlee.schedule.repository.ScheduleRepository;
-import knk.erp.api.shlee.schedule.specification.ScheduleSpecification;
+import knk.erp.api.shlee.schedule.specification.SS;
 import knk.erp.api.shlee.schedule.util.ScheduleUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
@@ -15,9 +14,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,17 +23,6 @@ public class ScheduleService {
     private final ScheduleRepository scheduleRepository;
     private final MemberRepository memberRepository;
     private final ScheduleUtil util;
-
-    public RES_readScheduleList test(){
-        try {
-            String memberId = getMemberId();
-            List<Schedule> scheduleList = scheduleRepository.findAll(ScheduleSpecification.withMemberId(memberId, "all dep"));
-
-            return new RES_readScheduleList("RSL001", util.ScheduleListToDTO(scheduleList));
-        } catch (Exception e) {
-            return new RES_readScheduleList("RSL002", e.getMessage());
-        }
-    }
 
     public RES_createSchedule createSchedule(ScheduleDTO scheduleDTO) {
         try {
@@ -49,22 +34,16 @@ public class ScheduleService {
         }
     }
 
-    public RES_readScheduleList readScheduleList(Pageable pageable, String viewOption) {
+    public RES_readScheduleList readScheduleList(String viewOption) {
         try {
             String memberId = getMemberId();
             Long departmentId = getDepartmentId(memberId);
             List<Schedule> scheduleList = new ArrayList<>();
             if (viewOption.isEmpty()) {
-                scheduleList.addAll(scheduleRepository.findAllByMemberIdAndDeletedIsFalse(memberId,getPageRequest(pageable)).toList());
+                scheduleList.addAll(scheduleRepository.findAll(SS.MID(memberId).and(SS.DFS())));
             }
-            if (parseViewOption(viewOption, "all")) {
-                scheduleList.addAll(scheduleRepository.findAllByViewOptionAndDeletedIsFalse("all", getPageRequest(pageable)).toList());
-            }
-            if (parseViewOption(viewOption, "dep")) {
-                scheduleList.addAll(scheduleRepository.findAllByViewOptionAndDepartmentIdAndDeletedIsFalse("dep", departmentId, getPageRequest(pageable)).toList());
-            }
-            if (parseViewOption(viewOption, "own")) {
-                scheduleList.addAll(scheduleRepository.findAllByViewOptionAndMemberIdAndDeletedIsFalse("own", memberId, getPageRequest(pageable)).toList());
+            else {
+                scheduleList.addAll(scheduleRepository.findAll(SS.DFS().and(SS.VOP(viewOption, memberId, departmentId))));
             }
 
             return new RES_readScheduleList("RSL001", util.ScheduleListToDTO(scheduleList));
