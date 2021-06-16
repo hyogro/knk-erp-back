@@ -5,22 +5,17 @@ import knk.erp.api.shlee.account.entity.MemberRepository;
 import knk.erp.api.shlee.schedule.dto.Schedule.*;
 import knk.erp.api.shlee.schedule.entity.Schedule;
 import knk.erp.api.shlee.schedule.repository.ScheduleRepository;
-import knk.erp.api.shlee.schedule.responseEntity.schedule.*;
+import knk.erp.api.shlee.schedule.responseEntity.ResponseCM;
+import knk.erp.api.shlee.schedule.responseEntity.ResponseCMD;
+import knk.erp.api.shlee.schedule.responseEntity.ResponseCMDL;
 import knk.erp.api.shlee.schedule.specification.SS;
 import knk.erp.api.shlee.schedule.util.ScheduleUtil;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -31,68 +26,69 @@ public class ScheduleService {
     private final MemberRepository memberRepository;
     private final ScheduleUtil util;
 
-    public RES_createSchedule createSchedule(ScheduleDTO scheduleDTO) {
+    public ResponseCM createSchedule(ScheduleDTO scheduleDTO) {
         try {
             Schedule schedule = scheduleDTO.toEntity();
             schedule.setAuthor(getMember());
+
             scheduleRepository.save(schedule);
-            return new RES_createSchedule("CS001");
+            return new ResponseCM("CS001");
         } catch (Exception e) {
-            return new RES_createSchedule("CS002", e.getMessage());
+            return new ResponseCM("CS002", e.getMessage());
         }
     }
 
-    public RES_readScheduleList readScheduleList(String viewOption) {
+    public ResponseCMDL readScheduleList(String viewOption) {
         try {
             String memberId = getMemberId();
             Long departmentId = Objects.requireNonNull(getMember()).getDepartment().getId();
+
             List<Schedule> scheduleList = (viewOption.isEmpty())
                     ? scheduleRepository.findAll(SS.mid(memberId).and(SS.delFalse()))
                     : scheduleRepository.findAll(SS.delFalse().and(SS.viewOption(viewOption, memberId, departmentId)));
-
-            return new RES_readScheduleList("RSL001", util.ScheduleListToDTO(scheduleList));
+            return new ResponseCMDL("RSL001", util.ScheduleListToDTO(scheduleList));
         } catch (Exception e) {
-            return new RES_readScheduleList("RSL002", e.getMessage());
+            return new ResponseCMDL("RSL002", e.getMessage());
         }
     }
 
-    public RES_readScheduleDetail readScheduleDetail(Long sid) {
+    public ResponseCMD readScheduleDetail(Long sid) {
         try {
             Schedule schedule = scheduleRepository.getOne(sid);
-            return new RES_readScheduleDetail("RSD001", util.ScheduleToDTO(schedule));
+            return new ResponseCMD("RSD001", new ScheduleDetailData(schedule));
         } catch (Exception e) {
-            return new RES_readScheduleDetail("RSD002", e.getMessage());
+            return new ResponseCMD("RSD002", e.getMessage());
         }
     }
 
-    public RES_updateSchedule updateSchedule(Long sid, ScheduleDTO scheduleDTO) {
+    public ResponseCM updateSchedule(Long sid, ScheduleDTO scheduleDTO) {
         try {
-            String memberId = getMemberId();
+            String mid = getMemberId();
             Schedule schedule = scheduleRepository.getOne(sid);
 
-            if (!memberId.equals(schedule.getAuthor().getMemberId())) return new RES_updateSchedule("US003");
+            if (!checkAuth(schedule, mid)) return new ResponseCM("US003");
 
             util.DTOTOSchedule(schedule, scheduleDTO);
             scheduleRepository.save(schedule);
-            return new RES_updateSchedule("US001");
+            return new ResponseCM("US001");
         } catch (Exception e) {
-            return new RES_updateSchedule("US002", e.getMessage());
+            return new ResponseCM("US002", e.getMessage());
         }
     }
 
-    public RES_deleteSchedule deleteSchedule(Long sid) {
+    public ResponseCM deleteSchedule(Long sid) {
         try {
-            String memberId = getMemberId();
+            String mid = getMemberId();
             Schedule schedule = scheduleRepository.getOne(sid);
 
-            if (!memberId.equals(schedule.getAuthor().getMemberId())) return new RES_deleteSchedule("DS003");
+            if (!checkAuth(schedule, mid)) return new ResponseCM("DS003");
 
             schedule.setDeleted(true);
             scheduleRepository.save(schedule);
-            return new RES_deleteSchedule("DS001");
+            return new ResponseCM("DS001");
 
         } catch (Exception e) {
-            return new RES_deleteSchedule("DS002", e.getMessage());
+            return new ResponseCM("DS002", e.getMessage());
         }
     }
 
@@ -110,6 +106,11 @@ public class ScheduleService {
         } catch (Exception e) {
             return null;
         }
+    }
+
+    //일정, 맴버아이디로 작성자권한 조회
+    private boolean checkAuth(Schedule schedule, String mid){
+        return schedule.getAuthor().getMemberId().equals(mid);
     }
 
 }

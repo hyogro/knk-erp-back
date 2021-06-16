@@ -1,6 +1,9 @@
 package knk.erp.api.shlee.schedule.controller;
 
 import knk.erp.api.shlee.schedule.dto.Vacation.*;
+import knk.erp.api.shlee.schedule.responseEntity.ResponseCM;
+import knk.erp.api.shlee.schedule.responseEntity.ResponseCMD;
+import knk.erp.api.shlee.schedule.responseEntity.ResponseCMDL;
 import knk.erp.api.shlee.schedule.responseEntity.vacation.*;
 import knk.erp.api.shlee.schedule.service.VacationService;
 import org.springframework.http.ResponseEntity;
@@ -19,7 +22,7 @@ public class VacationController {
      * 휴가 생성
      **/
     @PostMapping("")
-    public ResponseEntity<RES_createVacation> createVacation(@RequestBody VacationDTO vacationDTO) {
+    public ResponseEntity<ResponseCM> createVacation(@RequestBody VacationDTO vacationDTO) {
         return ResponseEntity.ok(vacationService.createVacation(vacationDTO));
     }
 
@@ -27,7 +30,7 @@ public class VacationController {
      * 휴가 목록 읽기
      **/
     @GetMapping("")
-    public ResponseEntity<RES_readVacationList> readVacationList() {
+    public ResponseEntity<ResponseCMDL> readVacationList() {
         return ResponseEntity.ok(vacationService.readVacationList());
     }
 
@@ -36,15 +39,15 @@ public class VacationController {
      * 휴가 상세 읽기
      **/
     @GetMapping("/{vid}")
-    public ResponseEntity<RES_readVacation> readVacation(@PathVariable("vid") Long vid) {
-        return ResponseEntity.ok(vacationService.readVacation(vid));
+    public ResponseEntity<ResponseCMD> readVacation(@PathVariable("vid") Long vid) {
+        return ResponseEntity.ok(vacationService.readVacationDetail(vid));
     }
 
     /**
      * 휴가 삭제
      **/
     @DeleteMapping("/{vid}")
-    public ResponseEntity<RES_deleteVacation> deleteVacation(@PathVariable("vid") Long vid) {
+    public ResponseEntity<ResponseCM> deleteVacation(@PathVariable("vid") Long vid) {
         return ResponseEntity.ok(vacationService.deleteVacation(vid));
     }
 
@@ -52,7 +55,7 @@ public class VacationController {
      * 승인해야 할 휴가목록 읽기
      **/
     @GetMapping("/approve")
-    public ResponseEntity<RES_readVacationList> readVacationListForApprove() {
+    public ResponseEntity<ResponseCMDL> readVacationListForApprove() {
         return ResponseEntity.ok(vacationService.readVacationListForApprove());
     }
 
@@ -60,7 +63,7 @@ public class VacationController {
      * 휴가 승인
      **/
     @PutMapping("/approve/{vid}")
-    public ResponseEntity<RES_approveVacation> approveVacation(@PathVariable Long vid) {
+    public ResponseEntity<ResponseCM> approveVacation(@PathVariable Long vid) {
         return ResponseEntity.ok(vacationService.approveVacation(vid));
     }
 
@@ -68,7 +71,7 @@ public class VacationController {
      * 휴가 거절
      **/
     @PutMapping("/reject/{vid}")
-    public ResponseEntity<RES_rejectVacation> rejectVacation(@PathVariable Long vid , @RequestBody REQ_rejectVacation reject) {
+    public ResponseEntity<ResponseCM> rejectVacation(@PathVariable Long vid , @RequestBody REQ_rejectVacation reject) {
         return ResponseEntity.ok(vacationService.rejectVacation(vid, reject));
     }
 
@@ -76,7 +79,7 @@ public class VacationController {
      * 휴가 요약정보 조회
      **/
     @GetMapping("/summary")
-    public ResponseEntity<RES_readVacationSummary> rejectVacation() {
+    public ResponseEntity<ResponseCMD> rejectVacation() {
         return ResponseEntity.ok(vacationService.readVacationSummary());
     }
 

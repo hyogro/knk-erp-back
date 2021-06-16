@@ -7,6 +7,9 @@ import knk.erp.api.shlee.common.util.CommonUtil;
 import knk.erp.api.shlee.schedule.dto.Vacation.*;
 import knk.erp.api.shlee.schedule.entity.Vacation;
 import knk.erp.api.shlee.schedule.repository.VacationRepository;
+import knk.erp.api.shlee.schedule.responseEntity.ResponseCM;
+import knk.erp.api.shlee.schedule.responseEntity.ResponseCMD;
+import knk.erp.api.shlee.schedule.responseEntity.ResponseCMDL;
 import knk.erp.api.shlee.schedule.responseEntity.vacation.*;
 import knk.erp.api.shlee.schedule.specification.VS;
 import knk.erp.api.shlee.schedule.util.VacationUtil;
@@ -37,59 +40,59 @@ public class VacationService {
     private final MemberRepository memberRepository;
 
     //휴가 생성
-    public RES_createVacation createVacation(VacationDTO vacationDTO) {
+    public ResponseCM createVacation(VacationDTO vacationDTO) {
         try {
             Vacation vacation = vacationDTO.toEntity();
             vacation.setAuthor(getMember());
             approveCheck(vacation);
 
             vacationRepository.save(vacation);
-            return new RES_createVacation("CV001");
+            return new ResponseCM("CV001");
         } catch (Exception e) {
-            return new RES_createVacation("CV002", e.getMessage());
+            return new ResponseCM("CV002", e.getMessage());
         }
     }
 
     //내 휴가목록 조회
-    public RES_readVacationList readVacationList() {
+    public ResponseCMDL readVacationList() {
         try {
             String memberId = getMemberId();
             List<Vacation> vacationList = vacationRepository.findAll(VS.delFalse().and(VS.mid(memberId)));
-            return new RES_readVacationList("RVL001", util.VacationListToDTO(vacationList));
+            return new ResponseCMDL("RVL001", util.VacationListToDTO(vacationList));
         } catch (Exception e) {
-            return new RES_readVacationList("RVL002", e.getMessage());
+            return new ResponseCMDL("RVL002", e.getMessage());
         }
     }
 
     //내 휴가상세 조회
-    public RES_readVacation readVacation(Long vid) {
+    public ResponseCMD readVacationDetail(Long vid) {
         try {
             Vacation vacation = vacationRepository.getOne(vid);
-            return new RES_readVacation("RV001", new VacationDetailData(vacation));
+            return new ResponseCMD("RVD001", new VacationDetailData(vacation));
         } catch (Exception e) {
-            return new RES_readVacation("RV002", e.getMessage());
+            return new ResponseCMD("RVD002", e.getMessage());
         }
     }
 
     //내 휴가 삭제
-    public RES_deleteVacation deleteVacation(Long vid) {
+    public ResponseCM deleteVacation(Long vid) {
         try {
             String memberId = getMemberId();
 
             Vacation vacation = vacationRepository.getOne(vid);
-            if (vacation.isApproval1() && vacation.isApproval2()) return new RES_deleteVacation("DV003");
-            if (!vacation.getAuthor().getMemberId().equals(memberId)) return new RES_deleteVacation("DV004");
+            if (vacation.isApproval1() && vacation.isApproval2()) return new ResponseCM("DV003");
+            if (!vacation.getAuthor().getMemberId().equals(memberId)) return new ResponseCM("DV004");
 
             vacation.setDeleted(true);
             vacationRepository.save(vacation);
-            return new RES_deleteVacation("DV001");
+            return new ResponseCM("DV001");
         } catch (Exception e) {
-            return new RES_deleteVacation("DV002", e.getMessage());
+            return new ResponseCM("DV002", e.getMessage());
         }
     }
 
     //승인, 거부할 휴가목록 조회
-    public RES_readVacationList readVacationListForApprove() {
+    public ResponseCMDL readVacationListForApprove() {
         try {
             List<Vacation> vacationList = new ArrayList<>();
 
@@ -102,14 +105,14 @@ public class VacationService {
             } else if (3 <= commonUtil.checkLevel()) {
                 vacationList = vacationRepository.findAll(VS.delFalse().and(VS.approve2Is(false)));
             }
-            return new RES_readVacationList("RVL001", util.VacationListToDTO(vacationList));
+            return new ResponseCMDL("RVL001", util.VacationListToDTO(vacationList));
         } catch (Exception e) {
-            return new RES_readVacationList("RVL002", e.getMessage());
+            return new ResponseCMDL("RVL002", e.getMessage());
         }
     }
 
     //휴가 승인
-    public RES_approveVacation approveVacation(Long vid) {
+    public ResponseCM approveVacation(Long vid) {
         try {
             Vacation vacation = vacationRepository.getOne(vid);
 
@@ -117,21 +120,21 @@ public class VacationService {
                 Member member = getMember();
                 assert member != null;
                 Long departmentId = member.getDepartment().getId();
-                if (!vacation.getAuthor().getDepartment().getId().equals(departmentId)) return new RES_approveVacation("AV003");
+                if (!vacation.getAuthor().getDepartment().getId().equals(departmentId)) return new ResponseCM("AV003");
             }
 
             boolean isChange = approveCheck(vacation);
             if (isChange) vacationRepository.save(vacation);
 
-            return isChange ? new RES_approveVacation("AV001") : new RES_approveVacation("AV003");
+            return isChange ? new ResponseCM("AV001") : new ResponseCM("AV003");
 
         } catch (Exception e) {
-            return new RES_approveVacation("AV002", e.getMessage());
+            return new ResponseCM("AV002", e.getMessage());
         }
     }
 
     //휴가 거절
-    public RES_rejectVacation rejectVacation(Long vid, REQ_rejectVacation reject) {
+    public ResponseCM rejectVacation(Long vid, REQ_rejectVacation reject) {
         try {
             String memberId = getMemberId();
 
@@ -141,26 +144,26 @@ public class VacationService {
                 vacation.setReject(true);
                 vacation.setRejectMemo(reject.getRejectMemo());
 
-                if (vacation.isApproval1() && vacation.isApproval2()) return new RES_rejectVacation("RV004");
+                if (vacation.isApproval1() && vacation.isApproval2()) return new ResponseCM("RV004");
 
                 if (commonUtil.checkLevel() == 2) {
                     Member member = memberRepository.findAllByMemberIdAndDeletedIsFalse(memberId);
                     Long departmentId = member.getDepartment().getId();
-                    if (!vacation.getAuthor().getDepartment().getId().equals(departmentId)) return new RES_rejectVacation("RV003");
+                    if (!vacation.getAuthor().getDepartment().getId().equals(departmentId)) return new ResponseCM("RV003");
                 }
 
                 vacationRepository.save(vacation);
-                return new RES_rejectVacation("RV001");
+                return new ResponseCM("RV001");
             }
-            return new RES_rejectVacation("RV003");
+            return new ResponseCM("RV003");
 
         } catch (Exception e) {
-            return new RES_rejectVacation("RV002", e.getMessage());
+            return new ResponseCM("RV002", e.getMessage());
         }
     }
 
     //휴가 요약정보 조회
-    public RES_readVacationSummary readVacationSummary() {
+    public ResponseCMD readVacationSummary() {
         try {
             String memberId = getMemberId();
             int vacation; //휴가
@@ -174,11 +177,11 @@ public class VacationService {
             } else if (3 <= commonUtil.checkLevel()) {
                 vacation = (int) vacationRepository.count(VS.delFalse().and(VS.startDateAfter(todayS)).and(VS.endDateBefore(todayE).and(VS.approve1Is(true)).and(VS.approve2Is(true))));
             } else {
-                return new RES_readVacationSummary("RVS003");
+                return new ResponseCMD("RVS003");
             }
-            return new RES_readVacationSummary("RVS001", new VacationSummaryDTO(vacation));
+            return new ResponseCMD("RVS001", new VacationSummaryDTO(vacation));
         } catch (Exception e) {
-            return new RES_readVacationSummary("RVS002", e.getMessage());
+            return new ResponseCMD("RVS002", e.getMessage());
         }
     }
 

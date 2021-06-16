@@ -10,7 +10,9 @@ import knk.erp.api.shlee.schedule.entity.Attendance;
 import knk.erp.api.shlee.schedule.entity.RectifyAttendance;
 import knk.erp.api.shlee.schedule.repository.AttendanceRepository;
 import knk.erp.api.shlee.schedule.repository.RectifyAttendanceRepository;
-import knk.erp.api.shlee.schedule.responseEntity.attendance.*;
+import knk.erp.api.shlee.schedule.responseEntity.ResponseCM;
+import knk.erp.api.shlee.schedule.responseEntity.ResponseCMD;
+import knk.erp.api.shlee.schedule.responseEntity.ResponseCMDL;
 import knk.erp.api.shlee.schedule.specification.AS;
 import knk.erp.api.shlee.schedule.specification.RAS;
 import knk.erp.api.shlee.schedule.util.AttendanceUtil;
@@ -40,7 +42,7 @@ public class AttendanceService {
     private final DepartmentRepository departmentRepository;
 
     //출근 기록
-    public RES_onWork onWork() {
+    public ResponseCM onWork() {
         try {
             String memberId = getMemberId();
             LocalDate today = LocalDate.now();
@@ -48,71 +50,70 @@ public class AttendanceService {
 
             //실패 - 기존 출근기록 있으면 리턴
             boolean isOnWorked = (int) attendanceRepository.count(AS.delFalse().and(AS.mid(memberId)).and(AS.atteDate(today))) != 0;
-            if (isOnWorked) return new RES_onWork("ON003");
+            if (isOnWorked) return new ResponseCM("ON003");
 
             AttendanceDTO attendanceDTO = new AttendanceDTO(today, onWorkTime, getDepartmentId(memberId));
             Attendance attendance = attendanceDTO.toEntity();
             attendance.setAuthor(getMember());
             attendanceRepository.save(attendance);
-            return new RES_onWork("ON001");
+            return new ResponseCM("ON001");
 
         } catch (Exception e) {
             //실패 - Exception 발생
-            return new RES_onWork("ON002", e.getMessage());
+            return new ResponseCM("ON002", e.getMessage());
         }
     }
 
     //퇴근 기록
-    public RES_offWork offWork() {
+    public ResponseCM offWork() {
         try {
             String memberId = getMemberId();
             LocalDate today = LocalDate.now();
             LocalTime offWorkTime = LocalTime.now();
 
             Optional<Attendance> attendanceOptional = attendanceRepository.findOne(AS.delFalse().and(AS.mid(memberId)).and(AS.atteDate(today)));
-            if (!attendanceOptional.isPresent()) return new RES_offWork("OFF005");
+            if (!attendanceOptional.isPresent()) return new ResponseCM("OFF004");
 
             //실패 - 기존 퇴근기록 있으면 수정불가
             Attendance attendance = attendanceOptional.get();
-            if (attendance.getOffWork() != null) return new RES_offWork("OFF003");
+            if (attendance.getOffWork() != null) return new ResponseCM("OFF003");
 
             //성공 - 기존 퇴근기록 없으면 생성 후 응답
             attendance.setOffWork(offWorkTime);
             attendanceRepository.save(attendance);
-            return new RES_offWork("OFF001");
+            return new ResponseCM("OFF001");
         } catch (Exception e) {
             //실패 - Exception 발생
-            return new RES_offWork("OFF002", e.getMessage());
+            return new ResponseCM("OFF002", e.getMessage());
         }
     }
 
     //출, 퇴근기록 조회
-    public RES_readAttendanceList readAttendanceList() {
+    public ResponseCMDL readAttendanceList() {
         try {
             String memberId = getMemberId();
 
             //성공 - 삭제되지 않은 기록 중 본인의 것만 조회
             List<Attendance> attendanceList = attendanceRepository.findAll(AS.delFalse().and(AS.mid(memberId)));
-            return new RES_readAttendanceList("RAL001", util.AttendanceListToDTO(attendanceList));
+            return new ResponseCMDL("RAL001", util.AttendanceListToDTO(attendanceList));
         } catch (Exception e) {
             //실패 - Exception 발생
-            return new RES_readAttendanceList("RAL002", e.getMessage());
+            return new ResponseCMDL("RAL002", e.getMessage());
         }
     }
 
-    //개인 출,퇴근 당일정보 조회
-    public RES_readAttendance readAttendance(Long aid) {
+    //개인 출,퇴근 상세 조회
+    public ResponseCMD readAttendance(Long aid) {
         try {
-            String memberId = getMemberId();
             Attendance attendance = attendanceRepository.getOne(aid);
-            return new RES_readAttendance("RA001", new AttendanceDTO(attendance));
+            return new ResponseCMD("RAD001", new AttendanceDTO(attendance));
         } catch (Exception e) {
-            return new RES_readAttendance("RA002", e.getMessage());
+            return new ResponseCMD("RAD002", e.getMessage());
         }
     }
 
     //출,퇴근기록 정정 요청 -> 정정요청 신규 생성
-    public RES_createRectifyAttendance createRectifyAttendance(RectifyAttendanceDTO rectifyAttendanceDTO) {
+    public ResponseCM createRectifyAttendance(RectifyAttendanceDTO rectifyAttendanceDTO) {
         try {
             //맴버아이디 및 부서아디 세팅
             setMemberIdAndDepartmentId(rectifyAttendanceDTO);
@@ -127,22 +128,21 @@ public class AttendanceService {
             //1,2차 승인시 출,퇴근 정보 등록
             rectifyToAttendance(done.getId());
 
-            return new RES_createRectifyAttendance("CRA001");
+            return new ResponseCM("CRA001");
         } catch (Exception e) {
             //실패 - Exception 발생
-            return new RES_createRectifyAttendance("CRA002", e.getMessage());
+            return new ResponseCM("CRA002", e.getMessage());
         }
     }
 
     //출,퇴근기록 정정 요청 -> 출퇴근 기록으로 정정요청 생성
-    public RES_updateRectifyAttendance updateRectifyAttendance(Long aid, RectifyAttendanceDTO rectifyAttendanceDTO) {
+    public ResponseCM updateRectifyAttendance(Long aid, RectifyAttendanceDTO rectifyAttendanceDTO) {
         try {
-            String memberId = getMemberId();
             setMemberIdAndDepartmentId(rectifyAttendanceDTO);
             Optional<Attendance> attendanceOptional = attendanceRepository.findOne(AS.delFalse().and(AS.id(aid)));
 
             if(!attendanceOptional.isPresent()){
-                return new RES_updateRectifyAttendance("URA002");
+                return new ResponseCM("URA002");
             }
 
             Attendance attendance = attendanceOptional.get();
@@ -159,70 +159,53 @@ public class AttendanceService {
             //1,2차 승인시 출,퇴근 정보 등록
             rectifyToAttendance(done.getId());
 
-            return new RES_updateRectifyAttendance("URA001");
+            return new ResponseCM("URA001");
         } catch (Exception e) {
             //실패 - Exception 발생
-            return new RES_updateRectifyAttendance("URA002", e.getMessage());
-        }
-    }
-
-    //정정 요청이 들어온뒤 1, 2차 승인이 완료된 경우 출퇴근 정정요청 삭제 후 해당정보로 출퇴근정보 생성
-    private void rectifyToAttendance(Long id) {
-        RectifyAttendance rectifyAttendance = rectifyAttendanceRepository.getOne(id);
-
-        if (rectifyAttendance.isApproval1() && rectifyAttendance.isApproval2() && !rectifyAttendance.isDeleted()) {
-            Attendance attendance = util.RectifyToAttendance(rectifyAttendance);
-            attendanceRepository.save(attendance);
-
-            rectifyAttendance.setDeleted(true);
-            rectifyAttendanceRepository.save(rectifyAttendance);
+            return new ResponseCM("URA002", e.getMessage());
         }
     }
 
     //출,퇴근 정정요청목록 조회
-    public RES_readRectifyAttendanceList readRectifyAttendanceList() {
+    public ResponseCMDL readRectifyAttendanceList() {
         try {
             String memberId = getMemberId();
 
             List<RectifyAttendance> rectifyAttendanceList = rectifyAttendanceRepository.findAll(RAS.delFalse().and(RAS.mid(memberId)));
-            return new RES_readRectifyAttendanceList("RRAL001", util.RectifyAttendanceListToDTO(rectifyAttendanceList));
+            return new ResponseCMDL("RRAL001", util.RectifyAttendanceListToDTO(rectifyAttendanceList));
         } catch (Exception e) {
             //실패 - Exception 발생
-            return new RES_readRectifyAttendanceList("RRAL002", e.getMessage());
+            return new ResponseCMDL("RRAL002", e.getMessage());
         }
     }
     
     //출,퇴근 정정요청상세 조회
-    public RES_readRectifyAttendance readRectifyAttendance(Long rid) {
+    public ResponseCMD readRectifyAttendance(Long rid) {
         try {
-            String memberId = getMemberId();
-
             RectifyAttendance rectifyAttendance = rectifyAttendanceRepository.getOne(rid);
-            return new RES_readRectifyAttendance("RRA001", new RectifyAttendanceDTO(rectifyAttendance));
+            return new ResponseCMD("RRA001", new RectifyAttendanceDTO(rectifyAttendance));
         } catch (Exception e) {
             //실패 - Exception 발생
-            return new RES_readRectifyAttendance("RRA002", e.getMessage());
+            return new ResponseCMD("RRA002", e.getMessage());
         }
     }
 
     //출,퇴근 정정요청 삭제
-    public RES_deleteRectifyAttendance deleteRectifyAttendance(Long rid) {
+    public ResponseCM deleteRectifyAttendance(Long rid) {
         try {
-            String memberId = getMemberId();
-
             RectifyAttendance rectifyAttendance = rectifyAttendanceRepository.getOne(rid);
 
             rectifyAttendance.setDeleted(true);
             rectifyAttendanceRepository.save(rectifyAttendance);
-            return new RES_deleteRectifyAttendance("DRA001");
+            return new ResponseCM("DRA001");
         } catch (Exception e) {
             //실패 - Exception 발생
-            return new RES_deleteRectifyAttendance("DRA002", e.getMessage());
+            return new ResponseCM("DRA002", e.getMessage());
         }
     }
 
     //승인해야할 출,퇴근 정정요청목록 조회
-    public RES_readRectifyAttendanceList readRectifyAttendanceListForApprove() {
+    public ResponseCMDL readRectifyAttendanceListForApprove() {
         try {
             String memberId = getMemberId();
             List<RectifyAttendance> rectifyAttendanceList = new ArrayList<>();
@@ -233,29 +216,29 @@ public class AttendanceService {
             } else if (3 <= commonUtil.checkLevel()) {
                 rectifyAttendanceList = rectifyAttendanceRepository.findAll(RAS.delFalse());
             }
-            return new RES_readRectifyAttendanceList("RRAL001", util.RectifyAttendanceListToDTO(rectifyAttendanceList));
+            return new ResponseCMDL("RRAL001", util.RectifyAttendanceListToDTO(rectifyAttendanceList));
         } catch (Exception e) {
             //실패 - Exception 발생
-            return new RES_readRectifyAttendanceList("RRAL002", e.getMessage());
+            return new ResponseCMDL("RRAL002", e.getMessage());
         }
     }
 
     //출,퇴근 정정 승인 레벨 2, 레벨 3만 접근 가능.
-    public RES_approveRectifyAttendance approveRectifyAttendance(Long rid) {
+    public ResponseCM approveRectifyAttendance(Long rid) {
         try {
             RectifyAttendance rectifyAttendance = rectifyAttendanceRepository.getOne(rid);
-            if (rectifyAttendance.isDeleted()) return new RES_approveRectifyAttendance("ARA004");
-            if (!rectifyApproved(rectifyAttendance)) return new RES_approveRectifyAttendance("ARA003");
+            if (rectifyAttendance.isDeleted()) return new ResponseCM("ARA004");
+            if (!rectifyApproved(rectifyAttendance)) return new ResponseCM("ARA003");
             RectifyAttendance done = rectifyAttendanceRepository.save(rectifyAttendance);
             rectifyToAttendance(done.getId());
-            return new RES_approveRectifyAttendance("ARA001");
+            return new ResponseCM("ARA001");
         } catch (Exception e) {
-            return new RES_approveRectifyAttendance("ARA002", e.getMessage());
+            return new ResponseCM("ARA002", e.getMessage());
         }
     }
 
     //출,퇴근 요약정보 조회
-    public RES_readAttendanceSummary readAttendanceSummary() {
+    public ResponseCMD readAttendanceSummary() {
         try {
             String memberId = getMemberId();
             int onWork;//출근
@@ -276,23 +259,36 @@ public class AttendanceService {
                 lateWork = (int) attendanceRepository.count(AS.delFalse().and(AS.atteDate(today).and(AS.onWorkAfter(nine))));
                 yetWork = (int) memberRepository.count() - onWork;
             } else {
-                return new RES_readAttendanceSummary("RSS003");
+                return new ResponseCMD("RAS003");
             }
-            return new RES_readAttendanceSummary("RSS001", new AttendanceSummaryDTO(onWork, yetWork, lateWork));
+            return new ResponseCMD("RAS001", new AttendanceSummaryDTO(onWork, yetWork, lateWork));
         } catch (Exception e) {
-            return new RES_readAttendanceSummary("RSS002", e.getMessage());
+            return new ResponseCMD("RAS002", e.getMessage());
         }
     }
 
     //개인 출,퇴근 당일정보 조회
-    public RES_readAttendance readAttendanceToday() {
+    public ResponseCMD readAttendanceToday() {
         try {
             String memberId = getMemberId();
             LocalDate today = LocalDate.now();
             Optional<Attendance> attendance = attendanceRepository.findOne(AS.delFalse().and(AS.atteDate(today).and(AS.mid(memberId))));
-            return attendance.map(value -> new RES_readAttendance("RA001", new AttendanceDTO(value))).orElseGet(() -> new RES_readAttendance("RA003"));
+            return attendance.map(value -> new ResponseCMD("RA001", new AttendanceDTO(value))).orElseGet(() -> new ResponseCMD("RA003"));
         } catch (Exception e) {
-            return new RES_readAttendance("RA002", e.getMessage());
+            return new ResponseCMD("RA002", e.getMessage());
+        }
+    }
+
+    //정정 요청이 들어온뒤 1, 2차 승인이 완료된 경우 출퇴근 정정요청 삭제 후 해당정보로 출퇴근정보 생성
+    private void rectifyToAttendance(Long id) {
+        RectifyAttendance rectifyAttendance = rectifyAttendanceRepository.getOne(id);
+
+        if (rectifyAttendance.isApproval1() && rectifyAttendance.isApproval2() && !rectifyAttendance.isDeleted()) {
+            Attendance attendance = util.RectifyToAttendance(rectifyAttendance);
+            attendanceRepository.save(attendance);
+
+            rectifyAttendance.setDeleted(true);
+            rectifyAttendanceRepository.save(rectifyAttendance);
         }
     }
 

@@ -13,16 +13,16 @@ import java.util.List;
 
 @Component
 public class AttendanceUtil {
-    public List<AttendanceDTO> AttendanceListToDTO(List<Attendance> attendanceList){
-        List<AttendanceDTO> attendanceDTOList = new ArrayList<>();
+    public List<Object> AttendanceListToDTO(List<Attendance> attendanceList){
+        List<Object> attendanceDTOList = new ArrayList<>();
         for(Attendance attendance : attendanceList){
             attendanceDTOList.add(new AttendanceDTO(attendance));
         }
         return attendanceDTOList;
     }
 
-    public List<RectifyAttendanceDTO> RectifyAttendanceListToDTO(List<RectifyAttendance> rectifyAttendanceList){
-        List<RectifyAttendanceDTO> rectifyAttendanceDTOList = new ArrayList<>();
+    public List<Object> RectifyAttendanceListToDTO(List<RectifyAttendance> rectifyAttendanceList){
+        List<Object> rectifyAttendanceDTOList = new ArrayList<>();
         for(RectifyAttendance rectifyAttendance : rectifyAttendanceList){
             rectifyAttendanceDTOList.add(new RectifyAttendanceDTO(rectifyAttendance));
         }
