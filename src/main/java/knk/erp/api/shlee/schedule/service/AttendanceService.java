@@ -41,6 +41,31 @@ public class AttendanceService {
     private final MemberRepository memberRepository;
     private final DepartmentRepository departmentRepository;
 
+    //테스트
+    public void test(){
+        //일 0 토 6
+        int[] monthStart = {31, 28, 31, 30, 31};
+        Member member = getMember();
+        for(int i=0; i<5; i++){
+            int year = 2021;
+            int month = i+1;
+            for(int j=0; j<monthStart[i]; j++){
+                int day = j+1;
+                LocalDate date = LocalDate.of(year, month, day);
+                if(date.getDayOfWeek().getValue() < 6){
+                    LocalTime onWork = LocalTime.of(9,0);
+                    LocalTime offWork = LocalTime.of(18,0);
+                    Attendance attendance = Attendance.builder().attendanceDate(date).onWork(onWork).offWork(offWork).build();
+                    attendance.setAuthor(member);
+                    attendanceRepository.save(attendance);
+                }
+
+            }
+        }
+
+
+    }
+
     //출근 기록
     public ResponseCM onWork() {
         try {
@@ -52,7 +77,7 @@ public class AttendanceService {
             boolean isOnWorked = (int) attendanceRepository.count(AS.delFalse().and(AS.mid(memberId)).and(AS.atteDate(today))) != 0;
             if (isOnWorked) return new ResponseCM("ON003");
 
-            AttendanceDTO attendanceDTO = new AttendanceDTO(today, onWorkTime, getDepartmentId(memberId));
+            AttendanceDTO attendanceDTO = new AttendanceDTO(today, onWorkTime);
             Attendance attendance = attendanceDTO.toEntity();
             attendance.setAuthor(getMember());
             attendanceRepository.save(attendance);
@@ -359,7 +384,6 @@ public class AttendanceService {
     private void setMemberIdAndDepartmentId(RectifyAttendanceDTO rectifyAttendanceDTO) {
         String memberId = getMemberId();
         rectifyAttendanceDTO.setMemberId(memberId);
-        rectifyAttendanceDTO.setDepartmentId(getDepartmentId(memberId));
     }
 
 

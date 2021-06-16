@@ -23,9 +23,6 @@ public class RectifyAttendance extends Time {
     private Member author;
 
     @Column(nullable = false)
-    private Long departmentId;
-
-    @Column(nullable = false)
     private LocalDate attendanceDate;
 
     @Column(nullable = false)
@@ -55,8 +52,7 @@ public class RectifyAttendance extends Time {
     private Long targetId;
 
     @Builder
-    public RectifyAttendance(Long departmentId, LocalDate attendanceDate, LocalTime onWork, LocalTime offWork, String memo, Long targetId) {
-        this.departmentId = departmentId;
+    public RectifyAttendance(LocalDate attendanceDate, LocalTime onWork, LocalTime offWork, String memo, Long targetId) {
         this.attendanceDate = attendanceDate;
         this.onWork = onWork;
         this.offWork = offWork;

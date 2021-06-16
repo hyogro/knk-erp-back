@@ -24,9 +24,6 @@ public class Attendance extends Time {
     private Member author;
 
     @Column(nullable = false)
-    private Long departmentId;
-
-    @Column(nullable = false)
     private LocalDate attendanceDate;
 
     @Column(nullable = false)
@@ -36,8 +33,7 @@ public class Attendance extends Time {
     private LocalTime offWork;
 
     @Builder
-    public Attendance(Long departmentId, LocalDate attendanceDate, LocalTime onWork, LocalTime offWork) {
-        this.departmentId = departmentId;
+    public Attendance(LocalDate attendanceDate, LocalTime onWork, LocalTime offWork) {
         this.attendanceDate = attendanceDate;
         this.onWork = onWork;
         this.offWork = offWork;

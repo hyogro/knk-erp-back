@@ -17,6 +17,11 @@ public class AttendanceController {
         this.attendanceService = attendanceService;
     }
 
+    @GetMapping("/test")
+    public void test(){
+        attendanceService.test();
+    }
+
     /**
      * 출근 기록
      **/
