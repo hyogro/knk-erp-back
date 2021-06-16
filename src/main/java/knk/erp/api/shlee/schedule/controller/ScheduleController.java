@@ -29,9 +29,9 @@ public class ScheduleController {
     //일정 목록 읽기
     @GetMapping("")
     public ResponseEntity<ResponseCMDL> readScheduleList(@RequestParam("viewOption") String viewOption,
-                                                         @RequestParam("startDate") LocalDateTime startDate,
-                                                         @RequestParam("endDate") LocalDateTime endDate) {
-        return ResponseEntity.ok(scheduleService.readScheduleList(viewOption, startDate, endDate));
+                                                         @RequestParam("startDate") String startDate,
+                                                         @RequestParam("endDate") String endDate) {
+        return ResponseEntity.ok(scheduleService.readScheduleList(viewOption, LocalDateTime.parse(startDate), LocalDateTime.parse(endDate)));
     }
 
     //일정 상세 읽기

@@ -8,7 +8,9 @@ import knk.erp.api.shlee.schedule.service.AttendanceService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 @RestController
 @RequestMapping("/attendance")
@@ -44,9 +46,9 @@ public class AttendanceController {
      * 출,퇴근 기록목록 조회
      **/
     @GetMapping("")
-    public ResponseEntity<ResponseCMDL> readAttendanceList(@RequestParam("startDate") LocalDateTime startDate,
-                                                           @RequestParam("endDate") LocalDateTime endDate) {
-        return ResponseEntity.ok(attendanceService.readAttendanceList(startDate, endDate));
+    public ResponseEntity<ResponseCMDL> readAttendanceList(@RequestParam("startDate") String startDate,
+                                                           @RequestParam("endDate") String endDate) {
+        return ResponseEntity.ok(attendanceService.readAttendanceList(LocalDate.parse(startDate), LocalDate.parse(endDate)));
     }
 
     /**

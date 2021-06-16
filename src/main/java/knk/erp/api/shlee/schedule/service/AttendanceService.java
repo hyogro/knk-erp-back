@@ -116,11 +116,11 @@ public class AttendanceService {
     }
 
     //출, 퇴근기록 조회
-    public ResponseCMDL readAttendanceList(LocalDateTime startDate, LocalDateTime endDate) {
+    public ResponseCMDL readAttendanceList(LocalDate startDate, LocalDate endDate) {
         try {
             String memberId = getMemberId();
 
-            List<Attendance> attendanceList = attendanceRepository.findAll(AS.delFalse().and(AS.mid(memberId)).and(AS.startDateAfter(startDate)).and(AS.endDateBefore(endDate)));
+            List<Attendance> attendanceList = attendanceRepository.findAll(AS.delFalse().and(AS.mid(memberId)).and(AS.attendanceDateBetween(startDate,endDate)));
             return new ResponseCMDL("RAL001", util.AttendanceListToDTO(attendanceList));
         } catch (Exception e) {
             //실패 - Exception 발생

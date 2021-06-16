@@ -7,9 +7,12 @@ import knk.erp.api.shlee.schedule.entity.Schedule;
 import org.springframework.data.jpa.domain.Specification;
 
 import javax.persistence.criteria.Join;
+import javax.persistence.criteria.Predicate;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
 
 public class AS {//AttendanceSpecification
 
@@ -50,10 +53,14 @@ public class AS {//AttendanceSpecification
         return (root, query, builder) -> builder.lessThan(root.get("offWork"), td);
     }
 
-    public static Specification<Attendance> startDateAfter(LocalDateTime td){//startDate after
-        return (root, query, builder) -> builder.greaterThan(root.get("startDate"), td);
-    }
-    public static Specification<Attendance> endDateBefore(LocalDateTime td){//endDate before
-        return (root, query, builder) -> builder.lessThan(root.get("endDate"), td);
+    public static Specification<Attendance> attendanceDateBetween(LocalDate sd, LocalDate ed){//endDate before
+        return (root, query, builder) -> {
+
+            List<Predicate> predicates = new ArrayList<>();
+            predicates.add(builder.greaterThan(root.get("attendanceDate"), sd));
+            predicates.add(builder.lessThan(root.get("attendanceDate"), ed));
+
+            return builder.and(predicates.toArray(new Predicate[0]));
+        };
     }
 }
