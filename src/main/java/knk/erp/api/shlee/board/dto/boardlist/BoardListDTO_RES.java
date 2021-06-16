@@ -3,6 +3,7 @@ package knk.erp.api.shlee.board.dto.boardlist;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Setter
@@ -14,4 +15,5 @@ public class BoardListDTO_RES {
     private String writerMemberName;
     private LocalDateTime createDate;
     private String boardType;
+    private List<String> visitors;
 }

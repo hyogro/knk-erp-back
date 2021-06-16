@@ -17,10 +17,10 @@ import java.util.List;
 @Table(name = "Board")
 @Entity
 public class Board extends Time {
+
     @Id
     @GeneratedValue
     private Long idx;
-
 
     // 게시글 제목
     @Column(nullable = false)
