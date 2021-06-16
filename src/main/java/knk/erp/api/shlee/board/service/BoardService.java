@@ -72,10 +72,11 @@ public class BoardService {
             if(reference_memberId != null && !boardUtil.checkReference(reference_memberId, reader)){
                 return new Read_BoardDTO_RES("RB003", "참조 대상이 아님");
             }
-            List<String> visitors = target.getVisitors();
 
+            List<String> visitors;
 
-            if(visitors != null){
+            if(target.getVisitors() != null){
+                visitors = new ArrayList<>(target.getVisitors());
                 if(!visitors.contains(reader.getMemberId())){
                     visitors.add(reader.getMemberId());
                 }
@@ -88,15 +89,14 @@ public class BoardService {
             target.setVisitors(visitors);
             int count = target.getCount() + 1;
             target.setCount(count);
-            System.out.println(target.getIdx());
             boardRepository.save(target);
-            System.out.println(target.getTitle());
 
             return new Read_BoardDTO_RES("RB001", new Read_BoardDTO(target.getTitle(), target.getReferenceMemberId(),
                     target.getContent(), target.getBoardType(), writer.getMemberName(), writer.getMemberId(),
                     writer.getDepartment().getDepartmentName(), target.getCreateDate(), target.getUpdateDate(), target.getFile(),
                     target.getCount(), target.getVisitors()));
         }catch(Exception e){
+            e.printStackTrace();
             return new Read_BoardDTO_RES("RB002", e.getMessage());
         }
     }
@@ -188,8 +188,8 @@ public class BoardService {
                     boardPage = boardRepository.findAllByDeletedIsFalse(pageable);
                     break;
             }
-            Page<BoardListDTO_RES> page = boardPage.map(board -> new BoardListDTO_RES(board.getTitle(), board.getWriterMemberName(),
-                    board.getCreateDate(), board.getBoardType()));
+            Page<BoardListDTO_RES> page = boardPage.map(board -> new BoardListDTO_RES(board.getIdx(), board.getTitle(),
+                    board.getWriterMemberName(), board.getCreateDate(), board.getBoardType(), board.getVisitors()));
 
             return new Search_BoardListDTO_RES("SBL001", page);
         }catch(Exception e){
@@ -205,12 +205,12 @@ public class BoardService {
         Page<Board> all = boardRepository.findAllByBoardTypeAndDeletedFalse("공지사항", pageable);
         List<Board> latest = new ArrayList<>();
         try{
-            for(int i = 0; i < all.getContent().size(); i++){
-                if(i<5) latest.add(all.getContent().get(i));
+            for(int i = 0; i < 5; i++){
+                if(i < all.getContent().size()) latest.add(all.getContent().get(i));
             }
             Page<Board> boardPage = new PageImpl<>(latest, pageable, latest.size());
-            Page<BoardListDTO_RES> page = boardPage.map(board -> new BoardListDTO_RES(board.getTitle(), board.getWriterMemberName(),
-                    board.getCreateDate(), board.getBoardType()));
+            Page<BoardListDTO_RES> page = boardPage.map(board -> new BoardListDTO_RES(board.getIdx(), board.getTitle(),
+                    board.getWriterMemberName(), board.getCreateDate(), board.getBoardType(), board.getVisitors()));
             return new NoticeListDTO_RES("NBL001", page);
         }catch(Exception e){
             return new NoticeListDTO_RES("NBL002", e.getMessage());
