@@ -30,7 +30,7 @@ public class Board extends Time {
     @Column(nullable = false, length = 2000)
     private String content;
 
-    // 참조 대상 memberName
+    // 참조 대상 memberId
     @Column
     @Convert(converter = StringListConverter.class)
     private List<String> referenceMemberId;
@@ -51,13 +51,20 @@ public class Board extends Time {
     @Column
     private Long writerDepId;
 
+    @Column
+    private int count;
+
+    @Column(length = 1000)
+    @Convert(converter = StringListConverter.class)
+    private List<String> visitors;
+
     @OneToMany
     @JoinColumn(name = "board_idx")
     private List<File> file;
 
     @Builder
     public Board(String title, String content, List<String> referenceMemberId, String boardType, String writerMemberId,
-                 Long writerDepId, String writerMemberName){
+                 Long writerDepId, String writerMemberName, int count){
         this.title = title;
         this.content = content;
         this.referenceMemberId = referenceMemberId;
@@ -65,5 +72,6 @@ public class Board extends Time {
         this.writerMemberId = writerMemberId;
         this.writerDepId = writerDepId;
         this.writerMemberName = writerMemberName;
+        this.count = count;
     }
 }
