@@ -15,6 +15,7 @@ import knk.erp.api.shlee.schedule.responseEntity.ResponseCMD;
 import knk.erp.api.shlee.schedule.responseEntity.ResponseCMDL;
 import knk.erp.api.shlee.schedule.specification.AS;
 import knk.erp.api.shlee.schedule.specification.RAS;
+import knk.erp.api.shlee.schedule.specification.SS;
 import knk.erp.api.shlee.schedule.util.AttendanceUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
@@ -22,6 +23,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -114,11 +116,11 @@ public class AttendanceService {
     }
 
     //출, 퇴근기록 조회
-    public ResponseCMDL readAttendanceList() {
+    public ResponseCMDL readAttendanceList(LocalDateTime startDate, LocalDateTime endDate) {
         try {
             String memberId = getMemberId();
 
-            List<Attendance> attendanceList = attendanceRepository.findAll(AS.delFalse().and(AS.mid(memberId)));
+            List<Attendance> attendanceList = attendanceRepository.findAll(AS.delFalse().and(AS.mid(memberId)).and(AS.startDateAfter(startDate)).and(AS.endDateBefore(endDate)));
             return new ResponseCMDL("RAL001", util.AttendanceListToDTO(attendanceList));
         } catch (Exception e) {
             //실패 - Exception 발생

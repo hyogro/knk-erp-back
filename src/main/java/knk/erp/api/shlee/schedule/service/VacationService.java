@@ -173,9 +173,9 @@ public class VacationService {
             if (commonUtil.checkLevel() == 2) {
                 Member member = memberRepository.findAllByMemberIdAndDeletedIsFalse(memberId);
                 Department department = member.getDepartment();
-                vacation = (int) vacationRepository.count(VS.delFalse().and(VS.did(department.getId())).and(VS.startDateAfter(todayS)).and(VS.endDateBefore(todayE).and(VS.approve1Is(true)).and(VS.approve2Is(true))));
+                vacation = (int) vacationRepository.count(VS.delFalse().and(VS.did(department.getId())).and(VS.startDateAfter(todayS)).and(VS.endDateBefore(todayE)).and(VS.approve1Is(true)).and(VS.approve2Is(true)));
             } else if (3 <= commonUtil.checkLevel()) {
-                vacation = (int) vacationRepository.count(VS.delFalse().and(VS.startDateAfter(todayS)).and(VS.endDateBefore(todayE).and(VS.approve1Is(true)).and(VS.approve2Is(true))));
+                vacation = (int) vacationRepository.count(VS.delFalse().and(VS.startDateAfter(todayS)).and(VS.endDateBefore(todayE)).and(VS.approve1Is(true)).and(VS.approve2Is(true)));
             } else {
                 return new ResponseCMD("RVS003");
             }

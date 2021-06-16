@@ -3,9 +3,11 @@ package knk.erp.api.shlee.schedule.specification;
 import knk.erp.api.shlee.account.entity.Department;
 import knk.erp.api.shlee.account.entity.Member;
 import knk.erp.api.shlee.schedule.entity.Schedule;
+import knk.erp.api.shlee.schedule.entity.Vacation;
 import org.springframework.data.jpa.domain.Specification;
 
 import javax.persistence.criteria.*;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -73,6 +75,13 @@ public class SS {//ScheduleSpecification
             predicates.add(builder.equal(sm.get("memberId"), mid));
             return builder.and(predicates.toArray(new Predicate[0]));
         });
+    }
+
+    public static Specification<Schedule> startDateAfter(LocalDateTime td){//startDate after
+        return (root, query, builder) -> builder.greaterThan(root.get("startDate"), td);
+    }
+    public static Specification<Schedule> endDateBefore(LocalDateTime td){//endDate before
+        return (root, query, builder) -> builder.lessThan(root.get("endDate"), td);
     }
 
 }

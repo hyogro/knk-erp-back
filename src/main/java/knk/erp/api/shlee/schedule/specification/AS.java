@@ -50,4 +50,10 @@ public class AS {//AttendanceSpecification
         return (root, query, builder) -> builder.lessThan(root.get("offWork"), td);
     }
 
+    public static Specification<Attendance> startDateAfter(LocalDateTime td){//startDate after
+        return (root, query, builder) -> builder.greaterThan(root.get("startDate"), td);
+    }
+    public static Specification<Attendance> endDateBefore(LocalDateTime td){//endDate before
+        return (root, query, builder) -> builder.lessThan(root.get("endDate"), td);
+    }
 }

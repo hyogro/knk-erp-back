@@ -15,6 +15,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 
@@ -37,14 +39,14 @@ public class ScheduleService {
         }
     }
 
-    public ResponseCMDL readScheduleList(String viewOption) {
+    public ResponseCMDL readScheduleList(String viewOption, LocalDateTime startDate, LocalDateTime endDate) {
         try {
             String memberId = getMemberId();
             Long departmentId = Objects.requireNonNull(getMember()).getDepartment().getId();
 
             List<Schedule> scheduleList = (viewOption.isEmpty())
-                    ? scheduleRepository.findAll(SS.mid(memberId).and(SS.delFalse()))
-                    : scheduleRepository.findAll(SS.delFalse().and(SS.viewOption(viewOption, memberId, departmentId)));
+                    ? scheduleRepository.findAll(SS.mid(memberId).and(SS.delFalse()).and(SS.startDateAfter(startDate)).and(SS.endDateBefore(endDate)))
+                    : scheduleRepository.findAll(SS.delFalse().and(SS.viewOption(viewOption, memberId, departmentId)).and(SS.startDateAfter(startDate)).and(SS.endDateBefore(endDate)));
             return new ResponseCMDL("RSL001", util.ScheduleListToDTO(scheduleList));
         } catch (Exception e) {
             return new ResponseCMDL("RSL002", e.getMessage());

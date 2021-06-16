@@ -8,6 +8,9 @@ import knk.erp.api.shlee.schedule.service.ScheduleService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
 @RestController
 @RequestMapping("/schedule")
 public class ScheduleController {
@@ -25,8 +28,10 @@ public class ScheduleController {
 
     //일정 목록 읽기
     @GetMapping("")
-    public ResponseEntity<ResponseCMDL> readScheduleList(@RequestParam("viewOption") String viewOption) {
-        return ResponseEntity.ok(scheduleService.readScheduleList(viewOption));
+    public ResponseEntity<ResponseCMDL> readScheduleList(@RequestParam("viewOption") String viewOption,
+                                                         @RequestParam("startDate") LocalDateTime startDate,
+                                                         @RequestParam("endDate") LocalDateTime endDate) {
+        return ResponseEntity.ok(scheduleService.readScheduleList(viewOption, startDate, endDate));
     }
 
     //일정 상세 읽기
