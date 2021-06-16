@@ -31,26 +31,6 @@ public class ScheduleService {
     private final MemberRepository memberRepository;
     private final ScheduleUtil util;
 
-    @Transactional
-    public void test() {
-        for (int i = 0; i < 100; i++) {
-            String title = "부하테스트 제목_" + i;
-            String memo = "부하테스트 제목_" + i;
-            String viewOption = (i % 3 == 0) ? "all" : (i % 3 == 2) ? "dep" : "own";
-            int rand1 = (int)(Math.random()*100);
-            int rand2 = (int)(Math.random()*9);
-
-            LocalDateTime startDate = LocalDateTime.of(LocalDate.of(2021,6, rand1%20+1), LocalTime.of(9, 30));
-            LocalDateTime endDate = LocalDateTime.of(LocalDate.of(2021,6, rand1%20+1 + rand2), LocalTime.of(9, 30));
-            ScheduleDTO scheduleDTO = new ScheduleDTO(null, title, memo, viewOption, startDate, endDate);
-
-            System.out.println(scheduleDTO.toString());
-            Schedule schedule = scheduleDTO.toEntity();
-            schedule.setAuthor(getMember());
-            scheduleRepository.save(schedule);
-        }
-    }
-
     public RES_createSchedule createSchedule(ScheduleDTO scheduleDTO) {
         try {
             Schedule schedule = scheduleDTO.toEntity();
