@@ -118,7 +118,6 @@ public class AttendanceService {
         try {
             String memberId = getMemberId();
 
-            //성공 - 삭제되지 않은 기록 중 본인의 것만 조회
             List<Attendance> attendanceList = attendanceRepository.findAll(AS.delFalse().and(AS.mid(memberId)));
             return new ResponseCMDL("RAL001", util.AttendanceListToDTO(attendanceList));
         } catch (Exception e) {
@@ -131,7 +130,7 @@ public class AttendanceService {
     public ResponseCMD readAttendance(Long aid) {
         try {
             Attendance attendance = attendanceRepository.getOne(aid);
-            return new ResponseCMD("RAD001", new AttendanceDTO(attendance));
+            return new ResponseCMD("RAD001", new AttendanceDetailData(attendance));
         } catch (Exception e) {
             return new ResponseCMD("RAD002", e.getMessage());
         }
@@ -140,11 +139,9 @@ public class AttendanceService {
     //출,퇴근기록 정정 요청 -> 정정요청 신규 생성
     public ResponseCM createRectifyAttendance(RectifyAttendanceDTO rectifyAttendanceDTO) {
         try {
-            //맴버아이디 및 부서아디 세팅
-            setMemberIdAndDepartmentId(rectifyAttendanceDTO);
-
             //성공 - 생성 후 응답
             RectifyAttendance rectifyAttendance = rectifyAttendanceDTO.toEntity();
+            rectifyAttendance.setAuthor(getMember());
 
             //레벨에 따른 1,2차 승인여부 변경
             rectifyApproved(rectifyAttendance);
@@ -163,7 +160,6 @@ public class AttendanceService {
     //출,퇴근기록 정정 요청 -> 출퇴근 기록으로 정정요청 생성
     public ResponseCM updateRectifyAttendance(Long aid, RectifyAttendanceDTO rectifyAttendanceDTO) {
         try {
-            setMemberIdAndDepartmentId(rectifyAttendanceDTO);
             Optional<Attendance> attendanceOptional = attendanceRepository.findOne(AS.delFalse().and(AS.id(aid)));
 
             if(!attendanceOptional.isPresent()){
@@ -173,7 +169,7 @@ public class AttendanceService {
             Attendance attendance = attendanceOptional.get();
 
             RectifyAttendance rectifyAttendance = util.AttendanceToRectify(attendance, rectifyAttendanceDTO);
-
+            rectifyAttendance.setAuthor(getMember());
             //레벨에 따른 1,2차 승인여부 변경
             rectifyApproved(rectifyAttendance);
             RectifyAttendance done = rectifyAttendanceRepository.save(rectifyAttendance);
@@ -208,7 +204,7 @@ public class AttendanceService {
     public ResponseCMD readRectifyAttendance(Long rid) {
         try {
             RectifyAttendance rectifyAttendance = rectifyAttendanceRepository.getOne(rid);
-            return new ResponseCMD("RRA001", new RectifyAttendanceDTO(rectifyAttendance));
+            return new ResponseCMD("RRA001", new RectifyAttendanceDetailData(rectifyAttendance));
         } catch (Exception e) {
             //실패 - Exception 발생
             return new ResponseCMD("RRA002", e.getMessage());
@@ -379,13 +375,6 @@ public class AttendanceService {
             return null;
         }
     }
-
-    //RectifyAttendanceDTO 에 맴버 아이디 및 부서아이디 입력
-    private void setMemberIdAndDepartmentId(RectifyAttendanceDTO rectifyAttendanceDTO) {
-        String memberId = getMemberId();
-        rectifyAttendanceDTO.setMemberId(memberId);
-    }
-
 
 }
 
