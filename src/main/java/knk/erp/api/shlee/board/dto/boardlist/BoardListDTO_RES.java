@@ -11,6 +11,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class BoardListDTO_RES {
+    private Long board_idx;
     private String title;
     private String writerMemberName;
     private LocalDateTime createDate;
