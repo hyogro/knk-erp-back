@@ -54,7 +54,7 @@ public class AttendanceController {
     /**
      * 출,퇴근 기록 조회
      **/
-    @PostMapping("/{aid}")
+    @GetMapping("/{aid}")
     public ResponseEntity<ResponseCMD> readAttendance(@PathVariable("aid") Long aid) {
         return ResponseEntity.ok(attendanceService.readAttendance(aid));
     }

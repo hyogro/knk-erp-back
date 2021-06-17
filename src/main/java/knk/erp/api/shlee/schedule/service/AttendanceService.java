@@ -44,25 +44,33 @@ public class AttendanceService {
     private final DepartmentRepository departmentRepository;
 
     //테스트
-    public void test(){
+    public void test() {
         //일 0 토 6
         int[] monthStart = {31, 28, 31, 30, 31};
-        Member member = getMember();
-        for(int i=0; i<5; i++){
-            int year = 2021;
-            int month = i+1;
-            for(int j=0; j<monthStart[i]; j++){
-                int day = j+1;
-                LocalDate date = LocalDate.of(year, month, day);
-                if(date.getDayOfWeek().getValue() < 6){
-                    LocalTime onWork = LocalTime.of(9,0);
-                    LocalTime offWork = LocalTime.of(18,0);
-                    Attendance attendance = Attendance.builder().attendanceDate(date).onWork(onWork).offWork(offWork).build();
-                    attendance.setAuthor(member);
-                    attendanceRepository.save(attendance);
-                }
 
+        for (int a = 11; a < 100; a++) {
+            Member memberM = Member.builder().memberId("test"+a).password("1234").memberName("테스트"+a).phone("010-0000-00"+a).joiningDate(LocalDate.now())
+                    .build();
+            Member member = memberRepository.save(memberM);
+            System.out.println(memberM.toString() + "생성완료");
+            for (int i = 0; i < 5; i++) {
+                int year = 2021;
+                int month = i + 1;
+                for (int j = 0; j < monthStart[i]; j++) {
+                    int day = j + 1;
+                    LocalDate date = LocalDate.of(year, month, day);
+                    if (date.getDayOfWeek().getValue() < 6) {
+                        LocalTime onWork = LocalTime.of(9, 0);
+                        LocalTime offWork = LocalTime.of(18, 0);
+                        Attendance attendance = Attendance.builder().attendanceDate(date).onWork(onWork).offWork(offWork).build();
+                        attendance.setAuthor(member);
+                        attendanceRepository.save(attendance);
+                        System.out.println(member.getMemberId() + "\t" + date.toString() + " 기록완료");
+                    }
+
+                }
             }
+
         }
 
 
@@ -120,7 +128,7 @@ public class AttendanceService {
         try {
             String memberId = getMemberId();
 
-            List<Attendance> attendanceList = attendanceRepository.findAll(AS.delFalse().and(AS.mid(memberId)).and(AS.attendanceDateBetween(startDate,endDate)));
+            List<Attendance> attendanceList = attendanceRepository.findAll(AS.delFalse().and(AS.mid(memberId)).and(AS.attendanceDateBetween(startDate, endDate)));
             return new ResponseCMDL("RAL001", util.AttendanceListToDTO(attendanceList));
         } catch (Exception e) {
             //실패 - Exception 발생
@@ -164,7 +172,7 @@ public class AttendanceService {
         try {
             Optional<Attendance> attendanceOptional = attendanceRepository.findOne(AS.delFalse().and(AS.id(aid)));
 
-            if(!attendanceOptional.isPresent()){
+            if (!attendanceOptional.isPresent()) {
                 return new ResponseCM("URA002");
             }
 
@@ -201,7 +209,7 @@ public class AttendanceService {
             return new ResponseCMDL("RRAL002", e.getMessage());
         }
     }
-    
+
     //출,퇴근 정정요청상세 조회
     public ResponseCMD readRectifyAttendance(Long rid) {
         try {
@@ -276,8 +284,7 @@ public class AttendanceService {
                 onWork = (int) attendanceRepository.count(AS.delFalse().and(AS.atteDate(today).and(AS.did(departmentId))));
                 lateWork = (int) attendanceRepository.count(AS.delFalse().and(AS.atteDate(today).and(AS.did(departmentId).and(AS.onWorkAfter(nine)))));
                 yetWork = department.getMemberList().size() - onWork;
-            }
-            else if (3 <= commonUtil.checkLevel()) {
+            } else if (3 <= commonUtil.checkLevel()) {
                 onWork = (int) attendanceRepository.count(AS.delFalse().and(AS.atteDate(today)));
                 lateWork = (int) attendanceRepository.count(AS.delFalse().and(AS.atteDate(today).and(AS.onWorkAfter(nine))));
                 yetWork = (int) memberRepository.count() - onWork;
@@ -368,7 +375,7 @@ public class AttendanceService {
         return authentication.getName();
     }
 
-    private Member getMember(){
+    private Member getMember() {
         try {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             String memberId = authentication.getName();
