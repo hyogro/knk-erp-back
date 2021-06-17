@@ -1,14 +1,15 @@
 package knk.erp.api.shlee.board.util;
 
-import knk.erp.api.shlee.account.entity.Member;
 import knk.erp.api.shlee.board.dto.board.BoardDTO;
 import knk.erp.api.shlee.board.entity.Board;
+import knk.erp.api.shlee.board.entity.BoardRepository;
 import knk.erp.api.shlee.file.entity.File;
 import knk.erp.api.shlee.file.repository.FileRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -17,15 +18,37 @@ import java.util.List;
 @Component
 public class BoardUtil {
 
-    public Page<Board> findAllByReferenceMemberId(Authentication authentication, Page<Board> boardPage, Pageable pageable){
+    public Page<Board> searchBoard(String searchType, String keyword, String boardType, BoardRepository boardRepository, Pageable pageable){
+        List<Board> boardList;
+        switch (searchType) {
+            case "제목검색":
+                boardList = boardRepository.findAllByTitleContainingAndBoardTypeAndDeletedFalse(keyword, boardType);
+                break;
+
+            case "작성자검색":
+                if(keyword.length()>=6) boardList = boardRepository.findAllByWriterMemberIdAndBoardTypeAndDeletedFalse(keyword, boardType);
+                else boardList = boardRepository.findAllByWriterMemberNameAndBoardTypeAndDeletedFalse(keyword, boardType);
+                break;
+
+            case "참조":
+                Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+                boardList = findAllByReferenceMemberId(authentication, boardRepository.findAllByBoardTypeAndDeletedFalse(boardType));
+                break;
+
+            default:
+                boardList = boardRepository.findAllByBoardTypeAndDeletedFalse(boardType);
+                break;
+        }
+        return new PageImpl<>(boardList, pageable, boardList.size());
+    }
+
+    public List<Board> findAllByReferenceMemberId(Authentication authentication, List<Board> boardList){
         List<Board> ref_BoardList = new ArrayList<>();
-        for(Board b : boardPage.getContent()){
-            if(!b.isDeleted()){
-                if(b.getReferenceMemberId() != null &&b.getReferenceMemberId().contains(authentication.getName()))ref_BoardList.add(b);
-            }
+        for(Board b : boardList){
+            if(b.getReferenceMemberId() != null &&b.getReferenceMemberId().contains(authentication.getName())) ref_BoardList.add(b);
         }
 
-        return new PageImpl<>(ref_BoardList, pageable, ref_BoardList.size());
+        return ref_BoardList;
     }
 
     public void updateSetBoard(Board target, BoardDTO boardDTO, FileRepository fileRepository){
@@ -55,13 +78,5 @@ public class BoardUtil {
             target.setFile(file);
         }
 
-    }
-
-    public boolean checkReference(List<String> reference_memberId, Member reader){
-        for(String memberId : reference_memberId){
-            if(memberId.equals(reader.getMemberId())) return true;
-            else if(memberId.equals("null")) return true;
-        }
-        return false;
     }
 }

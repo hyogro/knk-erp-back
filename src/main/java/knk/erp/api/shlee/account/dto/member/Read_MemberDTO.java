@@ -1,6 +1,5 @@
 package knk.erp.api.shlee.account.dto.member;
 
-import knk.erp.api.shlee.account.entity.Authority;
 import lombok.*;
 
 import java.time.LocalDate;

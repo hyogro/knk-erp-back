@@ -10,7 +10,7 @@ import java.util.List;
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
-public class BoardListDTO_RES {
+public class BoardListDTO {
     private Long board_idx;
     private String title;
     private String writerMemberName;

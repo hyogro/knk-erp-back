@@ -10,11 +10,11 @@ import java.util.LinkedHashMap;
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
-public class NoticeListDTO_RES {
+public class NoticeLatestDTO_RES {
     private String code;
     private String message;
     private LinkedHashMap<String, String> help_codeList = new LinkedHashMap<>();
-    private Page<BoardListDTO_RES> page;
+    private Page<BoardListDTO> page;
 
     private void createCodeList(){
         this.help_codeList.put("NBL001", "공지사항 최신순 5개 불러오기 성공");
@@ -22,14 +22,14 @@ public class NoticeListDTO_RES {
     }
 
     // error
-    public NoticeListDTO_RES(String code, String message) {
+    public NoticeLatestDTO_RES(String code, String message) {
         createCodeList();
         this.code = code;
         this.message = message;
     }
 
     // ok
-    public NoticeListDTO_RES(String code, Page<BoardListDTO_RES> page) {
+    public NoticeLatestDTO_RES(String code, Page<BoardListDTO> page) {
         createCodeList();
         this.code = code;
         this.page = page;
