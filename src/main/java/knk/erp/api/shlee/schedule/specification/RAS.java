@@ -1,9 +1,12 @@
 package knk.erp.api.shlee.schedule.specification;
 
 
+import knk.erp.api.shlee.account.entity.Member;
 import knk.erp.api.shlee.schedule.entity.RectifyAttendance;
+import knk.erp.api.shlee.schedule.entity.Schedule;
 import org.springframework.data.jpa.domain.Specification;
 
+import javax.persistence.criteria.Join;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
@@ -18,7 +21,11 @@ public class RAS {//RectifyAttendanceSpecification
     }
 
     public static Specification<RectifyAttendance> mid(String memberId){//memberId
-        return (root, query, builder) -> builder.equal(root.get("memberId"), memberId);
+        return (root, query, builder) -> {
+
+            Join<Schedule, Member> sm = root.join("author");
+            return builder.equal(sm.get("memberId"), memberId);
+        };
     }
     public static Specification<RectifyAttendance> did(Long departmentId){//memberId
         return (root, query, builder) -> builder.equal(root.get("departmentId"), departmentId);
