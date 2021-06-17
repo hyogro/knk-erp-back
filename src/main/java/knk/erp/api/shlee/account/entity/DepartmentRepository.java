@@ -10,7 +10,7 @@ import java.util.Optional;
 public interface DepartmentRepository extends JpaRepository<Department, Long> {
     Department findByLeader_MemberIdAndDeletedFalse(String leaderId);
     Department findByDepartmentNameAndDeletedFalse(String departmentName);
-    List<Department> findAllByDeletedIsFalse();
-    boolean existsByDepartmentNameAndDeletedIsFalse(String departmentName);
+    List<Department> findAllByDeletedFalse();
+    boolean existsByDepartmentNameAndDeletedFalse(String departmentName);
     Department findByIdAndDeletedFalse(Long id);
 }

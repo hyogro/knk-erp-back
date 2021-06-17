@@ -1,6 +1,5 @@
 package knk.erp.api.shlee.board.dto.boardlist;
 
-import knk.erp.api.shlee.board.entity.Board;
 import lombok.*;
 import org.springframework.data.domain.Page;
 
@@ -11,26 +10,26 @@ import java.util.LinkedHashMap;
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
-public class Search_BoardListDTO_RES {
+public class Read_WorkBoardListDTO_RES {
     private String code;
     private String message;
     private LinkedHashMap<String, String> help_codeList = new LinkedHashMap<>();
-    private Page<BoardListDTO_RES> page;
+    private Page<BoardListDTO> page;
 
     private void createCodeList(){
-        this.help_codeList.put("SBL001", "게시글 리스트 불러오기 성공");
-        this.help_codeList.put("SBL002", "게시글 리스트 불러오기 실패");
+        this.help_codeList.put("RWB001", "업무게시글 목록 불러오기 성공");
+        this.help_codeList.put("RWB002", "업무게시글 목록 불러오기 실패");
     }
 
     // error
-    public Search_BoardListDTO_RES(String code, String message) {
+    public Read_WorkBoardListDTO_RES(String code, String message) {
         createCodeList();
         this.code = code;
         this.message = message;
     }
 
     // ok
-    public Search_BoardListDTO_RES(String code, Page<BoardListDTO_RES> page) {
+    public Read_WorkBoardListDTO_RES(String code, Page<BoardListDTO> page) {
         createCodeList();
         this.code = code;
         this.page = page;

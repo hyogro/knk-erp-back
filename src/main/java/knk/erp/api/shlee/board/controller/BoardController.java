@@ -1,8 +1,9 @@
 package knk.erp.api.shlee.board.controller;
 
 import knk.erp.api.shlee.board.dto.board.*;
-import knk.erp.api.shlee.board.dto.boardlist.NoticeListDTO_RES;
-import knk.erp.api.shlee.board.dto.boardlist.Search_BoardListDTO_RES;
+import knk.erp.api.shlee.board.dto.boardlist.NoticeLatestDTO_RES;
+import knk.erp.api.shlee.board.dto.boardlist.Read_NoticeBoardDTO_RES;
+import knk.erp.api.shlee.board.dto.boardlist.Read_WorkBoardListDTO_RES;
 import knk.erp.api.shlee.board.service.BoardService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -41,17 +42,31 @@ public class BoardController {
         return ResponseEntity.ok(boardService.deleteBoard(board_idx));
     }
 
-    // 게시글 목록 보기
-    @GetMapping("")
-    public ResponseEntity<Search_BoardListDTO_RES> boardList(@PageableDefault Pageable pageable,
-                                                             @RequestParam("searchType") String searchType,
-                                                             @RequestParam("keyword") String keyword){
-        return ResponseEntity.ok(boardService.boardList(pageable, searchType, keyword));
+    // 업무게시판 목록 보기
+    @GetMapping("/workBoardList")
+    public ResponseEntity<Read_WorkBoardListDTO_RES> workBoardList(@PageableDefault(size = 15) Pageable pageable,
+                                                               @RequestParam("searchType") String searchType,
+                                                               @RequestParam("keyword") String keyword){
+        return ResponseEntity.ok(boardService.workBoardList(pageable, searchType, keyword));
+    }
+
+    // 공지사항 목록 보기
+    @GetMapping("/noticeBoardList")
+    public ResponseEntity<Read_NoticeBoardDTO_RES> noticeBoardList(@PageableDefault(size = 20) Pageable pageable,
+                                                                   @RequestParam("searchType") String searchType,
+                                                                   @RequestParam("keyword") String keyword){
+        return ResponseEntity.ok(boardService.noticeBoardList(pageable, searchType, keyword));
     }
 
     // 공지사항 최신순 5개 보기
-    @GetMapping("/notice")
-    public ResponseEntity<NoticeListDTO_RES> noticeList(@PageableDefault(size = 5) Pageable pageable){
-        return ResponseEntity.ok(boardService.noticeList(pageable));
+    @GetMapping("/noticeLatest")
+    public ResponseEntity<NoticeLatestDTO_RES> noticeLatest(@PageableDefault(size = 5) Pageable pageable){
+        return ResponseEntity.ok(boardService.noticeLatest(pageable));
+    }
+
+    // 멤버 id와 이름 목록 불러오기
+    @GetMapping("/memberIdList")
+    public ResponseEntity<MemberIdListDTO_RES> memberIdList(){
+        return ResponseEntity.ok(boardService.memberIdList());
     }
 }

@@ -1,11 +1,14 @@
 package knk.erp.api.shlee.board.service;
 
+import knk.erp.api.shlee.account.entity.Department;
+import knk.erp.api.shlee.account.entity.DepartmentRepository;
 import knk.erp.api.shlee.account.entity.Member;
 import knk.erp.api.shlee.account.entity.MemberRepository;
 import knk.erp.api.shlee.board.dto.board.*;
-import knk.erp.api.shlee.board.dto.boardlist.BoardListDTO_RES;
-import knk.erp.api.shlee.board.dto.boardlist.NoticeListDTO_RES;
-import knk.erp.api.shlee.board.dto.boardlist.Search_BoardListDTO_RES;
+import knk.erp.api.shlee.board.dto.boardlist.BoardListDTO;
+import knk.erp.api.shlee.board.dto.boardlist.NoticeLatestDTO_RES;
+import knk.erp.api.shlee.board.dto.boardlist.Read_NoticeBoardDTO_RES;
+import knk.erp.api.shlee.board.dto.boardlist.Read_WorkBoardListDTO_RES;
 import knk.erp.api.shlee.board.entity.Board;
 import knk.erp.api.shlee.board.entity.BoardRepository;
 import knk.erp.api.shlee.board.util.BoardUtil;
@@ -20,6 +23,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 @Service
@@ -27,6 +31,7 @@ import java.util.List;
 public class BoardService {
     private final MemberRepository memberRepository;
     private final BoardRepository boardRepository;
+    private final DepartmentRepository departmentRepository;
     private final BoardUtil boardUtil;
     private final CommonUtil commonUtil;
     private final FileRepository fileRepository;
@@ -67,11 +72,6 @@ public class BoardService {
             Member reader = memberRepository.findAllByMemberIdAndDeletedIsFalse(authentication.getName());
             Board target = boardRepository.findByIdxAndDeletedFalse(board_idx);
             Member writer = memberRepository.findAllByMemberIdAndDeletedIsFalse(target.getWriterMemberId());
-            List<String> reference_memberId = target.getReferenceMemberId();
-
-            if(reference_memberId != null && !boardUtil.checkReference(reference_memberId, reader)){
-                return new Read_BoardDTO_RES("RB003", "참조 대상이 아님");
-            }
 
             List<String> visitors;
 
@@ -151,69 +151,87 @@ public class BoardService {
         }
     }
 
-    // 게시글 목록 보기
+    // 업무게시판 목록 보기
     @Transactional
-    public Search_BoardListDTO_RES boardList(Pageable pageable, String searchType, String keyword){
+    public Read_WorkBoardListDTO_RES workBoardList(Pageable pageable, String searchType, String keyword){
         try{
-            if(searchType == null) searchType = "";
-
-            if(keyword == null) keyword = "";
-
             pageable = PageRequest.of(pageable.getPageNumber() <= 0 ? 0 : pageable.getPageNumber() - 1, pageable.getPageSize(),
                     Sort.by("createDate").descending());
 
-            Page<Board> boardPage;
+            Page<Board> boardPage = boardUtil.searchBoard(searchType, keyword, "업무게시판", boardRepository, pageable);
 
-            switch (searchType) {
-                case "제목검색":
-                    boardPage = boardRepository.findAllByTitleContainingAndDeletedFalse(pageable, keyword);
-                    break;
-
-                case "태그검색":
-                    boardPage = boardRepository.findAllByBoardTypeAndDeletedFalse(keyword, pageable);
-                    break;
-
-                case "작성자검색":
-                    if(keyword.length()>=5) boardPage = boardRepository.findAllByWriterMemberIdAndDeletedFalse(pageable, keyword);
-                    else boardPage = boardRepository.findAllByWriterMemberNameAndDeletedFalse(pageable, keyword);
-                    break;
-
-                case "참조":
-                    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-                    boardPage = boardUtil.findAllByReferenceMemberId(authentication, boardRepository.findAllByDeletedIsFalse(pageable),
-                            pageable);
-                    break;
-
-                default:
-                    boardPage = boardRepository.findAllByDeletedIsFalse(pageable);
-                    break;
-            }
-            Page<BoardListDTO_RES> page = boardPage.map(board -> new BoardListDTO_RES(board.getIdx(), board.getTitle(),
+            Page<BoardListDTO> page = boardPage.map(board -> new BoardListDTO(board.getIdx(), board.getTitle(),
                     board.getWriterMemberName(), board.getCreateDate(), board.getBoardType(), board.getVisitors()));
 
-            return new Search_BoardListDTO_RES("SBL001", page);
+            return new Read_WorkBoardListDTO_RES("RWB001", page);
         }catch(Exception e){
-            return new Search_BoardListDTO_RES("SBL002", e.getMessage());
+            return new Read_WorkBoardListDTO_RES("RWB002", e.getMessage());
+        }
+    }
+
+    // 공지사항 목록 보기
+    @Transactional
+    public Read_NoticeBoardDTO_RES noticeBoardList(Pageable pageable, String searchType, String keyword){
+        try{
+            pageable = PageRequest.of(pageable.getPageNumber() <= 0 ? 0 : pageable.getPageNumber() - 1, pageable.getPageSize(),
+                    Sort.by("createDate").descending());
+
+            Page<Board> boardPage = boardUtil.searchBoard(searchType, keyword, "공지사항", boardRepository, pageable);
+
+            Page<BoardListDTO> page = boardPage.map(board -> new BoardListDTO(board.getIdx(), board.getTitle(),
+                    board.getWriterMemberName(), board.getCreateDate(), board.getBoardType(), board.getVisitors()));
+
+            return new Read_NoticeBoardDTO_RES("RNB001", page);
+        }catch(Exception e){
+            return new Read_NoticeBoardDTO_RES("RNB002", e.getMessage());
         }
     }
 
     // 공지사항 최신순 5개 보기
     @Transactional
-    public NoticeListDTO_RES noticeList(Pageable pageable){
+    public NoticeLatestDTO_RES noticeLatest(Pageable pageable){
         pageable = PageRequest.of(pageable.getPageNumber() <= 0 ? 0 : pageable.getPageNumber() - 1, pageable.getPageSize(),
                 Sort.by("createDate").descending());
-        Page<Board> all = boardRepository.findAllByBoardTypeAndDeletedFalse("공지사항", pageable);
+
+        List<Board> allList = boardRepository.findAllByBoardTypeAndDeletedFalse("공지사항");
+        Page<Board> all = new PageImpl<>(allList, pageable, allList.size());
         List<Board> latest = new ArrayList<>();
         try{
             for(int i = 0; i < 5; i++){
                 if(i < all.getContent().size()) latest.add(all.getContent().get(i));
             }
             Page<Board> boardPage = new PageImpl<>(latest, pageable, latest.size());
-            Page<BoardListDTO_RES> page = boardPage.map(board -> new BoardListDTO_RES(board.getIdx(), board.getTitle(),
+            Page<BoardListDTO> page = boardPage.map(board -> new BoardListDTO(board.getIdx(), board.getTitle(),
                     board.getWriterMemberName(), board.getCreateDate(), board.getBoardType(), board.getVisitors()));
-            return new NoticeListDTO_RES("NBL001", page);
+            return new NoticeLatestDTO_RES("NBL001", page);
         }catch(Exception e){
-            return new NoticeListDTO_RES("NBL002", e.getMessage());
+            return new NoticeLatestDTO_RES("NBL002", e.getMessage());
+        }
+    }
+
+    // 멤버 id와 이름 목록 불러오기
+    @Transactional
+    public MemberIdListDTO_RES memberIdList(){
+        try{
+            List<Member> depMember;
+            List<Department> allDepartment = departmentRepository.findAllByDeletedFalse();
+            HashMap<String, String> member;
+            HashMap<String, HashMap<String, String>> data = new HashMap<>();
+
+            for(Department d : allDepartment){
+                member = new HashMap<>();
+                depMember = d.getMemberList();
+
+                for(Member m : depMember){
+                    member.put(m.getMemberId(), m.getMemberName());
+                }
+
+                data.put(d.getDepartmentName(), member);
+            }
+
+            return new MemberIdListDTO_RES("MIL001", data);
+        }catch(Exception e){
+            return new MemberIdListDTO_RES("MIL002", e.getMessage());
         }
     }
 }

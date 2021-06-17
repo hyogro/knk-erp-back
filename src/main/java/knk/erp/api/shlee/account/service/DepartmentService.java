@@ -28,7 +28,7 @@ public class DepartmentService {
     @Transactional
     public Create_DepartmentDTO_RES createDepartment(DepartmentDTO_REQ departmentDTOReq) {
         try {
-            if(departmentRepository.existsByDepartmentNameAndDeletedIsFalse(departmentDTOReq.getDepartmentName())) {
+            if(departmentRepository.existsByDepartmentNameAndDeletedFalse(departmentDTOReq.getDepartmentName())) {
                 return new Create_DepartmentDTO_RES("CD003", "이미 존재하는 부서입니다.");
             }
 
@@ -45,7 +45,7 @@ public class DepartmentService {
     @Transactional
     public Read_DepartmentDTO_RES readDepartment() {
         try {
-            List<Department> departmentList = departmentRepository.findAllByDeletedIsFalse();
+            List<Department> departmentList = departmentRepository.findAllByDeletedFalse();
             List<String> departmentName = new ArrayList<>();
             List<Long> dep_id = new ArrayList<>();
             for(Department d : departmentList){
@@ -78,7 +78,7 @@ public class DepartmentService {
     @Transactional
     public Update_DepartmentDTO_RES updateDepartment(Long dep_id, DepartmentDTO_REQ departmentDTOReq) {
         try {
-            if(departmentRepository.existsByDepartmentNameAndDeletedIsFalse(departmentDTOReq.getDepartmentName())){
+            if(departmentRepository.existsByDepartmentNameAndDeletedFalse(departmentDTOReq.getDepartmentName())){
                 return new Update_DepartmentDTO_RES("UD003", "이미 존재하는 부서입니다.");
             }
 
