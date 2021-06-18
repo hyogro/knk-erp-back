@@ -238,10 +238,6 @@ public class AttendanceService {
         try {
             String memberId = getMemberId();
             List<RectifyAttendance> rectifyAttendanceList = new ArrayList<>();
-            System.out.println(commonUtil.checkLevel());
-            System.out.println(commonUtil.checkLevel());
-            System.out.println(commonUtil.checkLevel());
-            System.out.println(commonUtil.checkLevel()+"<<");
             if (commonUtil.checkLevel() == 2) {
                 Member member = memberRepository.findAllByMemberIdAndDeletedIsFalse(memberId);
                 Long departmentId = member.getDepartment().getId();
@@ -262,6 +258,7 @@ public class AttendanceService {
             RectifyAttendance rectifyAttendance = rectifyAttendanceRepository.getOne(rid);
             if (rectifyAttendance.isDeleted()) return new ResponseCM("ARA004");
             if (!rectifyApproved(rectifyAttendance)) return new ResponseCM("ARA003");
+
             RectifyAttendance done = rectifyAttendanceRepository.save(rectifyAttendance);
             rectifyToAttendance(done.getId());
             return new ResponseCM("ARA001");
@@ -318,7 +315,10 @@ public class AttendanceService {
         if (rectifyAttendance.isApproval1() && rectifyAttendance.isApproval2() && !rectifyAttendance.isDeleted()) {
             Attendance attendance = util.RectifyToAttendance(rectifyAttendance);
             attendance.setAuthor(rectifyAttendance.getAuthor());
-            attendanceRepository.save(attendance);
+            System.out.println("여기부터 들어오긴 왔다");
+            Attendance a = attendanceRepository.save(attendance);
+            System.out.println(a.getAuthor().getMemberId());
+            System.out.println("여기까지 들어오긴 왔다");
 
             rectifyAttendance.setDeleted(true);
             rectifyAttendanceRepository.save(rectifyAttendance);
@@ -336,9 +336,7 @@ public class AttendanceService {
 
     //요청 시 권한에 따라서 1, 2차 승인 여부 변경
     private boolean rectifyApproved(RectifyAttendance rectifyAttendance) {
-
         String leaderId = getMemberId();
-
         //LVL2(부서장) 인 경우 승인하려는 맴버가 부서원인지 확인 후 승인 진행
         if (commonUtil.checkLevel() == 2) {
             Department department_m = rectifyAttendance.getAuthor().getDepartment();
