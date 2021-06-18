@@ -20,11 +20,11 @@ public class RAS {//RectifyAttendanceSpecification
         return (root, query, builder) -> builder.isFalse(root.get("deleted"));
     }
 
-    public static Specification<RectifyAttendance> mid(String memberId){//memberId
+    public static Specification<RectifyAttendance> mid(String mid){//memberId
         return (root, query, builder) -> {
 
             Join<Schedule, Member> sm = root.join("author");
-            return builder.equal(sm.get("memberId"), memberId);
+            return builder.equal(sm.get("memberId"), mid);
         };
     }
     public static Specification<RectifyAttendance> did(Long departmentId){//memberId

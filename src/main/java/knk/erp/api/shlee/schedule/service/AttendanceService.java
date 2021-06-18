@@ -238,6 +238,10 @@ public class AttendanceService {
         try {
             String memberId = getMemberId();
             List<RectifyAttendance> rectifyAttendanceList = new ArrayList<>();
+            System.out.println(commonUtil.checkLevel());
+            System.out.println(commonUtil.checkLevel());
+            System.out.println(commonUtil.checkLevel());
+            System.out.println(commonUtil.checkLevel()+"<<");
             if (commonUtil.checkLevel() == 2) {
                 Member member = memberRepository.findAllByMemberIdAndDeletedIsFalse(memberId);
                 Long departmentId = member.getDepartment().getId();
@@ -313,6 +317,7 @@ public class AttendanceService {
 
         if (rectifyAttendance.isApproval1() && rectifyAttendance.isApproval2() && !rectifyAttendance.isDeleted()) {
             Attendance attendance = util.RectifyToAttendance(rectifyAttendance);
+            attendance.setAuthor(rectifyAttendance.getAuthor());
             attendanceRepository.save(attendance);
 
             rectifyAttendance.setDeleted(true);
