@@ -5,9 +5,7 @@ import knk.erp.api.shlee.board.entity.Board;
 import knk.erp.api.shlee.board.entity.BoardRepository;
 import knk.erp.api.shlee.file.entity.File;
 import knk.erp.api.shlee.file.repository.FileRepository;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.*;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -18,27 +16,27 @@ import java.util.List;
 @Component
 public class BoardUtil {
 
-    public Page<Board> searchBoard(String searchType, String keyword, String boardType, BoardRepository boardRepository, Pageable pageable){
+    public Page<Board> searchBoard(String searchType, String keyword, String boardType, BoardRepository boardRepository, Pageable pageable, int size){
         List<Board> boardList = new ArrayList<>();
         switch (searchType) {
             case "제목검색":
-                if(keyword.length()>=2) boardList = boardRepository.findAllByTitleContainingAndBoardTypeAndDeletedFalse(keyword, boardType);
+                if(keyword.length()>=2) boardList = boardRepository.findAllByTitleContainingAndBoardTypeAndDeletedFalse(keyword, boardType, pageable);
                 break;
 
             case "작성자검색":
                 if(keyword.length()>=2){
-                    if(keyword.length()>=6) boardList = boardRepository.findAllByWriterMemberIdAndBoardTypeAndDeletedFalse(keyword, boardType);
-                    else boardList = boardRepository.findAllByWriterMemberNameAndBoardTypeAndDeletedFalse(keyword, boardType);
+                    if(keyword.length()>=6) boardList = boardRepository.findAllByWriterMemberIdAndBoardTypeAndDeletedFalse(keyword, boardType, pageable);
+                    else boardList = boardRepository.findAllByWriterMemberNameAndBoardTypeAndDeletedFalse(keyword, boardType, pageable);
                 }
                 break;
 
             case "참조":
                 Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-                boardList = findAllByReferenceMemberId(authentication, boardRepository.findAllByBoardTypeAndDeletedFalse(boardType));
+                boardList = findAllByReferenceMemberId(authentication, boardRepository.findAllByBoardTypeAndDeletedFalse(boardType, pageable));
                 break;
 
             default:
-                boardList = boardRepository.findAllByBoardTypeAndDeletedFalse(boardType);
+                boardList = boardRepository.findAllByBoardTypeAndDeletedFalse(boardType, pageable);
                 break;
         }
         return new PageImpl<>(boardList, pageable, boardList.size());

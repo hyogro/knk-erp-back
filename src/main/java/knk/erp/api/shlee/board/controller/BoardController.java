@@ -44,7 +44,7 @@ public class BoardController {
 
     // 업무게시판 목록 보기
     @GetMapping("/workBoardList")
-    public ResponseEntity<Read_WorkBoardListDTO_RES> workBoardList(@PageableDefault(size = 15) Pageable pageable,
+    public ResponseEntity<Read_WorkBoardListDTO_RES> workBoardList(Pageable pageable,
                                                                @RequestParam("searchType") String searchType,
                                                                @RequestParam("keyword") String keyword){
         return ResponseEntity.ok(boardService.workBoardList(pageable, searchType, keyword));
@@ -52,7 +52,7 @@ public class BoardController {
 
     // 공지사항 목록 보기
     @GetMapping("/noticeBoardList")
-    public ResponseEntity<Read_NoticeBoardDTO_RES> noticeBoardList(@PageableDefault(size = 20) Pageable pageable,
+    public ResponseEntity<Read_NoticeBoardDTO_RES> noticeBoardList(Pageable pageable,
                                                                    @RequestParam("searchType") String searchType,
                                                                    @RequestParam("keyword") String keyword){
         return ResponseEntity.ok(boardService.noticeBoardList(pageable, searchType, keyword));
