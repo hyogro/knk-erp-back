@@ -16,7 +16,7 @@ import java.util.List;
 @Component
 public class BoardUtil {
 
-    public Page<Board> searchBoard(String searchType, String keyword, String boardType, BoardRepository boardRepository, Pageable pageable, int size){
+    public Page<Board> searchBoard(String searchType, String keyword, String boardType, BoardRepository boardRepository, Pageable pageable){
         List<Board> boardList = new ArrayList<>();
         switch (searchType) {
             case "제목검색":
