@@ -19,15 +19,17 @@ import java.util.List;
 public class BoardUtil {
 
     public Page<Board> searchBoard(String searchType, String keyword, String boardType, BoardRepository boardRepository, Pageable pageable){
-        List<Board> boardList;
+        List<Board> boardList = new ArrayList<>();
         switch (searchType) {
             case "제목검색":
-                boardList = boardRepository.findAllByTitleContainingAndBoardTypeAndDeletedFalse(keyword, boardType);
+                if(keyword.length()>=2) boardList = boardRepository.findAllByTitleContainingAndBoardTypeAndDeletedFalse(keyword, boardType);
                 break;
 
             case "작성자검색":
-                if(keyword.length()>=6) boardList = boardRepository.findAllByWriterMemberIdAndBoardTypeAndDeletedFalse(keyword, boardType);
-                else boardList = boardRepository.findAllByWriterMemberNameAndBoardTypeAndDeletedFalse(keyword, boardType);
+                if(keyword.length()>=2){
+                    if(keyword.length()>=6) boardList = boardRepository.findAllByWriterMemberIdAndBoardTypeAndDeletedFalse(keyword, boardType);
+                    else boardList = boardRepository.findAllByWriterMemberNameAndBoardTypeAndDeletedFalse(keyword, boardType);
+                }
                 break;
 
             case "참조":
