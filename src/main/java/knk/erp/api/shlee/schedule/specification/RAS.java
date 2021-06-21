@@ -4,6 +4,7 @@ package knk.erp.api.shlee.schedule.specification;
 import knk.erp.api.shlee.account.entity.Member;
 import knk.erp.api.shlee.schedule.entity.RectifyAttendance;
 import knk.erp.api.shlee.schedule.entity.Schedule;
+import knk.erp.api.shlee.schedule.entity.Vacation;
 import org.springframework.data.jpa.domain.Specification;
 
 import javax.persistence.criteria.Join;
@@ -35,6 +36,10 @@ public class RAS {//RectifyAttendanceSpecification
             return builder.equal(sm.get("department").get("id"), departmentId);
 
         };
+    }
+
+    public static Specification<RectifyAttendance> approve1Is(boolean t){//approval1 is
+        return (root, query, builder) -> builder.equal(root.get("approval1"), t);
     }
 
 
