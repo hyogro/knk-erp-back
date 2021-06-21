@@ -100,10 +100,10 @@ public class VacationService {
                 Member member = getMember();
                 assert member != null;
                 Long did = member.getDepartment().getId();
-                vacationList = vacationRepository.findAll(VS.delFalse().and(VS.did(did)).and(VS.approve1Is(false)));
+                vacationList = vacationRepository.findAll(VS.delFalse().and(VS.rejectIs(false)).and(VS.did(did)).and(VS.approve1Is(false)));
 
             } else if (3 <= commonUtil.checkLevel()) {
-                vacationList = vacationRepository.findAll(VS.delFalse().and(VS.approve2Is(false)));
+                vacationList = vacationRepository.findAll(VS.delFalse().and(VS.rejectIs(false)).and(VS.approve2Is(false)));
             }
             return new ResponseCMDL("RVL001", util.VacationListToDTO(vacationList));
         } catch (Exception e) {
