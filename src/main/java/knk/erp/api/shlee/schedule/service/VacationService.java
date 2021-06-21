@@ -20,9 +20,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
+import java.time.*;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,6 +37,55 @@ public class VacationService {
      * 권한 여부 체크를 위한 사용자, 부서 리포지토리 접근
      **/
     private final MemberRepository memberRepository;
+
+    //개인 휴가정보 조회
+    public ResponseCMD readVacationInfo(String memberId) {
+        try {
+            Member member = memberRepository.findAllByMemberIdAndDeletedIsFalse(memberId);
+            LocalDate joiningDate = member.getJoiningDate();
+            LocalDate today = LocalDate.now();
+            int totalVacation;
+            int usedVacation = getUsedVacation(memberId);
+            int addVacation = member.getVacation();
+
+            Period period = Period.between(joiningDate, today);
+
+            if (period.getYears() == 0) {//올해 입사자
+                totalVacation = period.getMonths() * 60 * 8; //연차갯수 * 분 * 시간
+            } else {//1년 이상 재직자
+                totalVacation = (15 + ((period.getYears() - 1) / 2)) * 60 * 8; //연차갯수 * 분 * 시간
+            }
+
+            return new ResponseCMD("", new VacationInfo(totalVacation, usedVacation, addVacation));
+        } catch (Exception e) {
+            return new ResponseCMD("", new VacationInfo(-1, -1, -1));
+        }
+    }
+
+    //사용된 휴가 시간(분) 조회
+    private int getUsedVacation(String memberId) {
+        List<Vacation> vacationList = vacationRepository.findAll(VS.delFalse().and(VS.mid(memberId)).and(VS.approve2Is(true)));
+        int usedVacation = 0;
+        for (Vacation vacation : vacationList) {
+            LocalDateTime startDate = vacation.getStartDate();
+            LocalDateTime end = vacation.getEndDate();
+
+            switch (vacation.getType()) {
+                case "연차":
+                    int date = (int)ChronoUnit.DAYS.between(startDate, end) + 1;
+                    usedVacation += (date*8);
+                    break;
+                case "오후반차":
+                case "오전반차":
+                    usedVacation += 4;
+                    break;
+                case "기타":
+                    usedVacation += (int)ChronoUnit.HOURS.between(startDate, end);
+                    break;
+            }
+        }
+        return usedVacation * 60;
+    }
 
     //휴가 생성
     public ResponseCM createVacation(VacationDTO vacationDTO) {
@@ -149,7 +197,8 @@ public class VacationService {
                 if (commonUtil.checkLevel() == 2) {
                     Member member = memberRepository.findAllByMemberIdAndDeletedIsFalse(memberId);
                     Long departmentId = member.getDepartment().getId();
-                    if (!vacation.getAuthor().getDepartment().getId().equals(departmentId)) return new ResponseCM("RV003");
+                    if (!vacation.getAuthor().getDepartment().getId().equals(departmentId))
+                        return new ResponseCM("RV003");
                 }
 
                 vacationRepository.save(vacation);
@@ -227,7 +276,7 @@ public class VacationService {
         return authentication.getName();
     }
 
-    private Member getMember(){
+    private Member getMember() {
         try {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             String memberId = authentication.getName();

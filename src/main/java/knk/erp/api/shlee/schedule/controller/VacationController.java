@@ -18,6 +18,13 @@ public class VacationController {
         this.vacationService = vacationService;
     }
 
+    //휴가정보 조회
+    @GetMapping("info/{mid}")
+    public ResponseEntity<ResponseCMD> readVacationInfo(@PathVariable("mid") String memberId){
+        return ResponseEntity.ok(vacationService.readVacationInfo(memberId));
+    }
+
+
     /**
      * 휴가 생성
      **/
