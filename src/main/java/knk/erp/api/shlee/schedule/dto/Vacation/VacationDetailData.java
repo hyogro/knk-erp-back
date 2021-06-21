@@ -24,6 +24,7 @@ public class VacationDetailData {
     private String rejectMemo;
     private LocalDateTime startDate;
     private LocalDateTime endDate;
+    private String memberId;
     private String memberName;
     private String departmentName;
     private LocalDateTime requestDate;
@@ -42,6 +43,7 @@ public class VacationDetailData {
         this.rejectMemo = vacation.getRejectMemo();
         this.startDate = vacation.getStartDate();
         this.endDate = vacation.getEndDate();
+        this.memberId = vacation.getAuthor().getMemberId();
         this.memberName = vacation.getAuthor().getMemberName();
         this.departmentName = vacation.getAuthor().getDepartment().getDepartmentName();
         this.requestDate = vacation.getCreateDate();
