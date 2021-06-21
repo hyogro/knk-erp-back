@@ -17,5 +17,7 @@ public class ReadDetail_AccountDTO {
     private String phone;
     private float vacation;
     private String departmentName;
+    private String address;
+    private String email;
     LocalDate joiningDate;
 }

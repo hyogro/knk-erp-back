@@ -35,6 +35,12 @@ public class Member extends Time {
     private LocalDate joiningDate;
 
     @Column
+    private String address;
+
+    @Column
+    private String email;
+
+    @Column
     private float vacation;
 
     @Enumerated(EnumType.STRING)

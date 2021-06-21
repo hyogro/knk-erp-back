@@ -16,4 +16,6 @@ public class Update_AccountDTO_REQ {
     private float vacation;
     private String departmentName;
     private LocalDate joiningDate;
+    private String address;
+    private String email;
 }

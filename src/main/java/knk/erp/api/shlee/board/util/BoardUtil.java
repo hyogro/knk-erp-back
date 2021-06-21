@@ -1,6 +1,7 @@
 package knk.erp.api.shlee.board.util;
 
 import knk.erp.api.shlee.board.dto.board.BoardDTO;
+import knk.erp.api.shlee.board.dto.boardlist.BoardListDTO;
 import knk.erp.api.shlee.board.entity.Board;
 import knk.erp.api.shlee.board.entity.BoardRepository;
 import knk.erp.api.shlee.file.entity.File;
@@ -16,7 +17,8 @@ import java.util.List;
 @Component
 public class BoardUtil {
 
-    public Page<Board> searchBoard(String searchType, String keyword, String boardType, BoardRepository boardRepository, Pageable pageable){
+    public Page<BoardListDTO> searchBoard(String searchType, String keyword, String boardType, BoardRepository boardRepository, Pageable pageable){
+        pageable = PageRequest.of(pageable.getPageNumber() <= 0 ? 0 : pageable.getPageNumber() - 1, 20, Sort.by("createDate").descending());
         List<Board> boardList = new ArrayList<>();
         switch (searchType) {
             case "제목검색":
@@ -39,7 +41,11 @@ public class BoardUtil {
                 boardList = boardRepository.findAllByBoardTypeAndDeletedFalse(boardType, pageable);
                 break;
         }
-        return new PageImpl<>(boardList, pageable, boardList.size());
+        Page<Board> boardPage = new PageImpl<>(boardList, pageable, boardList.size());
+
+        Page<BoardListDTO> page = boardPage.map(board -> new BoardListDTO(board.getIdx(), board.getTitle(),
+                board.getWriterMemberName(), board.getCreateDate(), board.getBoardType(), board.getVisitors()));
+        return page;
     }
 
     public List<Board> findAllByReferenceMemberId(Authentication authentication, List<Board> boardList){
