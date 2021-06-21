@@ -55,14 +55,10 @@ public class VacationService {
             } else {//1년 이상 재직자
                 totalVacation = (15 + ((period.getYears() - 1) / 2)) * 60 * 8; //연차갯수 * 분 * 시간
             }
-            System.out.print("총 사용가능 휴가시간(연차 + 포상휴가): " + (((double)totalVacation / 60 / 8) + (double)(addVacation / 60 / 8)));
-            System.out.print("\t연차: " + (double)totalVacation / 60 / 8);
-            System.out.print("\t포상휴가: " + (double)addVacation / 60 / 8);
-            System.out.println("\t사용된 휴가: " + (double)usedVacation / 60 / 8);
 
-            return new ResponseCMD("", new VacationInfo(totalVacation, usedVacation, addVacation));
+            return new ResponseCMD("RVI001", new VacationInfo(totalVacation, usedVacation, addVacation));
         } catch (Exception e) {
-            return new ResponseCMD("", new VacationInfo(-1, -1, -1));
+            return new ResponseCMD("RVI002", new VacationInfo(-1, -1, -1));
         }
     }
 
