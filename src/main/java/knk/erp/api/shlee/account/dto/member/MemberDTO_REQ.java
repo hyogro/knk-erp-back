@@ -19,7 +19,6 @@ public class MemberDTO_REQ {
     private String password;
     private String phone;
     private String memberName;
-    private int vacation;
     private Long departmentId;
     private LocalDate joiningDate;
 
@@ -29,7 +28,7 @@ public class MemberDTO_REQ {
                 .password(passwordEncoder.encode(password))
                 .phone(phone)
                 .memberName(memberName)
-                .vacation(vacation)
+                .vacation(0)
                 .authority(Authority.ROLE_LVL1)
                 .joiningDate(joiningDate)
                 .build();

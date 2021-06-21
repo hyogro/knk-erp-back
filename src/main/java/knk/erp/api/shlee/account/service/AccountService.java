@@ -39,8 +39,6 @@ public class AccountService {
             if(memberRepository.existsByMemberId(memberDTOReq.getMemberId())) {
                 return new SignUp_MemberDTO_RES("SU003", "이미 가입된 ID");
             }
-            int vacation_date = memberDTOReq.getVacation();
-            memberDTOReq.setVacation(vacation_date*8*60);
 
             Member member = memberDTOReq.toMember(passwordEncoder);
             Department department;
