@@ -241,7 +241,7 @@ public class AttendanceService {
             if (commonUtil.checkLevel() == 2) {
                 Member member = memberRepository.findAllByMemberIdAndDeletedIsFalse(memberId);
                 Long departmentId = member.getDepartment().getId();
-                rectifyAttendanceList = rectifyAttendanceRepository.findAll(RAS.delFalse().and(RAS.did(departmentId)));
+                rectifyAttendanceList = rectifyAttendanceRepository.findAll(RAS.delFalse().and(RAS.did(departmentId).and(RAS.approve1Is(false))));
             } else if (3 <= commonUtil.checkLevel()) {
                 rectifyAttendanceList = rectifyAttendanceRepository.findAll(RAS.delFalse());
             }
