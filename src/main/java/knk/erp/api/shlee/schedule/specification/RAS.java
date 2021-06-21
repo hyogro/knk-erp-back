@@ -28,7 +28,13 @@ public class RAS {//RectifyAttendanceSpecification
         };
     }
     public static Specification<RectifyAttendance> did(Long departmentId){//memberId
-        return (root, query, builder) -> builder.equal(root.get("departmentId"), departmentId);
+        return (root, query, builder) -> {
+
+            Join<Schedule, Member> sm = root.join("author");
+
+            return builder.equal(sm.get("department").get("id"), departmentId);
+
+        };
     }
 
 
