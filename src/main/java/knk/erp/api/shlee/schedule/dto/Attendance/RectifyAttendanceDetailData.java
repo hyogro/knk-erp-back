@@ -23,10 +23,6 @@ public class RectifyAttendanceDetailData {
     private String approver2;
     private String memo;
 
-    public RectifyAttendance toEntity(){
-        return RectifyAttendance.builder().attendanceDate(attendanceDate).onWork(onWork).offWork(offWork).memo(memo).build();
-    }
-
     public RectifyAttendanceDetailData(RectifyAttendance rectifyAttendance){
         this.id = rectifyAttendance.getId();
         this.attendanceDate = rectifyAttendance.getAttendanceDate();
