@@ -2,6 +2,7 @@ package knk.erp.api.shlee.schedule.specification;
 
 
 import knk.erp.api.shlee.account.entity.Member;
+import knk.erp.api.shlee.schedule.entity.RectifyAttendance;
 import knk.erp.api.shlee.schedule.entity.Schedule;
 import knk.erp.api.shlee.schedule.entity.Vacation;
 import org.springframework.data.jpa.domain.Specification;
@@ -33,6 +34,10 @@ public class VS {//VacationSpecification
             return builder.equal(sm.get("department").get("id"), did);
 
         };
+    }
+
+    public static Specification<Vacation> rejectIs(boolean t){//approval1 is
+        return (root, query, builder) -> builder.equal(root.get("reject"), t);
     }
 
     public static Specification<Vacation> approve1Is(boolean t){//approval1 is

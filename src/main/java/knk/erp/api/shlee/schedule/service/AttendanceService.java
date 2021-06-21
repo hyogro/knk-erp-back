@@ -241,9 +241,9 @@ public class AttendanceService {
             if (commonUtil.checkLevel() == 2) {
                 Member member = memberRepository.findAllByMemberIdAndDeletedIsFalse(memberId);
                 Long departmentId = member.getDepartment().getId();
-                rectifyAttendanceList = rectifyAttendanceRepository.findAll(RAS.delFalse().and(RAS.rejectIs(false)).and(RAS.did(departmentId).and(RAS.approve1Is(false))));
+                rectifyAttendanceList = rectifyAttendanceRepository.findAll(RAS.delFalse().and(RAS.did(departmentId).and(RAS.approve1Is(false))));
             } else if (3 <= commonUtil.checkLevel()) {
-                rectifyAttendanceList = rectifyAttendanceRepository.findAll(RAS.delFalse().and(RAS.rejectIs(false)));
+                rectifyAttendanceList = rectifyAttendanceRepository.findAll(RAS.delFalse());
             }
             return new ResponseCMDL("RRAL001", util.RectifyAttendanceListToDTO(rectifyAttendanceList));
         } catch (Exception e) {

@@ -41,9 +41,6 @@ public class RAS {//RectifyAttendanceSpecification
     public static Specification<RectifyAttendance> approve1Is(boolean t){//approval1 is
         return (root, query, builder) -> builder.equal(root.get("approval1"), t);
     }
-    public static Specification<RectifyAttendance> rejectIs(boolean t){//approval1 is
-        return (root, query, builder) -> builder.equal(root.get("reject"), t);
-    }
 
 
 }
