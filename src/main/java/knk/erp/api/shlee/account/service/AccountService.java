@@ -118,8 +118,6 @@ public class AccountService {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             String level = authentication.getAuthorities().toString();
             Member target= memberRepository.findAllByMemberIdAndDeletedIsFalse(memberId);
-            int vacation_date = updateAccountDTOReq.getVacation();
-            updateAccountDTOReq.setVacation(vacation_date*8*60);
 
             if(securityUtil.checkAuthority(updateAccountDTOReq, level, target)){
                 Department department = null;

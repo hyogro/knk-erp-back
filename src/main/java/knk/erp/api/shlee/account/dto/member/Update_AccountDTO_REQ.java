@@ -13,7 +13,7 @@ public class Update_AccountDTO_REQ {
     private String password;
     private String authority;
     private String phone;
-    private int vacation;
+    private String vacation;
     private String departmentName;
     private LocalDate joiningDate;
     private String address;

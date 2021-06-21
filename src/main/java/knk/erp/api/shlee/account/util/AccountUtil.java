@@ -21,12 +21,15 @@ public class AccountUtil {
         if(updateAccountDTOReq.getPhone() != null){
             member.setPhone(updateAccountDTOReq.getPhone());
         }
-        if(updateAccountDTOReq.getVacation() != 0){
-            member.setVacation(updateAccountDTOReq.getVacation());
+
+        if(updateAccountDTOReq.getVacation() != null){
+            member.setVacation(Integer.parseInt(updateAccountDTOReq.getVacation())*8*60);
         }
+
         if(department != null){
             member.setDepartment(department);
         }
+
         if(updateAccountDTOReq.getJoiningDate() != null){
             member.setJoiningDate(updateAccountDTOReq.getJoiningDate());
         }
@@ -47,6 +50,7 @@ public class AccountUtil {
         if(updateAccountDTOReq.getPhone()!=null){
            my.setPhone(updateAccountDTOReq.getPhone());
         }
+
         if(updateAccountDTOReq.getAddress() != null){
             my.setAddress(updateAccountDTOReq.getAddress());
         }
