@@ -11,9 +11,8 @@ public class SecurityUtil {
     public boolean checkAuthority(Update_AccountDTO_REQ updateAccountDTOReq, String level, Member target){
         int my_level;
         int update_level;
-
         if(checkTargetAuthority(level, target)){
-            if(level.equals("[ROLE_ADMIN]")) my_level = 5;
+            if(level.equals("[ROLE_ADMIN]")) return true;
             else my_level = Integer.parseInt(level.replace("[ROLE_LVL","").replace("]",""));
 
             if(updateAccountDTOReq.getAuthority() != null){
@@ -33,7 +32,7 @@ public class SecurityUtil {
         int my_level;
         int target_level;
 
-        if(level.equals("[ROLE_ADMIN]")) my_level = 5;
+        if(level.equals("[ROLE_ADMIN]")) return true;
         else my_level = Integer.parseInt(level.replace("[ROLE_LVL","").replace("]",""));
 
         if(target.getAuthority().toString().equals("ROLE_ADMIN")) target_level = 5;

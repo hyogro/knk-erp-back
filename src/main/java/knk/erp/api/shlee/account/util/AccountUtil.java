@@ -30,6 +30,14 @@ public class AccountUtil {
         if(updateAccountDTOReq.getJoiningDate() != null){
             member.setJoiningDate(updateAccountDTOReq.getJoiningDate());
         }
+
+        if(updateAccountDTOReq.getAddress() != null){
+            member.setAddress(updateAccountDTOReq.getAddress());
+        }
+
+        if(updateAccountDTOReq.getEmail() != null){
+            member.setEmail(updateAccountDTOReq.getEmail());
+        }
     }
 
     public void updateSelfMember(Member my, Update_AccountDTO_REQ updateAccountDTOReq, BCryptPasswordEncoder passwordEncoder){
@@ -38,6 +46,13 @@ public class AccountUtil {
         }
         if(updateAccountDTOReq.getPhone()!=null){
            my.setPhone(updateAccountDTOReq.getPhone());
+        }
+        if(updateAccountDTOReq.getAddress() != null){
+            my.setAddress(updateAccountDTOReq.getAddress());
+        }
+
+        if(updateAccountDTOReq.getEmail() != null){
+            my.setEmail(updateAccountDTOReq.getEmail());
         }
     }
 

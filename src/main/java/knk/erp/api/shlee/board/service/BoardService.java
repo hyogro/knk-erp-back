@@ -155,13 +155,7 @@ public class BoardService {
     @Transactional
     public Read_WorkBoardListDTO_RES workBoardList(Pageable pageable, String searchType, String keyword){
         try{
-            pageable = PageRequest.of(pageable.getPageNumber() <= 0 ? 1 : pageable.getPageNumber() - 1, 15,
-                    Sort.by("createDate").descending());
-
-            Page<Board> boardPage = boardUtil.searchBoard(searchType, keyword, "업무게시판", boardRepository, pageable);
-
-            Page<BoardListDTO> page = boardPage.map(board -> new BoardListDTO(board.getIdx(), board.getTitle(),
-                    board.getWriterMemberName(), board.getCreateDate(), board.getBoardType(), board.getVisitors()));
+            Page<BoardListDTO> page = boardUtil.searchBoard(searchType, keyword, "업무게시판", boardRepository, pageable);
 
             return new Read_WorkBoardListDTO_RES("RWB001", page);
         }catch(Exception e){
@@ -173,13 +167,7 @@ public class BoardService {
     @Transactional
     public Read_NoticeBoardDTO_RES noticeBoardList(Pageable pageable, String searchType, String keyword){
         try{
-            pageable = PageRequest.of(pageable.getPageNumber(), 20,
-                    Sort.by("createDate").descending());
-
-            Page<Board> boardPage = boardUtil.searchBoard(searchType, keyword, "공지사항", boardRepository, pageable);
-
-            Page<BoardListDTO> page = boardPage.map(board -> new BoardListDTO(board.getIdx(), board.getTitle(),
-                    board.getWriterMemberName(), board.getCreateDate(), board.getBoardType(), board.getVisitors()));
+            Page<BoardListDTO> page = boardUtil.searchBoard(searchType, keyword, "공지사항", boardRepository, pageable);
 
             return new Read_NoticeBoardDTO_RES("RNB001", page);
         }catch(Exception e){
@@ -190,8 +178,7 @@ public class BoardService {
     // 공지사항 최신순 5개 보기
     @Transactional
     public NoticeLatestDTO_RES noticeLatest(Pageable pageable){
-        pageable = PageRequest.of(pageable.getPageNumber(), 5,
-                Sort.by("createDate").descending());
+        pageable = PageRequest.of(pageable.getPageNumber() <= 0 ? 0 : pageable.getPageNumber() - 1, 5, Sort.by("createDate").descending());
         List<Board> allList = boardRepository.findAllByBoardTypeAndDeletedFalse("공지사항");
         Page<Board> all = new PageImpl<>(allList, pageable, allList.size());
         List<Board> latest = new ArrayList<>();
