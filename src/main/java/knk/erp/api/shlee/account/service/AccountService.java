@@ -40,7 +40,7 @@ public class AccountService {
                 return new SignUp_MemberDTO_RES("SU003", "이미 가입된 ID");
             }
             int vacation_date = memberDTOReq.getVacation();
-            memberDTOReq.setVacation(vacation_date*24*60);
+            memberDTOReq.setVacation(vacation_date*8*60);
 
             Member member = memberDTOReq.toMember(passwordEncoder);
             Department department;
@@ -121,7 +121,7 @@ public class AccountService {
             String level = authentication.getAuthorities().toString();
             Member target= memberRepository.findAllByMemberIdAndDeletedIsFalse(memberId);
             int vacation_date = updateAccountDTOReq.getVacation();
-            updateAccountDTOReq.setVacation(vacation_date*24*60);
+            updateAccountDTOReq.setVacation(vacation_date*8*60);
 
             if(securityUtil.checkAuthority(updateAccountDTOReq, level, target)){
                 Department department = null;
