@@ -56,9 +56,9 @@ public class VacationService {
                 totalVacation = (15 + ((period.getYears() - 1) / 2)) * 60 * 8; //연차갯수 * 분 * 시간
             }
 
-            return new ResponseCMD("", new VacationInfo(totalVacation, usedVacation, addVacation));
+            return new ResponseCMD("RVI001", new VacationInfo(totalVacation, usedVacation, addVacation));
         } catch (Exception e) {
-            return new ResponseCMD("", new VacationInfo(-1, -1, -1));
+            return new ResponseCMD("RVI002", new VacationInfo(-1, -1, -1));
         }
     }
 
