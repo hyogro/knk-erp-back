@@ -51,5 +51,4 @@ public class AccountController {
     public ResponseEntity<Delete_AccountDTO_RES> deleteMember(@PathVariable String memberId){
         return ResponseEntity.ok(accountService.deleteMember(memberId));
     }
-
 }
