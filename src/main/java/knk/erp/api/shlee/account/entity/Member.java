@@ -41,7 +41,7 @@ public class Member extends Time {
     private String email;
 
     @Column
-    private float vacation;
+    private int vacation;
 
     @Enumerated(EnumType.STRING)
     private Authority authority;
@@ -51,7 +51,7 @@ public class Member extends Time {
     private Department department;
 
     @Builder
-    public Member(String memberId, String phone, String memberName, String password, float vacation, Authority authority,
+    public Member(String memberId, String phone, String memberName, String password, int vacation, Authority authority,
                   LocalDate joiningDate){
         this.memberId = memberId;
         this.phone = phone;

@@ -15,7 +15,7 @@ public class ReadDetail_AccountDTO {
     private String password;
     private String authority;
     private String phone;
-    private float vacation;
+    private int vacation;
     private String departmentName;
     private String address;
     private String email;

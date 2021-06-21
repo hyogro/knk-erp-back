@@ -14,7 +14,7 @@ public class GetMyVacation_MyPageDTO_RES {
     private String code;
     private String message;
     private LinkedHashMap<String, String> help_codeList = new LinkedHashMap<>();
-    private float vacation;
+    private int vacation;
 
     private void createCodeList(){
         this.help_codeList.put("GMV001", "본인 잔여 연차 일수 보기 성공");
@@ -29,7 +29,7 @@ public class GetMyVacation_MyPageDTO_RES {
     }
 
     // ok
-    public GetMyVacation_MyPageDTO_RES(String code, float vacation) {
+    public GetMyVacation_MyPageDTO_RES(String code, int vacation) {
         createCodeList();
         this.code = code;
         this.vacation = vacation;

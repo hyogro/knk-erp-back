@@ -19,7 +19,7 @@ public class MemberDTO_REQ {
     private String password;
     private String phone;
     private String memberName;
-    private float vacation;
+    private int vacation;
     private Long departmentId;
     private LocalDate joiningDate;
 
