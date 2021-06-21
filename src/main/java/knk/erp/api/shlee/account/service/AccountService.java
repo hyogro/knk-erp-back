@@ -49,9 +49,9 @@ public class AccountService {
             else department = departmentRepository.findByDepartmentNameAndDeletedFalse("부서미지정");
 
             member.setDepartment(department);
+            memberRepository.save(member);
             department.getMemberList().add(member);
             departmentRepository.save(department);
-            memberRepository.save(member);
 
             return new SignUp_MemberDTO_RES("SU001");
         }catch (Exception e){
