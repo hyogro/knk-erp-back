@@ -104,8 +104,8 @@ public class AccountService {
         try{
             Member target = memberRepository.findByMemberIdAndDeletedIsFalse(memberId);
             return new ReadDetail_AccountDTO_RES("RDA001", new ReadDetail_AccountDTO(target.getMemberId(), target.getMemberName(),null,
-                    target.getAuthority().toString(), target.getPhone(), target.getVacation(), target.getDepartment().getDepartmentName(),
-                    target.getAddress(), target.getEmail(), target.getJoiningDate()));
+                    target.getAuthority().toString(), target.getPhone(), target.getVacation(), target.getDepartment().getId(),
+                    target.getDepartment().getDepartmentName(), target.getAddress(), target.getEmail(), target.getJoiningDate()));
         }catch(Exception e){
             return new ReadDetail_AccountDTO_RES("RDA002", e.getMessage());
         }

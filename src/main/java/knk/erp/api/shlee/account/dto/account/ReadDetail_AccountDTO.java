@@ -16,6 +16,7 @@ public class ReadDetail_AccountDTO {
     private String authority;
     private String phone;
     private int vacation;
+    private Long dep_id;
     private String departmentName;
     private String address;
     private String email;
