@@ -23,7 +23,7 @@ public class Board extends Time {
     private Long idx;
 
     // 게시글 제목
-    @Column(nullable = false)
+    @Column(nullable = false, length = 80)
     private String title;
 
     // 게시글 내용
@@ -36,15 +36,15 @@ public class Board extends Time {
     private List<String> referenceMemberId;
 
     // 태그(ex : 공지사항, 자유게시판...)
-    @Column(nullable = false)
+    @Column(nullable = false, length = 20)
     private String boardType;
 
     // 작성자 memberId
-    @Column
+    @Column(length = 20)
     private String writerMemberId;
 
     // 작성자 이름
-    @Column
+    @Column(length = 10)
     private String writerMemberName;
 
     // 작성자 부서 id

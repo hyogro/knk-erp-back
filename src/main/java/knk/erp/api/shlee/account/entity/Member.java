@@ -19,31 +19,32 @@ public class Member extends Time {
     @GeneratedValue
     private Long id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 20)
     private String memberId;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 70)
     private String password;
 
     @Column(length = 13, nullable = false)
     private String phone;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 10)
     private String memberName;
 
     @Column
     private LocalDate joiningDate;
 
-    @Column
+    @Column(length = 150)
     private String address;
 
-    @Column
+    @Column(length = 40)
     private String email;
 
     @Column
     private int vacation;
 
     @Enumerated(EnumType.STRING)
+    @Column(length = 20)
     private Authority authority;
 
     @ManyToOne

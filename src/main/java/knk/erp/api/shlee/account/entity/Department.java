@@ -19,7 +19,7 @@ public class Department extends Time {
     @GeneratedValue
     private Long id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 20)
     private String departmentName;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
