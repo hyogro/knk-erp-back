@@ -99,7 +99,7 @@ public class DepartmentService {
             Department department = departmentRepository.getOne(dep_id);
             Member leader;
 
-            if(memberRepository.existsByMemberId(updateDepartmentLeaderDTOReq.getMemberId())){
+            if(memberRepository.existsByMemberIdAndDeletedFalse(updateDepartmentLeaderDTOReq.getMemberId())){
                 leader = memberRepository.findAllByMemberIdAndDeletedIsFalse(updateDepartmentLeaderDTOReq.getMemberId());
             }
             else return new UpdateLeader_DepartmentDTO_RES("ULD004", "입력한 멤버가 존재하지 않음");

@@ -37,10 +37,6 @@ public class AccountService {
     @Transactional
     public SignUp_MemberDTO_RES signup(MemberDTO_REQ memberDTOReq){
         try {
-            if(memberRepository.existsByMemberId(memberDTOReq.getMemberId())) {
-                return new SignUp_MemberDTO_RES("SU003", "이미 가입된 ID");
-            }
-
             Member member = memberDTOReq.toMember(passwordEncoder);
             Department department;
 
@@ -55,6 +51,16 @@ public class AccountService {
             return new SignUp_MemberDTO_RES("SU001");
         }catch (Exception e){
             return new SignUp_MemberDTO_RES("SU002", e.getMessage());
+        }
+    }
+
+    // Id 중복체크
+    @Transactional
+    public Check_existMemberId_RES checkId(Check_existMemberIdDTO checkExistMemberIdDTO){
+        try{
+            return new Check_existMemberId_RES("CMI001", memberRepository.existsByMemberId(checkExistMemberIdDTO.getMemberId()));
+        }catch(Exception e){
+            return new Check_existMemberId_RES("CMI002", e.getMessage());
         }
     }
 

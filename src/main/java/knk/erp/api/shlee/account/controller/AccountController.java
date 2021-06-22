@@ -51,4 +51,10 @@ public class AccountController {
     public ResponseEntity<Delete_AccountDTO_RES> deleteMember(@PathVariable String memberId){
         return ResponseEntity.ok(accountService.deleteMember(memberId));
     }
+
+    // 중복 ID 체크
+    @PostMapping("/checkId")
+    public ResponseEntity<Check_existMemberId_RES> checkId(@RequestBody Check_existMemberIdDTO checkExistMemberIdDTO){
+        return ResponseEntity.ok(accountService.checkId(checkExistMemberIdDTO));
+    }
 }
