@@ -52,7 +52,7 @@ public class Member extends Time {
 
     @Builder
     public Member(String memberId, String phone, String memberName, String password, int vacation, Authority authority,
-                  LocalDate joiningDate){
+                  LocalDate joiningDate, String address, String email){
         this.memberId = memberId;
         this.phone = phone;
         this.memberName = memberName;
@@ -60,5 +60,7 @@ public class Member extends Time {
         this.vacation = vacation;
         this.authority = authority;
         this.joiningDate = joiningDate;
+        this.address = address;
+        this.email = email;
     }
 }
