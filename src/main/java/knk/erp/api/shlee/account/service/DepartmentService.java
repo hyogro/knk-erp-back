@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 @Service
@@ -58,18 +59,40 @@ public class DepartmentService {
         }
     }
 
+    // 부서 상세 보기
     @Transactional
     public ReadDetail_DepartmentDTO_RES readDetailDepartment(Long dep_id){
-        Department department = departmentRepository.getOne(dep_id);
         try{
-            List<String> memberName = new ArrayList<>();
+            Department department = departmentRepository.getOne(dep_id);
+            HashMap<String, String> dep_member = new HashMap<>();
             for(Member m : department.getMemberList()){
-                memberName.add(m.getMemberName());
+                dep_member.put(m.getMemberId(), m.getMemberName());
             }
             return new ReadDetail_DepartmentDTO_RES("RDD001", new ReadDetail_DepartmentDTO(department.getDepartmentName(),
-                    memberName, department.getLeader().getMemberName()));
+                    dep_member, department.getLeader().getMemberName()));
         }catch(Exception e){
             return new ReadDetail_DepartmentDTO_RES("RDD002", e.getMessage());
+        }
+    }
+
+    // 해당 부서의 부서원을 제외한 모든 직원 리스트
+    @Transactional
+    public Read_notThisDepartmentMember_RES readNotThisDepartmentMember(Long dep_id){
+        try{
+            Department department = departmentRepository.getOne(dep_id);
+            List<Department> all = departmentRepository.findAllByDeletedFalse();
+            all.remove(department);
+
+            HashMap<String, String> notMember = new HashMap<>();
+
+            for(Department d : all){
+                for(Member m : d.getMemberList()){
+                    notMember.put(m.getMemberId(), m.getMemberName());
+                }
+            }
+            return new Read_notThisDepartmentMember_RES("RNDM001", notMember);
+        }catch(Exception e){
+            return new Read_notThisDepartmentMember_RES("RNDM002", e.getMessage());
         }
     }
 

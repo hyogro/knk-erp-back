@@ -2,6 +2,7 @@ package knk.erp.api.shlee.account.dto.department;
 
 import lombok.*;
 
+import java.util.HashMap;
 import java.util.List;
 
 @Getter
@@ -11,6 +12,6 @@ import java.util.List;
 @NoArgsConstructor
 public class ReadDetail_DepartmentDTO {
     private String departmentName;
-    private List<String> memberName;
+    private HashMap<String, String> dep_member;
     private String leaderName;
 }

@@ -25,9 +25,16 @@ public class DepartmentController {
         return ResponseEntity.ok(departmentService.readDepartment());
     }
 
+    // 부서 상세 보기
     @GetMapping("/{dep_id}")
     public ResponseEntity<ReadDetail_DepartmentDTO_RES> readDetailDepartment(@PathVariable Long dep_id){
         return ResponseEntity.ok(departmentService.readDetailDepartment(dep_id));
+    }
+
+    // 해당 부서의 부서원을 제외한 모든 직원 리스트
+    @GetMapping("/notThisDepartment/{dep_id}")
+    public ResponseEntity<Read_notThisDepartmentMember_RES> readNotThisDepartmentMember(@PathVariable Long dep_id){
+        return ResponseEntity.ok(departmentService.readNotThisDepartmentMember(dep_id));
     }
 
     // 부서 이름 수정
