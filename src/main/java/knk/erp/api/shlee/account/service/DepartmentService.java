@@ -48,8 +48,11 @@ public class DepartmentService {
         try {
             List<Department> departmentList = departmentRepository.findAllByDeletedFalse();
             List<Read_DepartmentDTO> readDepartmentDTO = new ArrayList<>();
+            String leaderName;
             for(Department d : departmentList){
-                readDepartmentDTO.add(new Read_DepartmentDTO(d.getId(), d.getDepartmentName(), d.getLeader().getMemberName(),
+                if(d.getLeader() == null) leaderName = "리더없음";
+                else leaderName = d.getLeader().getMemberName();
+                readDepartmentDTO.add(new Read_DepartmentDTO(d.getId(), d.getDepartmentName(), leaderName,
                         d.getMemberList().size()));
             }
 
