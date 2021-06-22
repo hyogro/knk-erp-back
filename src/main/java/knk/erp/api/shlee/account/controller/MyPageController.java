@@ -25,7 +25,7 @@ public class MyPageController {
         return ResponseEntity.ok(myPageService.updateSelf(updateAccountDTOReq));
     }
 
-    // 잔여 연차 일수
+    // 본인 포상휴가 분단위
     @GetMapping("/getMyVacation")
     public ResponseEntity<GetMyVacation_MyPageDTO_RES> getMyVacation(){return ResponseEntity.ok(myPageService.getMyVacation());}
 }

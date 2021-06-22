@@ -17,6 +17,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -86,13 +87,19 @@ public class AccountService {
             List<Member> memberList = memberRepository.findAllByDeletedIsFalse();
             List<String> memberName = new ArrayList<>();
             List<String> memberId = new ArrayList<>();
+            List<String> phone = new ArrayList<>();
+            List<LocalDate> joiningDate = new ArrayList<>();
+            List<String> departmentName = new ArrayList<>();
 
             for(Member m : memberList){
                 memberName.add(m.getMemberName());
                 memberId.add(m.getMemberId());
+                departmentName.add(m.getDepartment().getDepartmentName());
+                phone.add(m.getPhone());
+                joiningDate.add(m.getJoiningDate());
             }
 
-            return new Read_AccountDTO_RES("RA001", new Read_AccountDTO(memberId, memberName));
+            return new Read_AccountDTO_RES("RA001", new Read_AccountDTO(memberId, memberName, departmentName, phone, joiningDate));
         }catch(Exception e){
             return new Read_AccountDTO_RES("RA002", e.getMessage());
         }
