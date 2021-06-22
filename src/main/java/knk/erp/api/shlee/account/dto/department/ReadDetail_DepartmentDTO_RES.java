@@ -14,7 +14,7 @@ public class ReadDetail_DepartmentDTO_RES {
     private String code;
     private String message;
     private ReadDetail_DepartmentDTO readDetailDepartmentDTO;
-    private List<Read_DepartmentMemberListDTO> readDepartmentMemberListDTOS;
+    private List<Read_DepartmentMemberListDTO> readDepartmentMemberListDTO;
     private LinkedHashMap<String, String> help_codeList = new LinkedHashMap<>();
 
     private void createCodeList(){
@@ -31,10 +31,10 @@ public class ReadDetail_DepartmentDTO_RES {
 
     //ok
     public ReadDetail_DepartmentDTO_RES(String code, ReadDetail_DepartmentDTO readDetailDepartmentDTO,
-                                        List<Read_DepartmentMemberListDTO> readDepartmentMemberListDTOS) {
+                                        List<Read_DepartmentMemberListDTO> readDepartmentMemberListDTO) {
         createCodeList();
         this.code = code;
         this.readDetailDepartmentDTO = readDetailDepartmentDTO;
-        this.readDepartmentMemberListDTOS = readDepartmentMemberListDTOS;
+        this.readDepartmentMemberListDTO = readDepartmentMemberListDTO;
     }
 }
