@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 @Service
@@ -67,12 +66,12 @@ public class DepartmentService {
     public ReadDetail_DepartmentDTO_RES readDetailDepartment(Long dep_id){
         try{
             Department department = departmentRepository.getOne(dep_id);
-            HashMap<String, String> dep_member = new HashMap<>();
+            List<Read_DepartmentMemberListDTO> memberList = new ArrayList<>();
             for(Member m : department.getMemberList()){
-                dep_member.put(m.getMemberId(), m.getMemberName());
+                memberList.add(new Read_DepartmentMemberListDTO(m.getMemberId(), m.getMemberName()));
             }
             return new ReadDetail_DepartmentDTO_RES("RDD001", new ReadDetail_DepartmentDTO(department.getDepartmentName(),
-                    dep_member, department.getLeader().getMemberName(), department.getMemberList().size()));
+                    department.getLeader().getMemberName(), department.getMemberList().size()), memberList);
         }catch(Exception e){
             return new ReadDetail_DepartmentDTO_RES("RDD002", e.getMessage());
         }
@@ -86,14 +85,14 @@ public class DepartmentService {
             List<Department> all = departmentRepository.findAllByDeletedFalse();
             all.remove(department);
 
-            HashMap<String, String> notMember = new HashMap<>();
+            List<Read_DepartmentMemberListDTO> memberList = new ArrayList<>();
 
             for(Department d : all){
                 for(Member m : d.getMemberList()){
-                    notMember.put(m.getMemberId(), m.getMemberName());
+                    memberList.add(new Read_DepartmentMemberListDTO(m.getMemberId(), m.getMemberName()));
                 }
             }
-            return new Read_notThisDepartmentMember_RES("RNDM001", notMember);
+            return new Read_notThisDepartmentMember_RES("RNDM001", memberList);
         }catch(Exception e){
             return new Read_notThisDepartmentMember_RES("RNDM002", e.getMessage());
         }

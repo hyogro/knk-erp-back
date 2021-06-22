@@ -2,8 +2,8 @@ package knk.erp.api.shlee.account.dto.department;
 
 import lombok.*;
 
-import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 
 @Getter
 @Setter
@@ -13,7 +13,7 @@ import java.util.LinkedHashMap;
 public class Read_notThisDepartmentMember_RES {
     private String code;
     private String message;
-    private HashMap<String, String> dep_member;
+    private List<Read_DepartmentMemberListDTO> readDepartmentMemberListDTO;
     private LinkedHashMap<String, String> help_codeList = new LinkedHashMap<>();
 
     private void createCodeList(){
@@ -29,9 +29,9 @@ public class Read_notThisDepartmentMember_RES {
     }
 
     //ok
-    public Read_notThisDepartmentMember_RES(String code, HashMap<String, String> dep_member) {
+    public Read_notThisDepartmentMember_RES(String code, List<Read_DepartmentMemberListDTO> readDepartmentMemberListDTO) {
         createCodeList();
         this.code = code;
-        this.dep_member = dep_member;
+        this.readDepartmentMemberListDTO = readDepartmentMemberListDTO;
     }
 }
