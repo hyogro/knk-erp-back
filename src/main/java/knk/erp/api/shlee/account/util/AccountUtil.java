@@ -15,9 +15,11 @@ public class AccountUtil {
         if(updateAccountDTOReq.getPassword() != null){
             member.setPassword(passwordEncoder.encode(updateAccountDTOReq.getPassword()));
         }
+
         if(updateAccountDTOReq.getAuthority() != null){
             member.setAuthority(toAuthority(updateAccountDTOReq));
         }
+
         if(updateAccountDTOReq.getPhone() != null){
             member.setPhone(updateAccountDTOReq.getPhone());
         }

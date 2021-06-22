@@ -14,7 +14,7 @@ public class Update_AccountDTO_REQ {
     private String authority;
     private String phone;
     private String vacation;
-    private String departmentName;
+    private Long dep_id;
     private LocalDate joiningDate;
     private String address;
     private String email;

@@ -122,11 +122,11 @@ public class AccountService {
             if(securityUtil.checkAuthority(updateAccountDTOReq, level, target)){
                 Department department = null;
 
-                if(departmentRepository.existsByDepartmentNameAndDeletedFalse(updateAccountDTOReq.getDepartmentName())){
+                if(departmentRepository.existsByIdAndDeletedFalse(updateAccountDTOReq.getDep_id())){
                     if(departmentRepository.getOne(target.getDepartment().getId()).getLeader() == target){
                         return new Update_AccountDTO_RES("UA004", "수정할 대상이 부서의 리더입니다.");
                     }
-                    department = departmentRepository.findByDepartmentNameAndDeletedFalse(updateAccountDTOReq.getDepartmentName());
+                    department = departmentRepository.findByIdAndDeletedFalse(updateAccountDTOReq.getDep_id());
                 }
 
                 accountUtil.updateSetMember(target, department, updateAccountDTOReq, passwordEncoder);
