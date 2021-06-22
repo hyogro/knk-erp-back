@@ -11,9 +11,9 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Read_AccountDTO {
-    private List<String> memberId;
-    private List<String> memberName;
-    private List<String> departmentName;
-    private List<String> phone;
-    private List<LocalDate> joiningDate;
+    private String memberId;
+    private String memberName;
+    private String departmentName;
+    private String phone;
+    private LocalDate joiningDate;
 }

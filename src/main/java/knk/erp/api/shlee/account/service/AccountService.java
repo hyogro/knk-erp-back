@@ -85,21 +85,14 @@ public class AccountService {
     public Read_AccountDTO_RES readMember(){
         try{
             List<Member> memberList = memberRepository.findAllByDeletedIsFalse();
-            List<String> memberName = new ArrayList<>();
-            List<String> memberId = new ArrayList<>();
-            List<String> phone = new ArrayList<>();
-            List<LocalDate> joiningDate = new ArrayList<>();
-            List<String> departmentName = new ArrayList<>();
+            List<Read_AccountDTO> info = new ArrayList<>();
 
             for(Member m : memberList){
-                memberName.add(m.getMemberName());
-                memberId.add(m.getMemberId());
-                departmentName.add(m.getDepartment().getDepartmentName());
-                phone.add(m.getPhone());
-                joiningDate.add(m.getJoiningDate());
+                info.add(new Read_AccountDTO(m.getMemberId(), m.getMemberName(), m.getDepartment().getDepartmentName(), m.getPhone(),
+                        m.getJoiningDate()));
             }
 
-            return new Read_AccountDTO_RES("RA001", new Read_AccountDTO(memberId, memberName, departmentName, phone, joiningDate));
+            return new Read_AccountDTO_RES("RA001", info);
         }catch(Exception e){
             return new Read_AccountDTO_RES("RA002", e.getMessage());
         }
