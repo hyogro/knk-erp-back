@@ -12,5 +12,6 @@ public interface DepartmentRepository extends JpaRepository<Department, Long> {
     Department findByDepartmentNameAndDeletedFalse(String departmentName);
     List<Department> findAllByDeletedFalse();
     boolean existsByIdAndDeletedFalse(Long id);
+    boolean existsByDepartmentNameAndDeletedFalse(String departmentName);
     Department findByIdAndDeletedFalse(Long id);
 }
