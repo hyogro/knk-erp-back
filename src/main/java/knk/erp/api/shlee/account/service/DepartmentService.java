@@ -2,7 +2,6 @@ package knk.erp.api.shlee.account.service;
 
 import knk.erp.api.shlee.account.dto.department.*;
 import knk.erp.api.shlee.account.entity.*;
-import knk.erp.api.shlee.account.util.DepartmentUtil;
 import knk.erp.api.shlee.common.util.CommonUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
@@ -17,7 +16,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class DepartmentService {
     private final DepartmentRepository departmentRepository;
-    private final DepartmentUtil departmentUtil;
 
     //2021-06-07 15:07 이상훈 추가
     private final MemberRepository memberRepository;
@@ -65,7 +63,7 @@ public class DepartmentService {
     @Transactional
     public ReadDetail_DepartmentDTO_RES readDetailDepartment(Long dep_id){
         try{
-            Department department = departmentRepository.getOne(dep_id);
+            Department department = departmentRepository.findByIdAndDeletedFalse(dep_id);
             List<Read_DepartmentMemberListDTO> memberList = new ArrayList<>();
             for(Member m : department.getMemberList()){
                 memberList.add(new Read_DepartmentMemberListDTO(m.getMemberId(), m.getMemberName()));
@@ -81,7 +79,7 @@ public class DepartmentService {
     @Transactional
     public Read_notThisDepartmentMember_RES readNotThisDepartmentMember(Long dep_id){
         try{
-            Department department = departmentRepository.getOne(dep_id);
+            Department department = departmentRepository.findByIdAndDeletedFalse(dep_id);
             List<Department> all = departmentRepository.findAllByDeletedFalse();
             all.remove(department);
 
@@ -106,7 +104,7 @@ public class DepartmentService {
                 return new Update_DepartmentDTO_RES("UD003", "이미 존재하는 부서입니다.");
             }
 
-            Department department = departmentRepository.getOne(dep_id);
+            Department department = departmentRepository.findByIdAndDeletedFalse(dep_id);
             department.setDepartmentName(departmentDTOReq.getDepartmentName());
             departmentRepository.save(department);
 
@@ -120,7 +118,7 @@ public class DepartmentService {
     @Transactional
     public UpdateLeader_DepartmentDTO_RES updateLeader(Long dep_id, Update_DepartmentLeaderDTO_REQ updateDepartmentLeaderDTOReq){
         try{
-            Department department = departmentRepository.getOne(dep_id);
+            Department department = departmentRepository.findByIdAndDeletedFalse(dep_id);
             Member leader;
 
             if(memberRepository.existsByMemberIdAndDeletedFalse(updateDepartmentLeaderDTOReq.getMemberId())){
@@ -160,7 +158,7 @@ public class DepartmentService {
     @Transactional
     public Delete_DepartmentDTO_RES deleteDepartment(Long dep_id) {
         try {
-            Department target = departmentRepository.getOne(dep_id);
+            Department target = departmentRepository.findByIdAndDeletedFalse(dep_id);
             List<Member> memberList =  target.getMemberList();
 
             for(Member m : memberList){
