@@ -14,4 +14,5 @@ public class ReadDetail_DepartmentDTO {
     private String departmentName;
     private HashMap<String, String> dep_member;
     private String leaderName;
+    private int headCount;
 }

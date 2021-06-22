@@ -72,7 +72,7 @@ public class DepartmentService {
                 dep_member.put(m.getMemberId(), m.getMemberName());
             }
             return new ReadDetail_DepartmentDTO_RES("RDD001", new ReadDetail_DepartmentDTO(department.getDepartmentName(),
-                    dep_member, department.getLeader().getMemberName()));
+                    dep_member, department.getLeader().getMemberName(), department.getMemberList().size()));
         }catch(Exception e){
             return new ReadDetail_DepartmentDTO_RES("RDD002", e.getMessage());
         }
