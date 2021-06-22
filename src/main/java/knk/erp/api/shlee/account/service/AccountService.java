@@ -164,6 +164,7 @@ public class AccountService {
                     }
                 }
 
+                target.setDepartment(null);
                 target.setDeleted(true);
                 memberRepository.save(target);
 

@@ -46,14 +46,13 @@ public class DepartmentService {
     public Read_DepartmentDTO_RES readDepartment() {
         try {
             List<Department> departmentList = departmentRepository.findAllByDeletedFalse();
-            List<String> departmentName = new ArrayList<>();
-            List<Long> dep_id = new ArrayList<>();
+            List<Read_DepartmentDTO> readDepartmentDTO = new ArrayList<>();
             for(Department d : departmentList){
-                departmentName.add(d.getDepartmentName());
-                dep_id.add(d.getId());
+                readDepartmentDTO.add(new Read_DepartmentDTO(d.getId(), d.getDepartmentName(), d.getLeader().getMemberName(),
+                        d.getMemberList().size()));
             }
 
-            return new Read_DepartmentDTO_RES("RD001", new Read_DepartmentDTO(dep_id, departmentName));
+            return new Read_DepartmentDTO_RES("RD001", readDepartmentDTO);
         } catch (Exception e) {
             return new Read_DepartmentDTO_RES("RD002", e.getMessage());
         }

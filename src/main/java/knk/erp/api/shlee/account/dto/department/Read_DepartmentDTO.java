@@ -12,6 +12,8 @@ import java.util.List;
 @ToString
 @AllArgsConstructor
 public class Read_DepartmentDTO {
-    private List<Long> dep_id;
-    private List<String> departmentName;
+    private Long dep_id;
+    private String departmentName;
+    private String leaderName;
+    private int headCount;
 }
