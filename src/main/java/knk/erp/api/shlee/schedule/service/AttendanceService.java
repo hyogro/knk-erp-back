@@ -46,33 +46,25 @@ public class AttendanceService {
     //테스트
     public void test() {
         //일 0 토 6
-        int[] monthStart = {31, 28, 31, 30, 31};
 
-        for (int a = 11; a < 100; a++) {
-            Member memberM = Member.builder().memberId("test"+a).password("1234").memberName("테스트"+a).phone("010-0000-00"+a).joiningDate(LocalDate.now())
-                    .build();
-            Member member = memberRepository.save(memberM);
-            System.out.println(memberM.toString() + "생성완료");
-            for (int i = 0; i < 5; i++) {
-                int year = 2021;
-                int month = i + 1;
-                for (int j = 0; j < monthStart[i]; j++) {
-                    int day = j + 1;
-                    LocalDate date = LocalDate.of(year, month, day);
-                    if (date.getDayOfWeek().getValue() < 6) {
-                        LocalTime onWork = LocalTime.of(9, 0);
-                        LocalTime offWork = LocalTime.of(18, 0);
-                        Attendance attendance = Attendance.builder().attendanceDate(date).onWork(onWork).offWork(offWork).build();
-                        attendance.setAuthor(member);
-                        attendanceRepository.save(attendance);
-                        System.out.println(member.getMemberId() + "\t" + date.toString() + " 기록완료");
-                    }
-
+        Member member = getMember();
+            int year = 2021;
+            int month = 6;
+            for (int j = 0; j < 30; j++) {
+                int day = j + 1;
+                LocalDate date = LocalDate.of(year, month, day);
+                if (date.getDayOfWeek().getValue() < 6) {
+                    LocalTime onWork = LocalTime.of(9, 0);
+                    LocalTime offWork = LocalTime.of(18, 0);
+                    Attendance attendance = Attendance.builder().attendanceDate(date).onWork(onWork).offWork(offWork).build();
+                    attendance.setAuthor(member);
+                    attendanceRepository.save(attendance);
+                    System.out.println(member.getMemberId() + "\t" + date.toString() + " 기록완료");
                 }
-            }
 
+            }
         }
-    }
+
 
     //출근 기록
     public ResponseCM onWork() {
