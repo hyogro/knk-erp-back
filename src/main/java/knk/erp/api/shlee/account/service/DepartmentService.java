@@ -217,7 +217,7 @@ public class DepartmentService {
 
             return new Delete_DepartmentMemberDTO_RES("DDM001");
         }catch(Exception e){
-            return new Delete_DepartmentMemberDTO_RES("DDm002", e.getMessage());
+            return new Delete_DepartmentMemberDTO_RES("DDM002", e.getMessage());
         }
     }
 
