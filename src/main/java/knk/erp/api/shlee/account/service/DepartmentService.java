@@ -66,7 +66,7 @@ public class DepartmentService {
             Department department = departmentRepository.findByIdAndDeletedFalse(dep_id);
             List<Read_DepartmentMemberListDTO> memberList = new ArrayList<>();
             String leaderName;
-            int headCount;
+
             for(Member m : department.getMemberList()){
                 memberList.add(new Read_DepartmentMemberListDTO(m.getMemberId(), m.getMemberName()));
             }
@@ -203,10 +203,10 @@ public class DepartmentService {
 
     // 부서 멤버 삭제
     @Transactional
-    public Delete_DepartmentMemberDTO_RES deleteMemberToDepartment(Long dep_id, String memberId){
+    public Delete_DepartmentMemberDTO_RES deleteMemberToDepartment(String memberId){
         try{
-            Department targetDepartment = departmentRepository.findByIdAndDeletedFalse(dep_id);
             Member targetMember = memberRepository.findByMemberIdAndDeletedIsFalse(memberId);
+            Department targetDepartment = targetMember.getDepartment();
 
             if(targetDepartment.getLeader() == targetMember){
                 return new Delete_DepartmentMemberDTO_RES("DDM003","해당 부서의 리더");
