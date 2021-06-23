@@ -16,10 +16,14 @@ import java.util.List;
 @NoArgsConstructor
 @Table(name = "Board")
 @Entity
+@SequenceGenerator(
+        name = "board_idx_generator",
+        sequenceName = "board_idx"
+)
 public class Board extends Time {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "board_idx_generator")
     private Long idx;
 
     // 게시글 제목
