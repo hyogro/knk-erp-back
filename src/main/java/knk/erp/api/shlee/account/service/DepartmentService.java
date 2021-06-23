@@ -65,11 +65,17 @@ public class DepartmentService {
         try{
             Department department = departmentRepository.findByIdAndDeletedFalse(dep_id);
             List<Read_DepartmentMemberListDTO> memberList = new ArrayList<>();
+            String leaderName;
+            int headCount;
             for(Member m : department.getMemberList()){
                 memberList.add(new Read_DepartmentMemberListDTO(m.getMemberId(), m.getMemberName()));
             }
+
+            if(department.getLeader() == null) leaderName = "파트장이 지정되지 않음";
+            else leaderName = department.getLeader().getMemberName();
+
             return new ReadDetail_DepartmentDTO_RES("RDD001", new ReadDetail_DepartmentDTO(department.getDepartmentName(),
-                    department.getLeader().getMemberName(), department.getMemberList().size()), memberList);
+                    leaderName, department.getMemberList().size()), memberList);
         }catch(Exception e){
             return new ReadDetail_DepartmentDTO_RES("RDD002", e.getMessage());
         }
