@@ -64,10 +64,9 @@ public class DepartmentController {
     }
 
     // 부서 멤버 삭제
-    @DeleteMapping("/deleteMember/{dep_id}")
-    public ResponseEntity<Delete_DepartmentMemberDTO_RES> deleteMemberToDepartment(@PathVariable Long dep_id,
-                                                                                   @RequestParam("memberId") String memberId){
-        return ResponseEntity.ok(departmentService.deleteMemberToDepartment(dep_id, memberId));
+    @DeleteMapping("/deleteMember/{memberId}")
+    public ResponseEntity<Delete_DepartmentMemberDTO_RES> deleteMemberToDepartment(@PathVariable String memberId){
+        return ResponseEntity.ok(departmentService.deleteMemberToDepartment(memberId));
     }
 
     /**2021-06-07 15:07 이상훈 추가

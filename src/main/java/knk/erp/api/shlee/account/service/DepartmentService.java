@@ -65,11 +65,17 @@ public class DepartmentService {
         try{
             Department department = departmentRepository.findByIdAndDeletedFalse(dep_id);
             List<Read_DepartmentMemberListDTO> memberList = new ArrayList<>();
+            String leaderName;
+
             for(Member m : department.getMemberList()){
                 memberList.add(new Read_DepartmentMemberListDTO(m.getMemberId(), m.getMemberName()));
             }
+
+            if(department.getLeader() == null) leaderName = "파트장이 지정되지 않음";
+            else leaderName = department.getLeader().getMemberName();
+
             return new ReadDetail_DepartmentDTO_RES("RDD001", new ReadDetail_DepartmentDTO(department.getDepartmentName(),
-                    department.getLeader().getMemberName(), department.getMemberList().size()), memberList);
+                    leaderName, department.getMemberList().size()), memberList);
         }catch(Exception e){
             return new ReadDetail_DepartmentDTO_RES("RDD002", e.getMessage());
         }
@@ -197,10 +203,10 @@ public class DepartmentService {
 
     // 부서 멤버 삭제
     @Transactional
-    public Delete_DepartmentMemberDTO_RES deleteMemberToDepartment(Long dep_id, String memberId){
+    public Delete_DepartmentMemberDTO_RES deleteMemberToDepartment(String memberId){
         try{
-            Department targetDepartment = departmentRepository.findByIdAndDeletedFalse(dep_id);
             Member targetMember = memberRepository.findByMemberIdAndDeletedIsFalse(memberId);
+            Department targetDepartment = targetMember.getDepartment();
 
             if(targetDepartment.getLeader() == targetMember){
                 return new Delete_DepartmentMemberDTO_RES("DDM003","해당 부서의 리더");
@@ -211,7 +217,7 @@ public class DepartmentService {
 
             return new Delete_DepartmentMemberDTO_RES("DDM001");
         }catch(Exception e){
-            return new Delete_DepartmentMemberDTO_RES("DDm002", e.getMessage());
+            return new Delete_DepartmentMemberDTO_RES("DDM002", e.getMessage());
         }
     }
 
