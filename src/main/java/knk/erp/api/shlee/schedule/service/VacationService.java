@@ -184,18 +184,18 @@ public class VacationService {
     //휴가 거절
     public ResponseCM rejectVacation(Long vid, REQ_rejectVacation reject) {
         try {
-            String memberId = getMemberId();
 
             if (2 <= commonUtil.checkLevel()) {
+                Member member = getMember();
+                assert member != null;
 
                 Vacation vacation = vacationRepository.getOne(vid);
                 vacation.setReject(true);
-                vacation.setRejectMemo(reject.getRejectMemo());
+                vacation.setRejectMemo(member.getMemberName() + ") "+reject.getRejectMemo());
 
                 if (vacation.isApproval1() && vacation.isApproval2()) return new ResponseCM("RV004");
 
                 if (commonUtil.checkLevel() == 2) {
-                    Member member = memberRepository.findAllByMemberIdAndDeletedIsFalse(memberId);
                     Long departmentId = member.getDepartment().getId();
                     if (!vacation.getAuthor().getDepartment().getId().equals(departmentId))
                         return new ResponseCM("RV003");
