@@ -113,12 +113,6 @@ public class BoardService {
                 return new Update_BoardDTO_RES("UB003", "게시글 작성자가 아님");
             }
 
-            if(boardDTO.getBoardType() != null){
-                if(boardDTO.getBoardType().equals("공지사항") && commonUtil.authorityToInteger(updater) <= 2){
-                    return new Update_BoardDTO_RES("UB004", "권한 부족");
-                }
-            }
-
             boardUtil.updateSetBoard(target, boardDTO, fileRepository);
 
             boardRepository.save(target);

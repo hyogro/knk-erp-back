@@ -92,10 +92,6 @@ public class BoardUtil {
             }
         }
 
-        if(boardDTO.getBoardType() != null){
-            target.setBoardType(boardDTO.getBoardType());
-        }
-
         List<File> file = new ArrayList<>();
         if(boardDTO.getFileName() != null){
             for(String f : boardDTO.getFileName()){
