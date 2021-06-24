@@ -9,7 +9,10 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
     Board findByIdxAndDeletedFalse(Long idx);
     List<Board> findAllByBoardTypeAndDeletedFalse(String boardType);
     List<Board> findAllByBoardTypeAndDeletedFalse(String boardType, Pageable pageable);
+    List<Board> findAllByTitleContainingAndBoardTypeAndDeletedFalse(String title, String boardType);
     List<Board> findAllByTitleContainingAndBoardTypeAndDeletedFalse(String title, String boardType, Pageable pageable);
+    List<Board> findAllByWriterMemberIdAndBoardTypeAndDeletedFalse(String memberId, String boardType);
     List<Board> findAllByWriterMemberIdAndBoardTypeAndDeletedFalse(String memberId, String boardType, Pageable pageable);
+    List<Board> findAllByWriterMemberNameAndBoardTypeAndDeletedFalse(String memberName, String boardType);
     List<Board> findAllByWriterMemberNameAndBoardTypeAndDeletedFalse(String memberName, String boardType, Pageable pageable);
 }

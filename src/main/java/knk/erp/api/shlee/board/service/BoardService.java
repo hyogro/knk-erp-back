@@ -1,7 +1,5 @@
 package knk.erp.api.shlee.board.service;
 
-import knk.erp.api.shlee.account.entity.Department;
-import knk.erp.api.shlee.account.entity.DepartmentRepository;
 import knk.erp.api.shlee.account.entity.Member;
 import knk.erp.api.shlee.account.entity.MemberRepository;
 import knk.erp.api.shlee.board.dto.board.*;
@@ -23,7 +21,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 @Service
@@ -31,7 +28,6 @@ import java.util.List;
 public class BoardService {
     private final MemberRepository memberRepository;
     private final BoardRepository boardRepository;
-    private final DepartmentRepository departmentRepository;
     private final BoardUtil boardUtil;
     private final CommonUtil commonUtil;
     private final FileRepository fileRepository;
@@ -150,8 +146,9 @@ public class BoardService {
     public Read_WorkBoardListDTO_RES workBoardList(Pageable pageable, String searchType, String keyword){
         try{
             Page<BoardListDTO> page = boardUtil.searchBoard(searchType, keyword, "업무게시판", boardRepository, pageable);
+            int totalPage = boardUtil.getBoardSize("업무게시판", boardRepository, searchType, keyword);
 
-            return new Read_WorkBoardListDTO_RES("RWB001", page, boardUtil.getBoardSize("업무게시판", boardRepository));
+            return new Read_WorkBoardListDTO_RES("RWB001", page, totalPage);
         }catch(Exception e){
             return new Read_WorkBoardListDTO_RES("RWB002", e.getMessage());
         }
@@ -162,8 +159,9 @@ public class BoardService {
     public Read_NoticeBoardDTO_RES noticeBoardList(Pageable pageable, String searchType, String keyword){
         try{
             Page<BoardListDTO> page = boardUtil.searchBoard(searchType, keyword, "공지사항", boardRepository, pageable);
+            int totalPage = boardUtil.getBoardSize("업무게시판", boardRepository, searchType, keyword);
 
-            return new Read_NoticeBoardDTO_RES("RNB001", page, boardUtil.getBoardSize("공지사항", boardRepository));
+            return new Read_NoticeBoardDTO_RES("RNB001", page, totalPage);
         }catch(Exception e){
             return new Read_NoticeBoardDTO_RES("RNB002", e.getMessage());
         }

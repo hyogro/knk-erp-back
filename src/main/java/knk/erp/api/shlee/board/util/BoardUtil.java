@@ -17,13 +17,35 @@ import java.util.List;
 @Component
 public class BoardUtil {
 
-    public int getBoardSize(String boardType, BoardRepository boardRepository){
-        List<Board> boardSize = boardRepository.findAllByBoardTypeAndDeletedFalse(boardType);
+    public int getBoardSize(String boardType, BoardRepository boardRepository, String searchType, String keyword){
+        List<Board> boardSize = new ArrayList<>();
         int totalPage;
         int elementsSize;
 
         if(boardType.equals("업무게시판")) elementsSize = 10;
-        else totalPage = elementsSize = 15;
+        else elementsSize = 15;
+
+        switch (searchType) {
+            case "제목검색":
+                if(keyword.length()>=2) boardSize = boardRepository.findAllByTitleContainingAndBoardTypeAndDeletedFalse(keyword, boardType);
+                break;
+
+            case "작성자검색":
+                if(keyword.length()>=2){
+                    if(keyword.length()>=6) boardSize = boardRepository.findAllByWriterMemberIdAndBoardTypeAndDeletedFalse(keyword, boardType);
+                    else boardSize = boardRepository.findAllByWriterMemberNameAndBoardTypeAndDeletedFalse(keyword, boardType);
+                }
+                break;
+
+            case "참조":
+                Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+                boardSize = findAllByReferenceMemberId(authentication, boardRepository.findAllByBoardTypeAndDeletedFalse(boardType));
+                break;
+
+            default:
+                boardSize = boardRepository.findAllByBoardTypeAndDeletedFalse(boardType);
+                break;
+        }
 
         totalPage = boardSize.size() / elementsSize;
 
