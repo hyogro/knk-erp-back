@@ -32,8 +32,8 @@ public class BoardUtil {
 
             case "작성자검색":
                 if(keyword.length()>=2){
-                    if(keyword.length()>=6) boardSize = boardRepository.findAllByWriterMemberIdAndBoardTypeAndDeletedFalse(keyword, boardType);
-                    else boardSize = boardRepository.findAllByWriterMemberNameAndBoardTypeAndDeletedFalse(keyword, boardType);
+                    if(keyword.length()>=6) boardSize = boardRepository.findAllByWriterMemberIdContainingAndBoardTypeAndDeletedFalse(keyword, boardType);
+                    else boardSize = boardRepository.findAllByWriterMemberNameContainingAndBoardTypeAndDeletedFalse(keyword, boardType);
                 }
                 break;
 
@@ -69,8 +69,8 @@ public class BoardUtil {
 
             case "작성자검색":
                 if(keyword.length()>=2){
-                    if(keyword.length()>=6) boardList = boardRepository.findAllByWriterMemberIdAndBoardTypeAndDeletedFalse(keyword, boardType, pageable);
-                    else boardList = boardRepository.findAllByWriterMemberNameAndBoardTypeAndDeletedFalse(keyword, boardType, pageable);
+                    if(keyword.length()>=6) boardList = boardRepository.findAllByWriterMemberIdContainingAndBoardTypeAndDeletedFalse(keyword, boardType, pageable);
+                    else boardList = boardRepository.findAllByWriterMemberNameContainingAndBoardTypeAndDeletedFalse(keyword, boardType, pageable);
                 }
                 break;
 
