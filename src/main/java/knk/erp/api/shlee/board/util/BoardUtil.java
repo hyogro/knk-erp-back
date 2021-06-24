@@ -17,8 +17,28 @@ import java.util.List;
 @Component
 public class BoardUtil {
 
+    public int getBoardSize(String boardType, BoardRepository boardRepository){
+        List<Board> boardSize = boardRepository.findAllByBoardTypeAndDeletedFalse(boardType);
+        int totalPage;
+        int elementsSize;
+
+        if(boardType.equals("업무게시판")) elementsSize = 10;
+        else totalPage = elementsSize = 15;
+
+        totalPage = boardSize.size() / elementsSize;
+
+        if(boardSize.size() % elementsSize != 0) totalPage++;
+
+        return totalPage;
+    }
+
     public Page<BoardListDTO> searchBoard(String searchType, String keyword, String boardType, BoardRepository boardRepository, Pageable pageable){
-        pageable = PageRequest.of(pageable.getPageNumber() <= 0 ? 0 : pageable.getPageNumber() - 1, 20, Sort.by("createDate").descending());
+        int size;
+
+        if(boardType.equals("공지사항")) size = 15;
+        else size = 10;
+
+        pageable = PageRequest.of(pageable.getPageNumber() <= 0 ? 0 : pageable.getPageNumber() - 1, size, Sort.by("createDate").descending());
         List<Board> boardList = new ArrayList<>();
         switch (searchType) {
             case "제목검색":

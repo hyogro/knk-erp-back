@@ -15,6 +15,7 @@ public class Read_NoticeBoardDTO_RES {
     private String message;
     private LinkedHashMap<String, String> help_codeList = new LinkedHashMap<>();
     private Page<BoardListDTO> page;
+    private int totalPage;
 
     private void createCodeList(){
         this.help_codeList.put("RNB001", "공지사항 목록 불러오기 성공");
@@ -29,9 +30,10 @@ public class Read_NoticeBoardDTO_RES {
     }
 
     // ok
-    public Read_NoticeBoardDTO_RES(String code, Page<BoardListDTO> page) {
+    public Read_NoticeBoardDTO_RES(String code, Page<BoardListDTO> page, int totalPage) {
         createCodeList();
         this.code = code;
         this.page = page;
+        this. totalPage = totalPage;
     }
 }

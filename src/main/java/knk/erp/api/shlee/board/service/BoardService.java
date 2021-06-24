@@ -157,7 +157,7 @@ public class BoardService {
         try{
             Page<BoardListDTO> page = boardUtil.searchBoard(searchType, keyword, "업무게시판", boardRepository, pageable);
 
-            return new Read_WorkBoardListDTO_RES("RWB001", page);
+            return new Read_WorkBoardListDTO_RES("RWB001", page, boardUtil.getBoardSize("업무게시판", boardRepository));
         }catch(Exception e){
             return new Read_WorkBoardListDTO_RES("RWB002", e.getMessage());
         }
@@ -169,7 +169,7 @@ public class BoardService {
         try{
             Page<BoardListDTO> page = boardUtil.searchBoard(searchType, keyword, "공지사항", boardRepository, pageable);
 
-            return new Read_NoticeBoardDTO_RES("RNB001", page);
+            return new Read_NoticeBoardDTO_RES("RNB001", page, boardUtil.getBoardSize("공지사항", boardRepository));
         }catch(Exception e){
             return new Read_NoticeBoardDTO_RES("RNB002", e.getMessage());
         }
