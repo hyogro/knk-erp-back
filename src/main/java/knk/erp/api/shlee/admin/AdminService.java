@@ -15,7 +15,7 @@ public class AdminService {
 
     public String makeAdmin(){
         String memberId = "admin";
-        String password = "Tmwlakffkrh@1";
+        String password = "admin1234";
         String memberName = "관리자";
         //Long departmentId = 1L;
         String phone = "000-0000-0000";
