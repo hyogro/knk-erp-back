@@ -90,10 +90,12 @@ public class BoardService {
             List<String> referenceMemberId = target.getReferenceMemberId();
             List<Read_ReferenceMemberDTO> reference = new ArrayList<>();
 
-            for(String s : referenceMemberId){
-                Member member = memberRepository.findByMemberIdAndDeletedIsFalse(s);
-                String name = member.getMemberName();
-                reference.add(new Read_ReferenceMemberDTO(s, name));
+            if(referenceMemberId != null){
+                for(String s : referenceMemberId){
+                    Member member = memberRepository.findByMemberIdAndDeletedIsFalse(s);
+                    String name = member.getMemberName();
+                    reference.add(new Read_ReferenceMemberDTO(s, name));
+                }
             }
 
             return new Read_BoardDTO_RES("RB001", new Read_BoardDTO(target.getTitle(), target.getContent(), target.getBoardType(),
