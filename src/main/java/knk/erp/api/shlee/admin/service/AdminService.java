@@ -84,7 +84,9 @@ public class AdminService {
             String memberId = "knk" + ((index < 10) ? "00": "0");
             String password = passwordEncoder.encode("00000000");
             String memberName = memberData[0];
-            String[] dateData = memberData[1].split(".");
+            String[] dateData = memberData[1].split("\\.");
+            System.out.println(memberData.toString());
+            System.out.println(dateData.toString());
 
             LocalDate joiningDate = LocalDate.of(Integer.parseInt(dateData[0]), Integer.parseInt(dateData[1]), Integer.parseInt(dateData[2]));
 
@@ -94,6 +96,7 @@ public class AdminService {
 
             try {
                 Member memberEntity = Member.builder().memberId(memberId).password(password).memberName(memberName).phone(phone).email(email).address(address).joiningDate(joiningDate).build();
+                //System.out.println(memberEntity.toString());
                 memberRepository.save(memberEntity);
             }catch (Exception e){
                 return "failed: " + e.getMessage();
