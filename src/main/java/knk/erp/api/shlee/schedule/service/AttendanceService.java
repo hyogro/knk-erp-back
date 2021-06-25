@@ -8,14 +8,16 @@ import knk.erp.api.shlee.common.util.CommonUtil;
 import knk.erp.api.shlee.schedule.dto.Attendance.*;
 import knk.erp.api.shlee.schedule.entity.Attendance;
 import knk.erp.api.shlee.schedule.entity.RectifyAttendance;
+import knk.erp.api.shlee.schedule.entity.Vacation;
 import knk.erp.api.shlee.schedule.repository.AttendanceRepository;
 import knk.erp.api.shlee.schedule.repository.RectifyAttendanceRepository;
+import knk.erp.api.shlee.schedule.repository.VacationRepository;
 import knk.erp.api.shlee.schedule.responseEntity.ResponseCM;
 import knk.erp.api.shlee.schedule.responseEntity.ResponseCMD;
 import knk.erp.api.shlee.schedule.responseEntity.ResponseCMDL;
 import knk.erp.api.shlee.schedule.specification.AS;
 import knk.erp.api.shlee.schedule.specification.RAS;
-import knk.erp.api.shlee.schedule.specification.SS;
+import knk.erp.api.shlee.schedule.specification.VS;
 import knk.erp.api.shlee.schedule.util.AttendanceUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
@@ -27,6 +29,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -34,6 +37,7 @@ import java.util.Optional;
 public class AttendanceService {
     private final AttendanceRepository attendanceRepository;
     private final RectifyAttendanceRepository rectifyAttendanceRepository;
+    private final VacationRepository vacationRepository;
     private final AttendanceUtil util;
     private final CommonUtil commonUtil;
 
@@ -239,27 +243,34 @@ public class AttendanceService {
     //출,퇴근 요약정보 조회
     public ResponseCMD readAttendanceSummary() {
         try {
-            String memberId = getMemberId();
-            int onWork;//출근
-            int yetWork;//미출근
-            int lateWork;//지각
+
             LocalDate today = LocalDate.now();
-            LocalTime nine = LocalTime.of(9, 0, 0);
+            LocalDateTime now = LocalDateTime.now();
 
             if (commonUtil.checkLevel() == 2) {
-                Long departmentId = getDepartmentId(memberId);
-                Department department = memberRepository.findAllByMemberIdAndDeletedIsFalse(memberId).getDepartment();
-                onWork = (int) attendanceRepository.count(AS.delFalse().and(AS.atteDate(today).and(AS.did(departmentId))));
-                lateWork = (int) attendanceRepository.count(AS.delFalse().and(AS.atteDate(today).and(AS.did(departmentId).and(AS.onWorkAfter(nine)))));
-                yetWork = department.getMemberList().size() - onWork;
+                Department department = getDepartment();
+                Long departmentId = department.getId();
+
+                List<Attendance> onWorkList = attendanceRepository.findAll(AS.delFalse().and(AS.atteDate(today).and(AS.did(departmentId))));
+                List<Attendance> offWorkList = attendanceRepository.findAll(AS.delFalse().and(AS.atteDate(today).and(AS.offWorked()).and(AS.did(departmentId))));
+                List<Vacation> vacationList = vacationRepository.findAll(VS.delFalse().and(VS.did(departmentId)).and(VS.targetDateBetween(now)).and(VS.approve1Is(true)).and(VS.approve2Is(true)));
+                List<Attendance> lateWorkList = new ArrayList<>(onWorkList);
+                List<Member> yetWorkList = department.getMemberList();
+
+                return new ResponseCMD("RAS001", makeAttendanceSummary(onWorkList, offWorkList, vacationList, lateWorkList, yetWorkList));
+
             } else if (3 <= commonUtil.checkLevel()) {
-                onWork = (int) attendanceRepository.count(AS.delFalse().and(AS.atteDate(today)));
-                lateWork = (int) attendanceRepository.count(AS.delFalse().and(AS.atteDate(today).and(AS.onWorkAfter(nine))));
-                yetWork = (int) memberRepository.count() - onWork;
+                List<Attendance> onWorkList = attendanceRepository.findAll(AS.delFalse().and(AS.atteDate(today)));
+                List<Attendance> offWorkList = attendanceRepository.findAll(AS.delFalse().and(AS.atteDate(today).and(AS.offWorked())));
+                List<Vacation> vacationList = vacationRepository.findAll(VS.delFalse().and(VS.targetDateBetween(now)).and(VS.approve1Is(true)).and(VS.approve2Is(true)));
+                List<Attendance> lateWorkList = new ArrayList<>(onWorkList);
+                List<Member> yetWorkList = memberRepository.findAll();
+
+                return new ResponseCMD("RAS001", makeAttendanceSummary(onWorkList, offWorkList, vacationList, lateWorkList, yetWorkList));
+
             } else {
                 return new ResponseCMD("RAS003");
             }
-            return new ResponseCMD("RAS001", new AttendanceSummaryDTO(onWork, yetWork, lateWork));
         } catch (Exception e) {
             return new ResponseCMD("RAS002", e.getMessage());
         }
@@ -275,6 +286,70 @@ public class AttendanceService {
         } catch (Exception e) {
             return new ResponseCMD("RA002", e.getMessage());
         }
+    }
+
+    //맴버의 출근 여부 확인
+    private boolean checkAttendance(Member member, List<Attendance> onWorkList) {
+        for (Attendance attendance : onWorkList) {
+            if (attendance.getAuthor().equals(member)) return true;
+        }
+        return false;
+    }
+
+    //맴버의 휴가 여부 확인
+    private boolean checkVacation(Member member, List<Vacation> vacationList) {
+        LocalDateTime now = LocalDateTime.now();
+        for (Vacation vacation : vacationList) {
+            if (vacation.getAuthor().equals(member)) {
+                return vacation.getStartDate().isBefore(now) && vacation.getEndDate().isAfter(now);
+            }
+        }
+        return false;
+    }
+
+    //요약 DTO 생성
+    private AttendanceSummaryDTO makeAttendanceSummary(List<Attendance> onWorkList, List<Attendance> offWorkList, List<Vacation> vacationList, List<Attendance> lateWorkList, List<Member> yetWorkList) {
+
+        List<MemberDepartmentNameDTO> onWork, offWork, yetWork, lateWork, vacation;//출근, 미출근, 지각, 휴가
+        LocalTime nine = LocalTime.of(9, 0, 0);
+
+        lateWorkList.removeIf(a -> a.getOnWork().isBefore(nine));// 9시 이전 출근자 삭제 = 지각 인원
+        lateWorkList.removeIf(a -> checkVacation(a.getAuthor(), vacationList));// 휴가자 삭제 = 지각 인원
+
+        yetWorkList.removeIf(member -> checkAttendance(member, onWorkList)); //출근자 삭제 = 미출근 인원
+        yetWorkList.removeIf(member -> checkVacation(member, vacationList)); // 휴가자 삭제 = 미출근 인원
+
+        onWork = attendanceListToMDList(onWorkList);
+        offWork = attendanceListToMDList(offWorkList);
+        lateWork = attendanceListToMDList(lateWorkList);
+        vacation = vacationListToMDList(vacationList);
+        yetWork = memberListToMDList(yetWorkList);
+
+        return new AttendanceSummaryDTO(onWork, offWork, yetWork, lateWork, vacation);
+    }
+
+    private List<MemberDepartmentNameDTO> attendanceListToMDList(List<Attendance> attendanceList) {
+        List<MemberDepartmentNameDTO> mdList = new ArrayList<>();
+        for (Attendance attendance : attendanceList) {
+            mdList.add(new MemberDepartmentNameDTO(attendance));
+        }
+        return mdList;
+    }
+
+    private List<MemberDepartmentNameDTO> vacationListToMDList(List<Vacation> vacationList) {
+        List<MemberDepartmentNameDTO> mdList = new ArrayList<>();
+        for (Vacation vacation : vacationList) {
+            mdList.add(new MemberDepartmentNameDTO(vacation));
+        }
+        return mdList;
+    }
+
+    private List<MemberDepartmentNameDTO> memberListToMDList(List<Member> memberList) {
+        List<MemberDepartmentNameDTO> mdList = new ArrayList<>();
+        for (Member member : memberList) {
+            mdList.add(new MemberDepartmentNameDTO(member));
+        }
+        return mdList;
     }
 
     //정정 요청이 들어온뒤 1, 2차 승인이 완료된 경우 출퇴근 정정요청 삭제 후 해당정보로 출퇴근정보 생성
@@ -294,13 +369,9 @@ public class AttendanceService {
         }
     }
 
-    //맴버 아이디로 부서 아이디 가져오기
-    private Long getDepartmentId(String memberId) {
-        try {
-            return memberRepository.findAllByMemberIdAndDeletedIsFalse(memberId).getDepartment().getId();
-        } catch (Exception e) {
-            return -1L;
-        }
+    //맴버로 부서 가져오기
+    private Department getDepartment() {
+        return Objects.requireNonNull(getMember()).getDepartment();
     }
 
     //요청 시 권한에 따라서 1, 2차 승인 여부 변경
