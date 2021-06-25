@@ -87,10 +87,20 @@ public class BoardService {
             target.setCount(count);
             boardRepository.save(target);
 
-            return new Read_BoardDTO_RES("RB001", new Read_BoardDTO(target.getTitle(), target.getReferenceMemberId(),
-                    target.getContent(), target.getBoardType(), writer.getMemberName(), writer.getMemberId(),
-                    writer.getDepartment().getDepartmentName(), target.getCreateDate(), target.getUpdateDate(), target.getFile(),
-                    target.getCount(), target.getVisitors()));
+            List<Read_ReferenceMemberDTO> reference = new ArrayList<>();
+            if(target.getReferenceMemberId() != null){
+                List<String> referenceMemberId = target.getReferenceMemberId();
+
+                for(String s : referenceMemberId){
+                    Member member = memberRepository.findByMemberIdAndDeletedIsFalse(s);
+                    String name = member.getMemberName();
+                    reference.add(new Read_ReferenceMemberDTO(s, name));
+                }
+            }
+
+            return new Read_BoardDTO_RES("RB001", new Read_BoardDTO(target.getTitle(), target.getContent(), target.getBoardType(),
+                    writer.getMemberName(), writer.getMemberId(), writer.getDepartment().getDepartmentName(), target.getCreateDate(),
+                    target.getUpdateDate(), target.getFile(), target.getCount(), target.getVisitors()), reference);
         }catch(Exception e){
             e.printStackTrace();
             return new Read_BoardDTO_RES("RB002", e.getMessage());

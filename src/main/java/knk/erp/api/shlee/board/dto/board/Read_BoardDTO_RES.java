@@ -3,6 +3,7 @@ package knk.erp.api.shlee.board.dto.board;
 import lombok.*;
 
 import java.util.LinkedHashMap;
+import java.util.List;
 
 @Getter
 @Setter
@@ -14,6 +15,7 @@ public class Read_BoardDTO_RES {
     private String message;
     private LinkedHashMap<String, String> help_codeList = new LinkedHashMap<>();
     private Read_BoardDTO readBoardDTO;
+    private List<Read_ReferenceMemberDTO> readReferenceMemberDTO;
 
     private void createCodeList(){
         this.help_codeList.put("RB001", "게시글 읽기 성공");
@@ -28,9 +30,10 @@ public class Read_BoardDTO_RES {
     }
 
     // ok
-    public Read_BoardDTO_RES(String code, Read_BoardDTO readBoardDTO) {
+    public Read_BoardDTO_RES(String code, Read_BoardDTO readBoardDTO, List<Read_ReferenceMemberDTO> readReferenceMemberDTO) {
         createCodeList();
         this.code = code;
         this.readBoardDTO = readBoardDTO;
+        this.readReferenceMemberDTO = readReferenceMemberDTO;
     }
 }

@@ -31,7 +31,7 @@ public class Board extends Time {
     private String title;
 
     // 게시글 내용
-    @Column(nullable = false, length = 2000)
+    @Column(columnDefinition = "TEXT")
     private String content;
 
     // 참조 대상 memberId
