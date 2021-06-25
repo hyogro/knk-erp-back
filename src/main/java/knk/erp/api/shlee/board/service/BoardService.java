@@ -87,10 +87,10 @@ public class BoardService {
             target.setCount(count);
             boardRepository.save(target);
 
-            List<String> referenceMemberId = target.getReferenceMemberId();
             List<Read_ReferenceMemberDTO> reference = new ArrayList<>();
+            if(target.getReferenceMemberId() != null){
+                List<String> referenceMemberId = target.getReferenceMemberId();
 
-            if(referenceMemberId != null){
                 for(String s : referenceMemberId){
                     Member member = memberRepository.findByMemberIdAndDeletedIsFalse(s);
                     String name = member.getMemberName();
