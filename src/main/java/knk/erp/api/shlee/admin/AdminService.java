@@ -3,6 +3,7 @@ package knk.erp.api.shlee.admin;
 import knk.erp.api.shlee.account.entity.Member;
 import knk.erp.api.shlee.account.entity.MemberRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -12,10 +13,11 @@ import java.time.LocalDate;
 public class AdminService {
 
     private final MemberRepository memberRepository;
+    private final BCryptPasswordEncoder passwordEncoder;
 
     public String makeAdmin(){
         String memberId = "admin";
-        String password = "admin1234";
+        String password = passwordEncoder.encode("admin1234");
         String memberName = "관리자";
         //Long departmentId = 1L;
         String phone = "000-0000-0000";
