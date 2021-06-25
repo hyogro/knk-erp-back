@@ -325,6 +325,12 @@ public class AttendanceService {
         vacation = vacationListToMDList(vacationList);
         yetWork = memberListToMDList(yetWorkList);
 
+        onWork.removeIf(i-> i.getMemberName().equals("관리자"));
+        offWork.removeIf(i-> i.getMemberName().equals("관리자"));
+        lateWork.removeIf(i-> i.getMemberName().equals("관리자"));
+        vacation.removeIf(i-> i.getMemberName().equals("관리자"));
+        yetWork.removeIf(i-> i.getMemberName().equals("관리자"));
+
         return new AttendanceSummaryDTO(onWork, offWork, yetWork, lateWork, vacation);
     }
 
