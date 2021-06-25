@@ -43,29 +43,6 @@ public class AttendanceService {
     private final MemberRepository memberRepository;
     private final DepartmentRepository departmentRepository;
 
-    //테스트
-    public void test() {
-        //일 0 토 6
-
-        Member member = getMember();
-            int year = 2021;
-            int month = 6;
-            for (int j = 0; j < 30; j++) {
-                int day = j + 1;
-                LocalDate date = LocalDate.of(year, month, day);
-                if (date.getDayOfWeek().getValue() < 6) {
-                    LocalTime onWork = LocalTime.of(9, 0);
-                    LocalTime offWork = LocalTime.of(18, 0);
-                    Attendance attendance = Attendance.builder().attendanceDate(date).onWork(onWork).offWork(offWork).build();
-                    attendance.setAuthor(member);
-                    attendanceRepository.save(attendance);
-                    System.out.println(member.getMemberId() + "\t" + date.toString() + " 기록완료");
-                }
-
-            }
-        }
-
-
     //출근 기록
     public ResponseCM onWork() {
         try {
