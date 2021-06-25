@@ -15,6 +15,7 @@ public class Read_WorkBoardListDTO_RES {
     private String message;
     private LinkedHashMap<String, String> help_codeList = new LinkedHashMap<>();
     private Page<BoardListDTO> page;
+    private int totalPage;
 
     private void createCodeList(){
         this.help_codeList.put("RWB001", "업무게시글 목록 불러오기 성공");
@@ -29,9 +30,10 @@ public class Read_WorkBoardListDTO_RES {
     }
 
     // ok
-    public Read_WorkBoardListDTO_RES(String code, Page<BoardListDTO> page) {
+    public Read_WorkBoardListDTO_RES(String code, Page<BoardListDTO> page, int totalPage) {
         createCodeList();
         this.code = code;
         this.page = page;
+        this.totalPage = totalPage;
     }
 }

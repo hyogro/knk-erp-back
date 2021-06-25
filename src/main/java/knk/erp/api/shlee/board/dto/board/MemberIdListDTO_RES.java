@@ -4,6 +4,7 @@ import lombok.*;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 
 @Getter
 @Setter
@@ -14,7 +15,7 @@ public class MemberIdListDTO_RES {
     private String code;
     private String message;
     private LinkedHashMap<String, String> help_codeList = new LinkedHashMap<>();
-    private HashMap<String, HashMap<String, String>> data;
+    private List<Get_memberIdListDTO> memberList;
 
     private void createCodeList(){
         this.help_codeList.put("MIL001", "멤버 id, 이름 목록 불러오기 성공");
@@ -29,9 +30,9 @@ public class MemberIdListDTO_RES {
     }
 
     // ok
-    public MemberIdListDTO_RES(String code, HashMap<String, HashMap<String, String>> data) {
+    public MemberIdListDTO_RES(String code, List<Get_memberIdListDTO> memberList) {
         createCodeList();
         this.code = code;
-        this.data = data;
+        this.memberList = memberList;
     }
 }

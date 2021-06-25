@@ -17,8 +17,50 @@ import java.util.List;
 @Component
 public class BoardUtil {
 
+    public int getBoardSize(String boardType, BoardRepository boardRepository, String searchType, String keyword){
+        List<Board> boardSize = new ArrayList<>();
+        int totalPage;
+        int elementsSize;
+
+        if(boardType.equals("업무게시판")) elementsSize = 10;
+        else elementsSize = 15;
+
+        switch (searchType) {
+            case "제목검색":
+                if(keyword.length()>=2) boardSize = boardRepository.findAllByTitleContainingAndBoardTypeAndDeletedFalse(keyword, boardType);
+                break;
+
+            case "작성자검색":
+                if(keyword.length()>=2){
+                    if(keyword.length()>=6) boardSize = boardRepository.findAllByWriterMemberIdContainingAndBoardTypeAndDeletedFalse(keyword, boardType);
+                    else boardSize = boardRepository.findAllByWriterMemberNameContainingAndBoardTypeAndDeletedFalse(keyword, boardType);
+                }
+                break;
+
+            case "참조":
+                Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+                boardSize = findAllByReferenceMemberId(authentication, boardRepository.findAllByBoardTypeAndDeletedFalse(boardType));
+                break;
+
+            default:
+                boardSize = boardRepository.findAllByBoardTypeAndDeletedFalse(boardType);
+                break;
+        }
+
+        totalPage = boardSize.size() / elementsSize;
+
+        if(boardSize.size() % elementsSize != 0) totalPage++;
+
+        return totalPage;
+    }
+
     public Page<BoardListDTO> searchBoard(String searchType, String keyword, String boardType, BoardRepository boardRepository, Pageable pageable){
-        pageable = PageRequest.of(pageable.getPageNumber() <= 0 ? 0 : pageable.getPageNumber() - 1, 20, Sort.by("createDate").descending());
+        int size;
+
+        if(boardType.equals("공지사항")) size = 15;
+        else size = 10;
+
+        pageable = PageRequest.of(pageable.getPageNumber() <= 0 ? 0 : pageable.getPageNumber() - 1, size, Sort.by("createDate").descending());
         List<Board> boardList = new ArrayList<>();
         switch (searchType) {
             case "제목검색":
@@ -27,8 +69,8 @@ public class BoardUtil {
 
             case "작성자검색":
                 if(keyword.length()>=2){
-                    if(keyword.length()>=6) boardList = boardRepository.findAllByWriterMemberIdAndBoardTypeAndDeletedFalse(keyword, boardType, pageable);
-                    else boardList = boardRepository.findAllByWriterMemberNameAndBoardTypeAndDeletedFalse(keyword, boardType, pageable);
+                    if(keyword.length()>=6) boardList = boardRepository.findAllByWriterMemberIdContainingAndBoardTypeAndDeletedFalse(keyword, boardType, pageable);
+                    else boardList = boardRepository.findAllByWriterMemberNameContainingAndBoardTypeAndDeletedFalse(keyword, boardType, pageable);
                 }
                 break;
 
@@ -70,10 +112,6 @@ public class BoardUtil {
             if(boardDTO.getReferenceMemberId().size() > 0){
                 target.setReferenceMemberId(boardDTO.getReferenceMemberId());
             }
-        }
-
-        if(boardDTO.getBoardType() != null){
-            target.setBoardType(boardDTO.getBoardType());
         }
 
         List<File> file = new ArrayList<>();

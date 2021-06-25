@@ -1,7 +1,5 @@
 package knk.erp.api.shlee.board.service;
 
-import knk.erp.api.shlee.account.entity.Department;
-import knk.erp.api.shlee.account.entity.DepartmentRepository;
 import knk.erp.api.shlee.account.entity.Member;
 import knk.erp.api.shlee.account.entity.MemberRepository;
 import knk.erp.api.shlee.board.dto.board.*;
@@ -23,7 +21,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 @Service
@@ -31,7 +28,6 @@ import java.util.List;
 public class BoardService {
     private final MemberRepository memberRepository;
     private final BoardRepository boardRepository;
-    private final DepartmentRepository departmentRepository;
     private final BoardUtil boardUtil;
     private final CommonUtil commonUtil;
     private final FileRepository fileRepository;
@@ -113,12 +109,6 @@ public class BoardService {
                 return new Update_BoardDTO_RES("UB003", "게시글 작성자가 아님");
             }
 
-            if(boardDTO.getBoardType() != null){
-                if(boardDTO.getBoardType().equals("공지사항") && commonUtil.authorityToInteger(updater) <= 2){
-                    return new Update_BoardDTO_RES("UB004", "권한 부족");
-                }
-            }
-
             boardUtil.updateSetBoard(target, boardDTO, fileRepository);
 
             boardRepository.save(target);
@@ -156,8 +146,9 @@ public class BoardService {
     public Read_WorkBoardListDTO_RES workBoardList(Pageable pageable, String searchType, String keyword){
         try{
             Page<BoardListDTO> page = boardUtil.searchBoard(searchType, keyword, "업무게시판", boardRepository, pageable);
+            int totalPage = boardUtil.getBoardSize("업무게시판", boardRepository, searchType, keyword);
 
-            return new Read_WorkBoardListDTO_RES("RWB001", page);
+            return new Read_WorkBoardListDTO_RES("RWB001", page, totalPage);
         }catch(Exception e){
             return new Read_WorkBoardListDTO_RES("RWB002", e.getMessage());
         }
@@ -168,8 +159,9 @@ public class BoardService {
     public Read_NoticeBoardDTO_RES noticeBoardList(Pageable pageable, String searchType, String keyword){
         try{
             Page<BoardListDTO> page = boardUtil.searchBoard(searchType, keyword, "공지사항", boardRepository, pageable);
+            int totalPage = boardUtil.getBoardSize("업무게시판", boardRepository, searchType, keyword);
 
-            return new Read_NoticeBoardDTO_RES("RNB001", page);
+            return new Read_NoticeBoardDTO_RES("RNB001", page, totalPage);
         }catch(Exception e){
             return new Read_NoticeBoardDTO_RES("RNB002", e.getMessage());
         }
@@ -199,23 +191,13 @@ public class BoardService {
     @Transactional
     public MemberIdListDTO_RES memberIdList(){
         try{
-            List<Member> depMember;
-            List<Department> allDepartment = departmentRepository.findAllByDeletedFalse();
-            HashMap<String, String> member;
-            HashMap<String, HashMap<String, String>> data = new HashMap<>();
-
-            for(Department d : allDepartment){
-                member = new HashMap<>();
-                depMember = d.getMemberList();
-
-                for(Member m : depMember){
-                    member.put(m.getMemberId(), m.getMemberName());
-                }
-
-                data.put(d.getDepartmentName(), member);
+            List<Member> all = memberRepository.findAllByDeletedIsFalse();
+            List<Get_memberIdListDTO> memberList = new ArrayList<>();
+            for(Member m : all){
+                memberList.add(new Get_memberIdListDTO(m.getMemberId(), m.getMemberName()));
             }
 
-            return new MemberIdListDTO_RES("MIL001", data);
+            return new MemberIdListDTO_RES("MIL001", memberList);
         }catch(Exception e){
             return new MemberIdListDTO_RES("MIL002", e.getMessage());
         }
