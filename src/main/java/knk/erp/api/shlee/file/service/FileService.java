@@ -1,8 +1,8 @@
 package knk.erp.api.shlee.file.service;
 
-import knk.erp.api.shlee.file.dto.RES_fileSave;
 import knk.erp.api.shlee.file.entity.File;
 import knk.erp.api.shlee.file.repository.FileRepository;
+import knk.erp.api.shlee.schedule.responseEntity.ResponseCM;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -56,15 +56,15 @@ public class FileService {
         return fileRepository.save(file);
     }
 
-    public RES_fileSave saveFile(MultipartFile multipartFile) {
+    public ResponseCM saveFile(MultipartFile multipartFile) {
         try {
             String fileName = saveEntity(multipartFile).getFileName();
 
             resolveFile(multipartFile, fileName);
 
-            return new RES_fileSave("FS001", fileName);
+            return new ResponseCM("FS001", fileName);
         } catch (Exception e) {
-            return new RES_fileSave("FS002", e.getMessage());
+            return new ResponseCM("FS002", e.getMessage());
         }
 
     }
