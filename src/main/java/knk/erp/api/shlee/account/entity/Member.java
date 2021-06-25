@@ -19,7 +19,8 @@ public class Member extends Time {
     @GeneratedValue
     private Long id;
 
-    @Column(nullable = false, length = 20)
+    //2021-06-25 이상훈 추가 unique = true
+    @Column(nullable = false, length = 20, unique = true)
     private String memberId;
 
     @Column(nullable = false, length = 70)
