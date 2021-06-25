@@ -1,4 +1,4 @@
-package knk.erp.api.shlee.admin;
+package knk.erp.api.shlee.admin.service;
 
 import knk.erp.api.shlee.account.entity.Member;
 import knk.erp.api.shlee.account.entity.MemberRepository;

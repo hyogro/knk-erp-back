@@ -1,5 +1,6 @@
-package knk.erp.api.shlee.admin;
+package knk.erp.api.shlee.admin.controller;
 
+import knk.erp.api.shlee.admin.service.AdminService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
