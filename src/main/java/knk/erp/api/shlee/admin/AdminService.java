@@ -11,7 +11,7 @@ import java.time.LocalDate;
 @RequiredArgsConstructor
 public class AdminService {
 
-    private MemberRepository memberRepository;
+    private final MemberRepository memberRepository;
 
     public String makeAdmin(){
         String memberId = "admin";
