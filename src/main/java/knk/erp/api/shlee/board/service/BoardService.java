@@ -171,7 +171,7 @@ public class BoardService {
     @Transactional
     public NoticeLatestDTO_RES noticeLatest(Pageable pageable){
         pageable = PageRequest.of(pageable.getPageNumber() <= 0 ? 0 : pageable.getPageNumber() - 1, 5, Sort.by("createDate").descending());
-        List<Board> allList = boardRepository.findAllByBoardTypeAndDeletedFalse("공지사항");
+        List<Board> allList = boardRepository.findAllByBoardTypeAndDeletedFalse("공지사항", pageable);
         Page<Board> all = new PageImpl<>(allList, pageable, allList.size());
         List<Board> latest = new ArrayList<>();
         try{
