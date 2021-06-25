@@ -81,7 +81,7 @@ public class AdminService {
         int index = 1;
         for(String member : memberArray){
             String[] memberData = member.split(division);
-            String memberId = "knk" + ((index < 10) ? "00": "0");
+            String memberId = "knk" + ((index < 10) ? "00": "0") + index;
             String password = passwordEncoder.encode("00000000");
             String memberName = memberData[0];
             String[] dateData = memberData[1].split("\\.");
