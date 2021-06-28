@@ -18,7 +18,6 @@ public class Create_BoardDTO_RES {
         this.help_codeList.put("CB001", "게시글 생성 성공");
         this.help_codeList.put("CB002", "게시글 생성 실패");
         this.help_codeList.put("CB003", "게시글 생성 실패 - 권한 부족");
-        this.help_codeList.put("CB004", "게시글 생성 실패 - 작성자와 다른 부서 태그");
     }
 
     // error

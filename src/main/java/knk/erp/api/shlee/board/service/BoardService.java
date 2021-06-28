@@ -38,8 +38,10 @@ public class BoardService {
         try{
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             Member writer = memberRepository.findAllByMemberIdAndDeletedIsFalse(authentication.getName());
-            if(boardDTO.getBoardType().equals("공지사항") && commonUtil.authorityToInteger(writer) <= 2){
-                return new Create_BoardDTO_RES("CB003", "권한 부족");
+            if(boardDTO.getBoardType().equals("공지사항")){
+                if(commonUtil.authorityToInteger(writer) <= 2 || !writer.getMemberId().equals("knk005")){
+                    return new Create_BoardDTO_RES("CB003", "권한 부족");
+                }
             }
             boardDTO.setWriterMemberId(writer.getMemberId());
             boardDTO.setWriterMemberName(writer.getMemberName());

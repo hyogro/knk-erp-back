@@ -52,7 +52,7 @@ public class MyPageService {
         }
     }
 
-    // 회원 본인 잔여 연차일수 보기
+    // 회원 본인 추가 연차일수 보기
     @Transactional
     public GetMyVacation_MyPageDTO_RES getMyVacation(){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
