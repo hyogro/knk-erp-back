@@ -46,14 +46,7 @@ public class AS {//AttendanceSpecification
         };
     }
 
-    public static Specification<Attendance> onWorkAfter(LocalTime td){//startDate after
-        return (root, query, builder) -> builder.greaterThan(root.get("onWork"), td);
-    }
-    public static Specification<Attendance> offWorkBefore(LocalTime td){//endDate before
-        return (root, query, builder) -> builder.lessThan(root.get("offWork"), td);
-    }
-
-    public static Specification<Attendance> attendanceDateBetween(LocalDate sd, LocalDate ed){//endDate before
+    public static Specification<Attendance> attendanceDateBetween(LocalDate sd, LocalDate ed){
         return (root, query, builder) -> {
 
             List<Predicate> predicates = new ArrayList<>();
@@ -63,4 +56,8 @@ public class AS {//AttendanceSpecification
             return builder.and(predicates.toArray(new Predicate[0]));
         };
     }
+    public static Specification<Attendance> offWorked(){
+        return (root, query, builder) -> builder.isNotNull(root.get("offWork"));
+    }
+
 }

@@ -47,11 +47,10 @@ public class VS {//VacationSpecification
     public static Specification<Vacation> approve2Is(boolean t){//approval2 is
         return (root, query, builder) -> builder.equal(root.get("approval2"), t);
     }
-    public static Specification<Vacation> startDateAfter(LocalDateTime td){//startDate after
-        return (root, query, builder) -> builder.greaterThan(root.get("startDate"), td);
-    }
-    public static Specification<Vacation> endDateBefore(LocalDateTime td){//endDate before
-        return (root, query, builder) -> builder.lessThan(root.get("endDate"), td);
-    }
 
+    public static Specification<Vacation> targetDateBetween(LocalDateTime td){//startDate after
+        return (root, query, builder) -> builder.between(builder.literal(td),
+                root.get("startDate"),
+                root.get("endDate"));
+    }
 }

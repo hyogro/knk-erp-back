@@ -82,13 +82,4 @@ public class VacationController {
         return ResponseEntity.ok(vacationService.rejectVacation(vid, reject));
     }
 
-    /**
-     * 휴가 요약정보 조회
-     **/
-    @GetMapping("/summary")
-    public ResponseEntity<ResponseCMD> rejectVacation() {
-        return ResponseEntity.ok(vacationService.readVacationSummary());
-    }
-
-
 }

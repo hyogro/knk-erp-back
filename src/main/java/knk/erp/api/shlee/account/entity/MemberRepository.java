@@ -15,4 +15,6 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     List<Member> findAllByDeletedIsFalse();
     Member findAllByMemberIdAndDeletedIsFalse(String memberId);
     Member findByMemberIdAndDeletedIsFalse(String memberId);
+
+    Long countAllByMemberNameIsNot(String memberName);
 }

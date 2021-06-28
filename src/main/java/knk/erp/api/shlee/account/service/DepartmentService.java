@@ -232,7 +232,7 @@ public class DepartmentService {
 
             if (3 <= commonUtil.checkLevel()) {
                 return new RES_DepNameAndMemCount("RDAM001", new DepartmentNameAndMemberCountDTO("구이앤금우통신",
-                        (int) memberRepository.count()));
+                        memberRepository.countAllByMemberNameIsNot("관리자").intValue()));
             }
 
             String memberId = authentication.getName();

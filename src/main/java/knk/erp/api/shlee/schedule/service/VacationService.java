@@ -211,29 +211,6 @@ public class VacationService {
         }
     }
 
-    //휴가 요약정보 조회
-    public ResponseCMD readVacationSummary() {
-        try {
-            String memberId = getMemberId();
-            int vacation; //휴가
-            LocalDateTime todayS = LocalDateTime.of(LocalDate.now(), LocalTime.of(0, 0, 0));
-            LocalDateTime todayE = LocalDateTime.of(LocalDate.now(), LocalTime.of(23, 59, 59));
-
-            if (commonUtil.checkLevel() == 2) {
-                Member member = memberRepository.findAllByMemberIdAndDeletedIsFalse(memberId);
-                Department department = member.getDepartment();
-                vacation = (int) vacationRepository.count(VS.delFalse().and(VS.did(department.getId())).and(VS.startDateAfter(todayS)).and(VS.endDateBefore(todayE)).and(VS.approve1Is(true)).and(VS.approve2Is(true)));
-            } else if (3 <= commonUtil.checkLevel()) {
-                vacation = (int) vacationRepository.count(VS.delFalse().and(VS.startDateAfter(todayS)).and(VS.endDateBefore(todayE)).and(VS.approve1Is(true)).and(VS.approve2Is(true)));
-            } else {
-                return new ResponseCMD("RVS003");
-            }
-            return new ResponseCMD("RVS001", new VacationSummaryDTO(vacation));
-        } catch (Exception e) {
-            return new ResponseCMD("RVS002", e.getMessage());
-        }
-    }
-
     //권한 체크 및 승인여부 변경
     private boolean approveCheck(Vacation vacation) {
         if (commonUtil.checkLevel() == 2) {
