@@ -39,7 +39,7 @@ public class BoardService {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             Member writer = memberRepository.findAllByMemberIdAndDeletedIsFalse(authentication.getName());
             if(boardDTO.getBoardType().equals("공지사항")){
-                if(commonUtil.authorityToInteger(writer) <= 2 || !writer.getMemberId().equals("knk005")){
+                if(commonUtil.authorityToInteger(writer) <= 2 && !writer.getMemberId().equals("knk005")){
                     return new Create_BoardDTO_RES("CB003", "권한 부족");
                 }
             }
