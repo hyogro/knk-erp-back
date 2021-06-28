@@ -22,6 +22,10 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.Period;
+import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 @Service
@@ -72,12 +76,39 @@ public class FileService {
         }
     }
 
+    private LinkedHashMap<String, List<LocalDate>> makeAttendanceWorkbookSheetTitle(LocalDate startDate, LocalDate endDate){
+        int gap = (int)ChronoUnit.DAYS.between(startDate, endDate);
+        LocalDate targetDate = startDate;
+        List<LocalDate> targetDateList = new ArrayList<>();
+        LinkedHashMap<String, List<LocalDate>> sheetMap = new LinkedHashMap<>();
+
+        int tmpMonth = targetDate.getMonthValue();
+        String sheetTitle = targetDate.getYear() + "-" + targetDate.getMonthValue();
+        for(int i=0; i<= gap; i++) {
+
+            if(targetDate.getMonthValue() != tmpMonth){
+                sheetMap.put(sheetTitle, targetDateList);
+                sheetTitle = targetDate.getYear() + "-" + targetDate.getMonthValue();
+                targetDateList = new ArrayList<>();
+                tmpMonth = targetDate.getMonthValue();
+                System.out.println(tmpMonth + "//" + targetDate.getMonthValue());
+            }
+            targetDateList.add(targetDate);
+            targetDate = targetDate.plusDays(1);
+        }
+        sheetMap.put(sheetTitle, targetDateList);
+        return sheetMap;
+    }
+
     private InputStream makeAttendanceWorkbookFile(LocalDate startDate, LocalDate endDate) throws IOException {
 
         List<Attendance> attendanceList = attendanceRepository.findAll(AS.delFalse().and(AS.attendanceDateBetween(startDate, endDate)));
         int startMonth = startDate.getMonthValue();
         int endMonth = endDate.getMonthValue();
         Workbook wb = new XSSFWorkbook();
+        LinkedHashMap<String, List<LocalDate>> sheetMap = makeAttendanceWorkbookSheetTitle(startDate, endDate);
+
+        System.out.println(sheetMap.toString());
 
         for(int m = startMonth; m <= endMonth; m++){
             Sheet sheet = wb.createSheet(m+"월 출퇴근 정보");

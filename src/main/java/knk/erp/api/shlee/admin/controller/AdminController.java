@@ -19,6 +19,6 @@ public class AdminController {
     }
     @GetMapping("")
     public String makeDefaultUser(){
-        return adminService.makeDefaultUser();
+        return "e";//adminService.makeDefaultUser();
     }
 }
