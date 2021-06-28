@@ -43,7 +43,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
                 // 로그인 API 권한없이 접근 가능하도록 설정
                 .authorizeRequests()
-                .antMatchers("/account/login", "/admin").permitAll()
+                .antMatchers("/account/login").permitAll()
 
                 // 회원 정보 목록 읽어오기, 회원 정보 수정, 회원 삭제, 회원 생성, 회원 정보 상세보기는 관리자 이상만 가능하도록 설정
                 .antMatchers("/account/readMember", "/account/{memberId}", "/account", "/account/signup")
@@ -65,7 +65,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
 
-                // JwtFilter 를 addFilterBefore 로 등록했던 JwtSecurityConfig 클래스를 적용
+                // JwtSecurityConfig 클래스를 적용
                 .apply(new knk.erp.api.shlee.config.JwtSecurityConfig(tokenProvider));
     }
 
