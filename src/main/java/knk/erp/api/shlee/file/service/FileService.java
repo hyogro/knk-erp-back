@@ -1,11 +1,16 @@
 package knk.erp.api.shlee.file.service;
 
+import knk.erp.api.shlee.account.entity.Member;
+import knk.erp.api.shlee.account.entity.MemberRepository;
 import knk.erp.api.shlee.file.entity.File;
 import knk.erp.api.shlee.file.repository.FileRepository;
 import knk.erp.api.shlee.schedule.entity.Attendance;
+import knk.erp.api.shlee.schedule.entity.Vacation;
 import knk.erp.api.shlee.schedule.repository.AttendanceRepository;
+import knk.erp.api.shlee.schedule.repository.VacationRepository;
 import knk.erp.api.shlee.schedule.responseEntity.ResponseCM;
 import knk.erp.api.shlee.schedule.specification.AS;
+import knk.erp.api.shlee.schedule.specification.VS;
 import lombok.RequiredArgsConstructor;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -24,9 +29,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Period;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -34,6 +37,8 @@ public class FileService {
 
     private final FileRepository fileRepository;
     private final AttendanceRepository attendanceRepository;
+    private final MemberRepository memberRepository;
+    private final VacationRepository vacationRepository;
     private final Path path = Paths.get("/home/ubuntu/files");
 
     private String getMemberId() {
@@ -91,7 +96,6 @@ public class FileService {
                 sheetTitle = targetDate.getYear() + "-" + targetDate.getMonthValue();
                 targetDateList = new ArrayList<>();
                 tmpMonth = targetDate.getMonthValue();
-                System.out.println(tmpMonth + "//" + targetDate.getMonthValue());
             }
             targetDateList.add(targetDate);
             targetDate = targetDate.plusDays(1);
@@ -103,37 +107,76 @@ public class FileService {
     private InputStream makeAttendanceWorkbookFile(LocalDate startDate, LocalDate endDate) throws IOException {
 
         List<Attendance> attendanceList = attendanceRepository.findAll(AS.delFalse().and(AS.attendanceDateBetween(startDate, endDate)));
-        int startMonth = startDate.getMonthValue();
-        int endMonth = endDate.getMonthValue();
-        Workbook wb = new XSSFWorkbook();
+
+        List<Vacation> vacationList = vacationRepository.findAll(VS.delFalse().and(VS.approve1Is(true)).and(VS.approve2Is(true)));
+
+        List<Member> memberList = memberRepository.findAllByDeletedIsFalse();
+        memberList.removeIf(i -> i.getMemberName().equals("관리자"));
+
         LinkedHashMap<String, List<LocalDate>> sheetMap = makeAttendanceWorkbookSheetTitle(startDate, endDate);
+        HashMap<String, String> colAttendanceDataSet = new HashMap<>();
+        HashMap<String, String> colVacationDataSet = new HashMap<>();
 
-        System.out.println(sheetMap.toString());
+        for (Attendance attendance : attendanceList){
+            String key = attendance.getAuthor().getMemberId() + attendance.getAttendanceDate().toString();
+            String val = attendance.getOnWork() + "~" + attendance.getOffWork();
 
-        for(int m = startMonth; m <= endMonth; m++){
-            Sheet sheet = wb.createSheet(m+"월 출퇴근 정보");
+            colAttendanceDataSet.put(key, val);
+        }
+//        for(Vacation vacation : vacationList){
+//            long days = ChronoUnit.DAYS.between(hiredDate, today);
+//
+//            String key = vacation.getAuthor().getMemberId() + vacation.getAttendanceDate().toString();
+//            String val = attendance.getOnWork() + "~" + attendance.getOffWork();
+//
+//            colVacationDataSet.put(key,val);
+//        }
+
+        Workbook wb = new XSSFWorkbook();
+
+        for(String key : sheetMap.keySet()){
+            Sheet sheet = wb.createSheet(key+" 출퇴근 정보");
             Row row = null;
             Cell cell = null;
             int rowNum = 0;
 
-            // Header
+            // ↓↓↓↓ Header 세팅↓↓↓↓
             row = sheet.createRow(rowNum++);
             cell = row.createCell(0);
-            cell.setCellValue("번호");
+            cell.setCellValue("부서");
             cell = row.createCell(1);
-            cell.setCellValue("이름");
-            cell = row.createCell(2);
-            cell.setCellValue("제목");
+            cell.setCellValue("이름(아이디)");
+            int idx = 2;
 
-            // Body
-            for (int i=0; i<3; i++) {
+            // 날짜 세팅
+            for(LocalDate date : sheetMap.get(key)){
+                cell = row.createCell(idx);
+                cell.setCellValue(date.toString());
+                idx++;
+            }
+            // ↑↑↑↑ Header 세팅↑↑↑↑
+
+            row.setHeight((short)512);
+
+            for(Member member : memberList){
                 row = sheet.createRow(rowNum++);
                 cell = row.createCell(0);
-                cell.setCellValue(i);
+                cell.setCellValue(member.getDepartment().getDepartmentName());
                 cell = row.createCell(1);
-                cell.setCellValue(i+"_name");
-                cell = row.createCell(2);
-                cell.setCellValue(i+"_title");
+                cell.setCellValue(member.getMemberName() + "(" + member.getMemberId() + ")");
+                int index = 2;
+                for(LocalDate date : sheetMap.get(key)){
+                    cell = row.createCell(index);
+                    String col = (colAttendanceDataSet.get(member.getMemberId()+date.toString()));
+                    if(col == null){
+                        col = "값 없음";
+                    }
+                    cell.setCellValue(col);
+                    index++;
+                }
+            }
+            for(int i = 0 ; i<idx; i++){
+                sheet.autoSizeColumn(i);
             }
         }
 
