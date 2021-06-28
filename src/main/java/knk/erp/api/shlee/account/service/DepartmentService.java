@@ -192,6 +192,9 @@ public class DepartmentService {
         try{
             Department targetDepartment = departmentRepository.findByIdAndDeletedFalse(dep_id);
             Member targetMember = memberRepository.findByMemberIdAndDeletedIsFalse(departmentMemberDTOReq.getMemberId());
+            if(targetDepartment.getLeader() == targetMember){
+                return new Add_DepartmentMemberDTO_RES("ADM003","해당 부서의 리더");
+            }
             targetMember.setDepartment(targetDepartment);
             memberRepository.save(targetMember);
 
