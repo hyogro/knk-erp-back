@@ -97,13 +97,12 @@ public class BoardService {
                     reference.add(new Read_ReferenceMemberDTO(s, name));
                 }
             }
-            else reference = null;
+            else reference.add(new Read_ReferenceMemberDTO(null, null));
 
             return new Read_BoardDTO_RES("RB001", new Read_BoardDTO(target.getTitle(), target.getContent(), target.getBoardType(),
                     writer.getMemberName(), writer.getMemberId(), writer.getDepartment().getDepartmentName(), target.getCreateDate(),
                     target.getUpdateDate(), target.getFile(), target.getCount(), target.getVisitors()), reference);
         }catch(Exception e){
-            e.printStackTrace();
             return new Read_BoardDTO_RES("RB002", e.getMessage());
         }
     }
