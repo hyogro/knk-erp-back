@@ -102,7 +102,6 @@ public class BoardService {
                     writer.getMemberName(), writer.getMemberId(), writer.getDepartment().getDepartmentName(), target.getCreateDate(),
                     target.getUpdateDate(), target.getFile(), target.getCount(), target.getVisitors()), reference);
         }catch(Exception e){
-            e.printStackTrace();
             return new Read_BoardDTO_RES("RB002", e.getMessage());
         }
     }
