@@ -16,7 +16,7 @@ public class SecurityUtil {
             else my_level = Integer.parseInt(level.replace("[ROLE_LVL","").replace("]",""));
 
             if(updateAccountDTOReq.getAuthority() != null){
-                if(updateAccountDTOReq.getAuthority().equals("ROLE_ADMIN")) return true;
+                if(updateAccountDTOReq.getAuthority().equals("ROLE_ADMIN")) update_level = 5;
                 else update_level = Integer.parseInt(updateAccountDTOReq.getAuthority().replace("ROLE_LVL",""));
             }
             else update_level = 0;
