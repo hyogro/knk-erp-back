@@ -17,7 +17,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -64,22 +63,18 @@ public class AccountService {
         }
     }
 
-    // 로그인 및 Access Token 발급
+    // 로그인 및 Token 발급
     @Transactional
     public Login_TokenDTO_RES login(MemberDTO_REQ MemberDTOReq){
 
-        // 1. Login ID/PW 를 기반으로 AuthenticationToken 생성
         UsernamePasswordAuthenticationToken authenticationToken = MemberDTOReq.toAuthentication();
 
         try{
-            // 2. 실제로 검증 (사용자 비밀번호 체크) 이 이루어지는 부분
-            //    authenticate 메서드가 실행이 될 때 CustomUserDetailsService 에서 만들었던 loadUserByMemberId 메서드가 실행됨
+
             Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
 
-            // 3. 인증 정보를 기반으로 JWT 토큰 생성
             TokenDto tokenDto = tokenProvider.generateTokenDto(authentication);
 
-            // 4. 토큰 발급
             return new Login_TokenDTO_RES("LI001", tokenDto);
         }catch(Exception e){
             return new Login_TokenDTO_RES("LI002", e.getMessage());
