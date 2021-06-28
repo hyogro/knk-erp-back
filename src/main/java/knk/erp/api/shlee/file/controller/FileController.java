@@ -2,9 +2,18 @@ package knk.erp.api.shlee.file.controller;
 
 import knk.erp.api.shlee.file.service.FileService;
 import knk.erp.api.shlee.schedule.responseEntity.ResponseCM;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.time.LocalDate;
 
 @RestController
 @RequestMapping("/file")
@@ -20,5 +29,12 @@ public class FileController {
             ResponseEntity.ok(null);
         }
         return ResponseEntity.ok(fileService.saveFile(file));
+    }
+
+    @GetMapping("/download/excel/attendance")
+    public ResponseEntity<ResponseCM> downloadExcelAttendance(@RequestParam("startDate") String startDate,
+                                        @RequestParam("endDate") String endDate){
+        return ResponseEntity.ok(fileService.downloadExcelAttendance(LocalDate.parse(startDate), LocalDate.parse(endDate)));
+
     }
 }
