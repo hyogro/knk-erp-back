@@ -14,6 +14,8 @@ import knk.erp.api.shlee.common.util.CommonUtil;
 import knk.erp.api.shlee.file.entity.File;
 import knk.erp.api.shlee.file.repository.FileRepository;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.data.domain.*;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -22,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 @Service
 @RequiredArgsConstructor
@@ -31,6 +34,7 @@ public class BoardService {
     private final BoardUtil boardUtil;
     private final CommonUtil commonUtil;
     private final FileRepository fileRepository;
+    private static final Log log = LogFactory.getLog(BoardService.class);
 
     // 게시글 생성
     @Transactional
@@ -47,9 +51,11 @@ public class BoardService {
             boardDTO.setWriterMemberName(writer.getMemberName());
             boardDTO.setWriterDepId(writer.getDepartment().getId());
             Board board = boardDTO.toBoard();
-            List<File> file = new ArrayList<>();
             if(boardDTO.getFileName() != null){
+                List<File> file = new ArrayList<>();
+                log.info(boardDTO.getFileName());
                 for(String f : boardDTO.getFileName()){
+                    log.info(f);
                     file.add(fileRepository.findByFileName(f));
                 }
                 board.setFile(file);
