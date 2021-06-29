@@ -52,6 +52,7 @@ public class FileService {
 
     private String makeFileName(String extension) {
         String fileName = LocalDateTime.now() + "";
+
         return fileName.replace("T", "").replace("-", "").replace(".", "").replace(":", "") + extension;
     }
 
@@ -70,7 +71,9 @@ public class FileService {
         String fileName = makeFileName(extension);
 
         File file = File.builder().originalFileName(originalFilename).fileName(fileName).extension(extension).memberId(memberId).build();
-        return fileRepository.save(file);
+        File saveFile = fileRepository.save(file);
+        saveFile.setFileName(saveFile.getId() + saveFile.getFileName());
+        return fileRepository.save(saveFile);
     }
 
     public ResponseCM saveFile(MultipartFile multipartFile) {
