@@ -47,8 +47,8 @@ public class BoardService {
             boardDTO.setWriterMemberName(writer.getMemberName());
             boardDTO.setWriterDepId(writer.getDepartment().getId());
             Board board = boardDTO.toBoard();
-            List<File> file = new ArrayList<>();
             if(boardDTO.getFileName() != null){
+                List<File> file = new ArrayList<>();
                 for(String f : boardDTO.getFileName()){
                     file.add(fileRepository.findByFileName(f));
                 }
