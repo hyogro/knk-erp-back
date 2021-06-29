@@ -170,7 +170,7 @@ public class BoardService {
     public Read_NoticeBoardDTO_RES noticeBoardList(Pageable pageable, String searchType, String keyword){
         try{
             Page<BoardListDTO> page = boardUtil.searchBoard(searchType, keyword, "공지사항", boardRepository, pageable);
-            int totalPage = boardUtil.getBoardSize("업무게시판", boardRepository, searchType, keyword);
+            int totalPage = boardUtil.getBoardSize("공지사항", boardRepository, searchType, keyword);
 
             return new Read_NoticeBoardDTO_RES("RNB001", page, totalPage);
         }catch(Exception e){
