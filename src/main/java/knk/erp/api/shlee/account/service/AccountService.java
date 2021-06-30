@@ -124,7 +124,8 @@ public class AccountService {
                 Department department = null;
 
                 if(departmentRepository.existsByIdAndDeletedFalse(updateAccountDTOReq.getDep_id())){
-                    if(departmentRepository.getOne(target.getDepartment().getId()).getLeader() == target){
+                    if(departmentRepository.getOne(target.getDepartment().getId()).getLeader() == target
+                            && !updateAccountDTOReq.getDep_id().equals(target.getDepartment().getId())){
                         return new Update_AccountDTO_RES("UA004", "수정할 대상이 부서의 리더입니다.");
                     }
                     department = departmentRepository.findByIdAndDeletedFalse(updateAccountDTOReq.getDep_id());
