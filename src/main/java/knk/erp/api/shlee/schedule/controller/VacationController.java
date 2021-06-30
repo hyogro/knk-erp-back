@@ -41,6 +41,14 @@ public class VacationController {
         return ResponseEntity.ok(vacationService.readVacationList());
     }
 
+    /**
+     * 휴가 목록 읽기
+     **/
+    @GetMapping("/all")
+    public ResponseEntity<ResponseCMDL> readAllVacationList() {
+        return ResponseEntity.ok(vacationService.readAllVacationList());
+    }
+
 
     /**
      * 휴가 상세 읽기
