@@ -131,7 +131,7 @@ public class VacationService {
         }
     }
 
-    //내 휴가 삭제
+    //내 휴가 삭제 dddd
     public ResponseCM deleteVacation(Long vid) {
         try {
             String memberId = getMemberId();
