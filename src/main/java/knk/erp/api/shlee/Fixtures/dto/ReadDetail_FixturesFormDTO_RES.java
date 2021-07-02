@@ -17,8 +17,8 @@ public class ReadDetail_FixturesFormDTO_RES {
     private ReadDetail_FixturesFormDTO readDetailFixturesFormDTO;
 
     private void createCodeList(){
-        this.help_codeList.put("RDFT001", "비품 요청서 상세보기 성공");
-        this.help_codeList.put("RDFT002", "비품 요청서 상세보기 실패");
+        this.help_codeList.put("RDFF001", "비품 요청서 상세보기 성공");
+        this.help_codeList.put("RDFF002", "비품 요청서 상세보기 실패");
     }
 
     // error

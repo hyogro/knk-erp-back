@@ -15,10 +15,10 @@ public class Delete_FixturesFormDTO_RES {
     private LinkedHashMap<String, String> help_codeList = new LinkedHashMap<>();
 
     private void createCodeList(){
-        this.help_codeList.put("DFT001", "비품 요청서 삭제 성공");
-        this.help_codeList.put("DFT002", "비품 요청서 삭제 실패");
-        this.help_codeList.put("DFT003", "비품 요청서 삭제 실패 - 비품 요청서 작성자가 아님");
-        this.help_codeList.put("DFT004", "비품 요청서 삭제 실패 - 이미 처리된 비품 요청서");
+        this.help_codeList.put("DFF001", "비품 요청서 삭제 성공");
+        this.help_codeList.put("DFF002", "비품 요청서 삭제 실패");
+        this.help_codeList.put("DFF003", "비품 요청서 삭제 실패 - 비품 요청서 작성자가 아님");
+        this.help_codeList.put("DFF004", "비품 요청서 삭제 실패 - 이미 처리된 비품 요청서");
     }
 
     // error

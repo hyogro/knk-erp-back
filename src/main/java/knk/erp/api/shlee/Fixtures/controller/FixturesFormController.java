@@ -34,18 +34,19 @@ public class FixturesFormController {
         return ResponseEntity.ok(fixturesFormService.readDetailFixturesForm(fixturesFormId));
     }
 
-    //PUT 내가쓴거 수정하기
+    // 내가 쓴 비품 요청서 수정
     @PutMapping("/{fixturesFormId}")
     public ResponseEntity<Update_FixturesFormDTO_RES> updateFixturesForm(@PathVariable Long fixturesFormId,
                                                                          @RequestBody Update_FixturesFormDTO_REQ updateFixturesFormDTOReq){
         return ResponseEntity.ok(fixturesFormService.updateFixturesForm(fixturesFormId, updateFixturesFormDTOReq));
     }
 
-    //DELETE 내가쓴거 삭제하기 isDeleted = true;
+    // 내가 쓴 비품 요청서 삭제
     @DeleteMapping("/{fixturesFormId}")
     public ResponseEntity<Delete_FixturesFormDTO_RES> deleteFixturesForm(@PathVariable Long fixturesFormId){
         return ResponseEntity.ok(fixturesFormService.deleteFixturesForm(fixturesFormId));
     }
+
 
     //GET 남이쓴거 목록 가져오기(페이징, 권한)
 

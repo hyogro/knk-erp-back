@@ -16,8 +16,8 @@ public class Create_FixturesFormDTO_RES {
     private LinkedHashMap<String, String> help_codeList = new LinkedHashMap<>();
 
     private void createCodeList(){
-        this.help_codeList.put("CFT001", "비품 요청 생성 성공");
-        this.help_codeList.put("CFT002", "비품 요청 생성 실패");
+        this.help_codeList.put("CFF001", "비품 요청 생성 성공");
+        this.help_codeList.put("CFF002", "비품 요청 생성 실패");
     }
 
     // error

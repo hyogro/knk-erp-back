@@ -8,7 +8,6 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Update_FixturesDTO_REQ {
-    private Long fixturesId;
     private String fixturesName;
     private int amount;
     private String memo;

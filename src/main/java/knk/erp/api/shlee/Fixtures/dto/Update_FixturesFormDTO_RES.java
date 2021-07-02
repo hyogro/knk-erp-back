@@ -15,10 +15,10 @@ public class Update_FixturesFormDTO_RES {
     private LinkedHashMap<String, String> help_codeList = new LinkedHashMap<>();
 
     private void createCodeList(){
-        this.help_codeList.put("UFT001", "비품 요청서 수정 성공");
-        this.help_codeList.put("UFT002", "비품 요청서 수정 실패");
-        this.help_codeList.put("UFT003", "비품 요청서 수정 실패 - 비품 요청서 작성자가 아님");
-        this.help_codeList.put("UFT004", "비품 요청서 수정 실패 - 이미 처리된 비품 요청서");
+        this.help_codeList.put("UFF001", "비품 요청서 수정 성공");
+        this.help_codeList.put("UFF002", "비품 요청서 수정 실패");
+        this.help_codeList.put("UFF003", "비품 요청서 수정 실패 - 비품 요청서 작성자가 아님");
+        this.help_codeList.put("UFF004", "비품 요청서 수정 실패 - 이미 처리된 비품 요청서");
     }
 
     // error
