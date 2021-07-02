@@ -33,10 +33,15 @@ public class FixturesForm extends Time {
     @JoinColumn(name = "fixtures_form_id")
     private List<Fixtures> fixturesList;
 
+    //확인여부()
+    @Column
+    private boolean check;
+
     @Builder
-    public FixturesForm(Member author, Member approver, List<Fixtures> fixturesList) {
+    public FixturesForm(Member author, Member approver, List<Fixtures> fixturesList, boolean check) {
         this.author = author;
         this.approver = approver;
         this.fixturesList = fixturesList;
+        this.check = check;
     }
 }

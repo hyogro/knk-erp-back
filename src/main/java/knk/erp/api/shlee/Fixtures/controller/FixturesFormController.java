@@ -1,14 +1,11 @@
 package knk.erp.api.shlee.Fixtures.controller;
 
-import knk.erp.api.shlee.Fixtures.dto.Create_FixturesDTO_RES;
-import knk.erp.api.shlee.Fixtures.dto.FixturesDTO_REQ;
+import knk.erp.api.shlee.Fixtures.dto.Create_FixturesFormDTO_RES;
 import knk.erp.api.shlee.Fixtures.dto.FixturesFormDTO_REQ;
+import knk.erp.api.shlee.Fixtures.dto.Read_FixturesFormDTO_RES;
 import knk.erp.api.shlee.Fixtures.service.FixturesFormService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/fixtures")
@@ -21,11 +18,15 @@ public class FixturesFormController {
 
     // 비품 요청 생성
     @PostMapping("")
-    public ResponseEntity<Create_FixturesDTO_RES> createFixtures(@RequestBody FixturesFormDTO_REQ fixturesFormDTOReq){
-        return ResponseEntity.ok(fixturesFormService.createFixtures(fixturesFormDTOReq));
+    public ResponseEntity<Create_FixturesFormDTO_RES> createFixturesForm(@RequestBody FixturesFormDTO_REQ fixturesFormDTOReq){
+        return ResponseEntity.ok(fixturesFormService.createFixturesForm(fixturesFormDTOReq));
     }
 
-    //GET 내가쓴거 목록 가져오기
+    // 내 비품 요청 목록 읽기
+    @GetMapping("")
+    public ResponseEntity<Read_FixturesFormDTO_RES> readFixturesFormList(){
+        return ResponseEntity.ok(fixturesFormService.readFixturesFormList());
+    }
 
     //GET 내가쓴거 상세 가져오기
 
