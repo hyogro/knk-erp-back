@@ -28,14 +28,9 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class VacationService {
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
     private final VacationRepository vacationRepository;
     private final CommonUtil commonUtil;
     private final VacationUtil util;
-
-    /**
-     * 권한 여부 체크를 위한 사용자, 부서 리포지토리 접근
-     **/
     private final MemberRepository memberRepository;
 
     //개인 휴가정보 조회
