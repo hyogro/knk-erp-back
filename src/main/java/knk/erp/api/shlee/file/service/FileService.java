@@ -197,7 +197,7 @@ public class FileService {
             }
             else{
                 String val;
-                if(vacation.getType().equals("기타")){
+                if(vacation.getType().equals("시간제")){
                     val = vacation.getStartDate().toLocalTime() + "~" + vacation.getEndDate().toLocalTime();
                 }
                 else {

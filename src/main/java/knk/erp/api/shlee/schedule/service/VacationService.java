@@ -74,7 +74,7 @@ public class VacationService {
                 case "오전반차":
                     usedVacation += 4;
                     break;
-                case "기타":
+                case "시간제":
                     usedVacation += (int)ChronoUnit.HOURS.between(startDate, end);
                     break;
             }
