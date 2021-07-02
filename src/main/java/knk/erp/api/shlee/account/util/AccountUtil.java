@@ -65,7 +65,7 @@ public class AccountUtil {
             my.setImages(updateAccountDTOReq.getImages());
         }
         else {
-            my.setImages("/memberImages/default.jpg");
+            my.setImages("default.png");
         }
 
         if(updateAccountDTOReq.getBirthDate() != null){
