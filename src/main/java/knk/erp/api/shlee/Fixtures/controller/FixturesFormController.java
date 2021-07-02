@@ -1,12 +1,11 @@
 package knk.erp.api.shlee.Fixtures.controller;
 
-import knk.erp.api.shlee.Fixtures.dto.Create_FixturesFormDTO_RES;
-import knk.erp.api.shlee.Fixtures.dto.FixturesFormDTO_REQ;
-import knk.erp.api.shlee.Fixtures.dto.ReadDetail_FixturesFormDTO_RES;
-import knk.erp.api.shlee.Fixtures.dto.Read_FixturesFormDTO_RES;
+import knk.erp.api.shlee.Fixtures.dto.*;
 import knk.erp.api.shlee.Fixtures.service.FixturesFormService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/fixtures")
@@ -36,6 +35,11 @@ public class FixturesFormController {
     }
 
     //PUT 내가쓴거 수정하기
+    @PutMapping("/{fixturesFormId}")
+    public ResponseEntity<Update_FixturesFormDTO_RES> updateFixturesForm(@PathVariable Long fixturesFormId,
+                                                                         @RequestBody Update_FixturesFormDTO_REQ updateFixturesFormDTOReq){
+        return ResponseEntity.ok(fixturesFormService.updateFixturesForm(fixturesFormId, updateFixturesFormDTOReq));
+    }
 
     //DELETE 내가쓴거 삭제하기 isDeleted = true;
 

@@ -7,11 +7,9 @@ import lombok.*;
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
-public class ReadDetail_FixturesDTO {
+public class Update_FixturesDTO_REQ {
     private Long fixturesId;
     private String fixturesName;
     private int amount;
-    private boolean confirm;
     private String memo;
-    private boolean purchase;
 }
