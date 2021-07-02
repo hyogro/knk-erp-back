@@ -20,5 +20,7 @@ public class ReadDetail_AccountDTO {
     private String departmentName;
     private String address;
     private String email;
-    LocalDate joiningDate;
+    private LocalDate joiningDate;
+    private String images;
+    private LocalDate birthDate;
 }
