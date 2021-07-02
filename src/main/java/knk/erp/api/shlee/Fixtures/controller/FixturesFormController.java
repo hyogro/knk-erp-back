@@ -2,6 +2,7 @@ package knk.erp.api.shlee.Fixtures.controller;
 
 import knk.erp.api.shlee.Fixtures.dto.Create_FixturesFormDTO_RES;
 import knk.erp.api.shlee.Fixtures.dto.FixturesFormDTO_REQ;
+import knk.erp.api.shlee.Fixtures.dto.ReadDetail_FixturesFormDTO_RES;
 import knk.erp.api.shlee.Fixtures.dto.Read_FixturesFormDTO_RES;
 import knk.erp.api.shlee.Fixtures.service.FixturesFormService;
 import org.springframework.http.ResponseEntity;
@@ -28,7 +29,11 @@ public class FixturesFormController {
         return ResponseEntity.ok(fixturesFormService.readFixturesFormList());
     }
 
-    //GET 내가쓴거 상세 가져오기
+    // 비품 요청서 상세 보기
+    @GetMapping("/{fixturesFormId}")
+    public ResponseEntity<ReadDetail_FixturesFormDTO_RES> readDetailFixturesForm(@PathVariable Long fixturesFormId){
+        return ResponseEntity.ok(fixturesFormService.readDetailFixturesForm(fixturesFormId));
+    }
 
     //PUT 내가쓴거 수정하기
 

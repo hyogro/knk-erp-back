@@ -1,9 +1,7 @@
 package knk.erp.api.shlee.Fixtures.service;
 
-import knk.erp.api.shlee.Fixtures.dto.Create_FixturesFormDTO_RES;
-import knk.erp.api.shlee.Fixtures.dto.FixturesFormDTO_REQ;
-import knk.erp.api.shlee.Fixtures.dto.Read_FixturesFormDTO;
-import knk.erp.api.shlee.Fixtures.dto.Read_FixturesFormDTO_RES;
+import knk.erp.api.shlee.Fixtures.dto.*;
+import knk.erp.api.shlee.Fixtures.entity.Fixtures;
 import knk.erp.api.shlee.Fixtures.entity.FixturesForm;
 import knk.erp.api.shlee.Fixtures.repository.FixturesFormRepository;
 import knk.erp.api.shlee.account.entity.Member;
@@ -52,6 +50,23 @@ public class FixturesFormService {
             return new Read_FixturesFormDTO_RES("RFT001", myFixtures);
         }catch(Exception e){
             return new Read_FixturesFormDTO_RES("RFT002",e.getMessage());
+        }
+    }
+
+    // 비품 요청서 상세보기
+    @Transactional
+    public ReadDetail_FixturesFormDTO_RES readDetailFixturesForm(Long fixturesFormId){
+        try{
+            FixturesForm target = fixturesFormRepository.findByIdAndDeletedIsFalse(fixturesFormId);
+            List<ReadDetail_FixturesDTO> fixtures = new ArrayList<>();
+            for(Fixtures f : target.getFixturesList()){
+                fixtures.add(new ReadDetail_FixturesDTO(f.getFixturesName(), f.getAmount(), f.isConfirm(), f.getMemo(), f.isPurchase()));
+            }
+            return new ReadDetail_FixturesFormDTO_RES("RDFT001", new ReadDetail_FixturesFormDTO(fixtures, target.getAuthor().getMemberName(),
+                    target.getAuthor().getMemberId()));
+
+        }catch(Exception e){
+            return new ReadDetail_FixturesFormDTO_RES("RDFT002", e.getMessage());
         }
     }
 }

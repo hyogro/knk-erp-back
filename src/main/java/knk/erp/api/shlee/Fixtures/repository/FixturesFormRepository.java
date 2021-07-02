@@ -9,4 +9,5 @@ import java.util.List;
 
 public interface FixturesFormRepository extends JpaRepository<FixturesForm, Long> {
     List<FixturesForm> findAllByAuthorAndDeletedIsFalse(Member author);
+    FixturesForm findByIdAndDeletedIsFalse(Long id);
 }
