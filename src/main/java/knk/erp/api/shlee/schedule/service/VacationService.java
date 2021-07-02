@@ -14,8 +14,6 @@ import knk.erp.api.shlee.schedule.responseEntity.vacation.*;
 import knk.erp.api.shlee.schedule.specification.VS;
 import knk.erp.api.shlee.schedule.util.VacationUtil;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -243,7 +241,8 @@ public class VacationService {
             vacation.setApproval1(true);
             vacation.setApprover1(getMember());
             return true;
-        } else if (3 <= commonUtil.checkLevel()) {
+        }
+        else if (3 <= commonUtil.checkLevel()) {
             if (!vacation.isApproval1()) {
                 vacation.setApproval1(true);
                 vacation.setApprover1(getMember());
