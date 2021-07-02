@@ -1,5 +1,6 @@
 package knk.erp.api.shlee.board.service;
 
+import knk.erp.api.shlee.account.entity.Authority;
 import knk.erp.api.shlee.account.entity.Member;
 import knk.erp.api.shlee.account.entity.MemberRepository;
 import knk.erp.api.shlee.board.dto.board.*;
@@ -39,7 +40,7 @@ public class BoardService {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             Member writer = memberRepository.findAllByMemberIdAndDeletedIsFalse(authentication.getName());
             if(boardDTO.getBoardType().equals("공지사항")){
-                if(commonUtil.authorityToInteger(writer) <= 2 && !writer.getMemberId().equals("knk005")){
+                if(commonUtil.authorityToInteger(writer) <= 2 && !writer.getAuthority().equals(Authority.ROLE_MANAGE)){
                     return new Create_BoardDTO_RES("CB003", "권한 부족");
                 }
             }

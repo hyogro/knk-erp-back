@@ -1,6 +1,5 @@
 package knk.erp.api.shlee.Fixtures.entity;
 
-import knk.erp.api.shlee.account.entity.Member;
 import knk.erp.api.shlee.schedule.entity.Time;
 import lombok.*;
 
@@ -33,12 +32,17 @@ public class Fixtures extends Time {
     @Column
     private boolean purchase;
 
+    //비고
+    @Column(length = 50)
+    private String memo;
+
 
     @Builder
-    public Fixtures(String fixturesName, int amount, boolean confirm, boolean purchase) {
+    public Fixtures(String fixturesName, int amount, boolean confirm, boolean purchase, String memo) {
         this.fixturesName = fixturesName;
         this.amount = amount;
         this.confirm = confirm;
         this.purchase = purchase;
+        this.memo = memo;
     }
 }

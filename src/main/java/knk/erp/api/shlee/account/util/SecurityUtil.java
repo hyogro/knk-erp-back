@@ -17,6 +17,7 @@ public class SecurityUtil {
 
             if(updateAccountDTOReq.getAuthority() != null){
                 if(updateAccountDTOReq.getAuthority().equals("ROLE_ADMIN")) update_level = 5;
+                else if(updateAccountDTOReq.getAuthority().equals("ROLE_MANAGE")) update_level = 1;
                 else update_level = Integer.parseInt(updateAccountDTOReq.getAuthority().replace("ROLE_LVL",""));
             }
             else update_level = 0;
@@ -33,9 +34,11 @@ public class SecurityUtil {
         int target_level;
 
         if(level.equals("[ROLE_ADMIN]")) return true;
+        else if(level.equals("[ROLE_MANAGE]")) my_level = 1;
         else my_level = Integer.parseInt(level.replace("[ROLE_LVL","").replace("]",""));
 
         if(target.getAuthority().toString().equals("ROLE_ADMIN")) target_level = 5;
+        else if(target.getAuthority().toString().equals("ROLE_MANAGE")) target_level = 1;
         else target_level = Integer.parseInt(target.getAuthority().toString().replace("ROLE_LVL",""));
 
         return my_level >= target_level;

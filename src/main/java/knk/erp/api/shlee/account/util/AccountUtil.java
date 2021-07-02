@@ -76,6 +76,9 @@ public class AccountUtil {
         else if(updateAccountDTOReq.getAuthority().equals("ROLE_LVL4")){
             authority = Authority.ROLE_LVL4;
         }
+        else if(updateAccountDTOReq.getAuthority().equals("ROLE_MANAGE")){
+            authority = Authority.ROLE_MANAGE;
+        }
         else{
             authority = Authority.ROLE_LVL1;
         }
