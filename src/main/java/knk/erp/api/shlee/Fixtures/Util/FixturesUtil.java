@@ -7,9 +7,5 @@ import org.springframework.stereotype.Component;
 @Component
 public class FixturesUtil {
 
-    public void updateFixtures(Fixtures fixture, String fixturesName, int amount, String memo){
-        fixture.setFixturesName(fixturesName);
-        fixture.setAmount(amount);
-        fixture.setMemo(memo);
-    }
+
 }
