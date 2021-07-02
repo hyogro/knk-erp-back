@@ -22,6 +22,7 @@ public class FixturesFormDTO_REQ {
         }
         return FixturesForm.builder()
                 .fixturesList(fixturesList)
+                .check(false)
                 .build();
     }
 }

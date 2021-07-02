@@ -10,7 +10,7 @@ import java.util.LinkedHashMap;
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
-public class Create_FixturesDTO_RES {
+public class Create_FixturesFormDTO_RES {
     private String code;
     private String message;
     private LinkedHashMap<String, String> help_codeList = new LinkedHashMap<>();
@@ -21,14 +21,14 @@ public class Create_FixturesDTO_RES {
     }
 
     // error
-    public Create_FixturesDTO_RES(String code, String message) {
+    public Create_FixturesFormDTO_RES(String code, String message) {
         createCodeList();
         this.code = code;
         this.message = message;
     }
 
     // ok
-    public Create_FixturesDTO_RES(String code) {
+    public Create_FixturesFormDTO_RES(String code) {
         createCodeList();
         this.code = code;
     }
