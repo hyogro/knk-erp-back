@@ -18,4 +18,6 @@ public class Update_AccountDTO_REQ {
     private LocalDate joiningDate;
     private String address;
     private String email;
+    private String images;
+    private LocalDate birthDate;
 }

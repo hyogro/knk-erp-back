@@ -20,4 +20,6 @@ public class Read_MemberDTO {
     private String address;
     private String email;
     private LocalDate joiningDate;
+    private String images;
+    private LocalDate birthDate;
 }

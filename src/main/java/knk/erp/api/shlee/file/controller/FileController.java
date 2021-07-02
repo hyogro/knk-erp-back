@@ -24,11 +24,11 @@ public class FileController {
     }
 
     @PostMapping("/upload")
-    public ResponseEntity<ResponseCM> uploadFile(@RequestParam MultipartFile file) {
+    public ResponseEntity<ResponseCM> uploadFile(@RequestParam("location") String location, @RequestParam MultipartFile file) {
         if(file.isEmpty()) {
             ResponseEntity.ok(null);
         }
-        return ResponseEntity.ok(fileService.saveFile(file));
+        return ResponseEntity.ok(fileService.saveFile(location, file));
     }
 
     @GetMapping("/download/excel/attendance")
