@@ -60,27 +60,27 @@ public class FileService {
         return originalFilename.substring(originalFilename.lastIndexOf("."));
     }
 
-    private void resolveFile(InputStream inputStream, String fileName) throws IOException {
-        Path location = this.path.resolve(fileName);
-        Files.copy(inputStream, location, StandardCopyOption.REPLACE_EXISTING);
+    private void resolveFile(InputStream inputStream, String location, String fileName) throws IOException {
+        Path loc = this.path.resolve(location+"/"+fileName);
+        Files.copy(inputStream, loc, StandardCopyOption.REPLACE_EXISTING);
     }
 
-    private File saveEntity(String originalFilename) {
+    private File saveEntity(String location, String originalFilename) {
         String memberId = getMemberId();
         String extension = getExtension(originalFilename);
         String fileName = makeFileName(extension);
 
-        File file = File.builder().originalFileName(originalFilename).fileName(fileName).extension(extension).memberId(memberId).build();
+        File file = File.builder().originalFileName(originalFilename).location(location).fileName(fileName).extension(extension).memberId(memberId).build();
         File saveFile = fileRepository.save(file);
         saveFile.setFileName(saveFile.getId() + saveFile.getFileName());
         return fileRepository.save(saveFile);
     }
 
-    public ResponseCM saveFile(MultipartFile multipartFile) {
+    public ResponseCM saveFile(String location, MultipartFile multipartFile) {
         try {
-            String fileName = saveEntity(multipartFile.getOriginalFilename()).getFileName();
+            String fileName = saveEntity(location, multipartFile.getOriginalFilename()).getFileName();
 
-            resolveFile(multipartFile.getInputStream(), fileName);
+            resolveFile(multipartFile.getInputStream(), location, fileName);
 
             return new ResponseCM("FS001", fileName);
         } catch (Exception e) {
@@ -293,9 +293,10 @@ public class FileService {
     public ResponseCM downloadExcelAttendance(LocalDate startDate, LocalDate endDate){
         try {
             InputStream is = makeAttendanceWorkbookFile(startDate, endDate);
+            String location = "excel";
 
-            String fileName = saveEntity(startDate + "~" + endDate + "직원 출퇴근 장부.xlsx").getFileName();
-            resolveFile(is, fileName);
+            String fileName = saveEntity(location,startDate + "~" + endDate + "직원 출퇴근 장부.xlsx").getFileName();
+            resolveFile(is, location, fileName);
             return new ResponseCM("ES001", fileName);
         }catch (Exception e){
             return new ResponseCM("ES002", e.getMessage());

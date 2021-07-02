@@ -60,6 +60,19 @@ public class AccountUtil {
         if(updateAccountDTOReq.getEmail() != null){
             my.setEmail(updateAccountDTOReq.getEmail());
         }
+
+        if(updateAccountDTOReq.getImages() != null){
+            my.setImages(updateAccountDTOReq.getImages());
+        }
+        else {
+            my.setImages("/memberImages/default.jpg");
+        }
+
+        if(updateAccountDTOReq.getBirthDate() != null){
+            my.setBirthDate(updateAccountDTOReq.getBirthDate());
+        }
+
+
     }
 
     public Authority toAuthority(Update_AccountDTO_REQ updateAccountDTOReq){

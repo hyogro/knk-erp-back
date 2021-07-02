@@ -23,6 +23,9 @@ public class File extends Time {
     private String originalFileName;
 
     @Column
+    private String location;
+
+    @Column
     private String fileName;
 
     @Column
@@ -32,8 +35,9 @@ public class File extends Time {
     private String extension;
 
     @Builder
-    public File(String originalFileName, String fileName, String memberId, String extension) {
+    public File(String originalFileName, String location, String fileName, String memberId, String extension) {
         this.originalFileName = originalFileName;
+        this.location = location;
         this.fileName = fileName;
         this.memberId = memberId;
         this.extension = extension;

@@ -52,9 +52,15 @@ public class Member extends Time {
     @JoinColumn(name = "department_id")
     private Department department;
 
+    @Column(length = 50)
+    private String images;
+
+    @Column(length = 50)
+    private LocalDate birthDate;
+
     @Builder
     public Member(String memberId, String phone, String memberName, String password, int vacation, Authority authority,
-                  LocalDate joiningDate, String address, String email){
+                  LocalDate joiningDate, String address, String email, String images, LocalDate birthDate){
         this.memberId = memberId;
         this.phone = phone;
         this.memberName = memberName;
@@ -64,5 +70,7 @@ public class Member extends Time {
         this.joiningDate = joiningDate;
         this.address = address;
         this.email = email;
+        this.images = images;
+        this.birthDate = birthDate;
     }
 }
