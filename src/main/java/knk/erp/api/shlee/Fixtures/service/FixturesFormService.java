@@ -63,7 +63,7 @@ public class FixturesFormService {
                 fixtures.add(new ReadDetail_FixturesDTO(f.getFixturesName(), f.getAmount(), f.isConfirm(), f.getMemo(), f.isPurchase()));
             }
             return new ReadDetail_FixturesFormDTO_RES("RDFT001", new ReadDetail_FixturesFormDTO(fixtures, target.getAuthor().getMemberName(),
-                    target.getAuthor().getMemberId()));
+                    target.getAuthor().getMemberId(), target.getCreateDate().toLocalDate()));
 
         }catch(Exception e){
             return new ReadDetail_FixturesFormDTO_RES("RDFT002", e.getMessage());
