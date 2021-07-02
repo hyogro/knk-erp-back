@@ -42,6 +42,10 @@ public class FixturesFormController {
     }
 
     //DELETE 내가쓴거 삭제하기 isDeleted = true;
+    @DeleteMapping("/{fixturesFormId}")
+    public ResponseEntity<Delete_FixturesFormDTO_RES> deleteFixturesForm(@PathVariable Long fixturesFormId){
+        return ResponseEntity.ok(fixturesFormService.deleteFixturesForm(fixturesFormId));
+    }
 
     //GET 남이쓴거 목록 가져오기(페이징, 권한)
 

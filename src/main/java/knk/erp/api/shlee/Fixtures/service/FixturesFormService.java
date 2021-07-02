@@ -97,4 +97,24 @@ public class FixturesFormService {
             return new Update_FixturesFormDTO_RES("UFT002", e.getMessage());
         }
     }
+
+    // 비품 요청서 삭제
+    public Delete_FixturesFormDTO_RES deleteFixturesForm(Long fixturesFormId){
+        try{
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            Member my = memberRepository.findByMemberIdAndDeletedIsFalse(authentication.getName());
+            FixturesForm targetForm = fixturesFormRepository.findByIdAndDeletedIsFalse(fixturesFormId);
+
+            if(!targetForm.getAuthor().equals(my)) return new Delete_FixturesFormDTO_RES("DFT003", "작성자가 아님");
+
+            if(targetForm.isCheck()) return new Delete_FixturesFormDTO_RES("DFT004", "이미 처리된 요청서");
+
+            targetForm.setDeleted(true);
+            fixturesFormRepository.save(targetForm);
+
+            return new Delete_FixturesFormDTO_RES("DFT001");
+        }catch(Exception e){
+            return new Delete_FixturesFormDTO_RES("DFT002", e.getMessage());
+        }
+    }
 }
