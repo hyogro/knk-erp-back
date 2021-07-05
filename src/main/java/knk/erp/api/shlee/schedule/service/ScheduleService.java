@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Objects;
 
@@ -96,7 +97,7 @@ public class ScheduleService {
     public ResponseCMDL readAnniversaryList(LocalDate startDate, LocalDate endDate) {
         try {
             List<Member> memberList = memberRepository.findAllByBirthDateIsNotNullAndDeletedFalse();
-            memberList.removeIf(i -> birthDateBetweenCheck(startDate, endDate, i.getBirthDate()));
+            memberList.removeIf(i -> !birthDateBetweenCheck(startDate, endDate, i.getBirthDate()));
             return new ResponseCMDL("RSL001", util.AnniversaryListToDTO(startDate.getYear(), memberList));
         } catch (Exception e) {
             return new ResponseCMDL("RSL002", e.getMessage());
@@ -105,8 +106,8 @@ public class ScheduleService {
 
     //월, 일만 비교하기
     private boolean birthDateBetweenCheck(LocalDate startDate, LocalDate endDate, LocalDate birthDate){
-        return startDate.getMonthValue() <= birthDate.getMonthValue() && startDate.getDayOfMonth() <= birthDate.getDayOfMonth()
-        && endDate.getMonthValue() >= birthDate.getMonthValue() && endDate.getDayOfMonth() >= birthDate.getDayOfMonth();
+        LocalDate nowBirthDate = LocalDate.of(startDate.getYear(), birthDate.getMonthValue(), birthDate.getDayOfMonth());
+        return startDate.equals(nowBirthDate) || endDate.equals(nowBirthDate) || (nowBirthDate.isAfter(startDate) && nowBirthDate.isBefore(endDate));
     }
 
     //권한 정보 얻어 맴버 아이디 가져오기
