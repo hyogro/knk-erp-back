@@ -51,8 +51,7 @@ public class FixturesFormController {
 
     // 비품 요청서 전체/미처리/처리완료 목록 보기(ROLE_LVL3 이상, ROLE_MANAGE)
     @GetMapping("/listAll")
-    public ResponseEntity<ReadAll_FixturesFormDTO_RES> readAllFixturesForm(Pageable pageable,
-                                                                           @RequestParam String searchType){
+    public ResponseEntity<ReadAll_FixturesFormDTO_RES> readAllFixturesForm(Pageable pageable, @RequestParam String searchType){
         return ResponseEntity.ok(fixturesFormService.readAllFixturesForm(pageable, searchType));
     }
 

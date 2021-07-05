@@ -16,4 +16,5 @@ public class Read_AccountDTO {
     private String departmentName;
     private String phone;
     private LocalDate joiningDate;
+    private String position;
 }

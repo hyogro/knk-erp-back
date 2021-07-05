@@ -23,6 +23,7 @@ public class MemberDTO_REQ {
     private LocalDate joiningDate;
     private String address;
     private String email;
+    private String position;
 
     public Member toMember(BCryptPasswordEncoder passwordEncoder){
         return Member.builder()
@@ -35,6 +36,7 @@ public class MemberDTO_REQ {
                 .joiningDate(joiningDate)
                 .address(address)
                 .email(email)
+                .position(position)
                 .build();
     }
 

@@ -154,7 +154,7 @@ public class FixturesFormService {
             }
             Page<FixturesForm> fixturesPage = new PageImpl<>(fixturesList, pageable, fixturesList.size());
             Page<ReadAll_FixturesFormDTO> page = fixturesPage.map(fixturesForm -> new ReadAll_FixturesFormDTO(fixturesForm.getId(),
-                    fixturesForm.getCreateDate().toLocalDate(), fixturesForm.isCheck()));
+                    fixturesForm.getCreateDate().toLocalDate(), fixturesForm.isCheck(), fixturesForm.getAuthor().getMemberName()));
 
             int size = pageSize.size() / 15;
             if(pageSize.size()%15 != 0) size++;

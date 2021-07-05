@@ -23,5 +23,5 @@ public class Read_MemberDTO {
     private String images;
     private LocalDate birthDate;
     private boolean birthDateSolar;
-
+    private String position;
 }
