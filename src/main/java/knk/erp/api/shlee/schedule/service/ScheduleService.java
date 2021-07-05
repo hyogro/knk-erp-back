@@ -93,6 +93,22 @@ public class ScheduleService {
         }
     }
 
+    public ResponseCMDL readAnniversaryList(LocalDate startDate, LocalDate endDate) {
+        try {
+            List<Member> memberList = memberRepository.findAllByBirthDateIsNotNullAndDeletedFalse();
+            memberList.removeIf(i -> birthDateBetweenCheck(startDate, endDate, i.getBirthDate()));
+            return new ResponseCMDL("RSL001", util.AnniversaryListToDTO(startDate.getYear(), memberList));
+        } catch (Exception e) {
+            return new ResponseCMDL("RSL002", e.getMessage());
+        }
+    }
+
+    //월, 일만 비교하기
+    private boolean birthDateBetweenCheck(LocalDate startDate, LocalDate endDate, LocalDate birthDate){
+        return startDate.getMonthValue() <= birthDate.getMonthValue() && startDate.getDayOfMonth() <= birthDate.getDayOfMonth()
+        && endDate.getMonthValue() >= birthDate.getMonthValue() && endDate.getDayOfMonth() >= birthDate.getDayOfMonth();
+    }
+
     //권한 정보 얻어 맴버 아이디 가져오기
     private String getMemberId() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

@@ -51,4 +51,11 @@ public class ScheduleController {
     public ResponseEntity<ResponseCM> deleteSchedule(@PathVariable("sid") Long sid) {
         return ResponseEntity.ok(scheduleService.deleteSchedule(sid));
     }
+
+    //기념일 목록 읽기
+    @GetMapping("/anniversary")
+    public ResponseEntity<ResponseCMDL> readAnniversaryList(@RequestParam("startDate") String startDate,
+                                                         @RequestParam("endDate") String endDate) {
+        return ResponseEntity.ok(scheduleService.readAnniversaryList(LocalDateTime.parse(startDate).toLocalDate(), LocalDateTime.parse(endDate).toLocalDate()));
+    }
 }

@@ -4,6 +4,7 @@ package knk.erp.api.shlee.account.entity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -15,6 +16,8 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     List<Member> findAllByDeletedIsFalse();
     Member findAllByMemberIdAndDeletedIsFalse(String memberId);
     Member findByMemberIdAndDeletedIsFalse(String memberId);
+
+    List<Member> findAllByBirthDateIsNotNullAndDeletedFalse();
 
     Long countAllByMemberNameIsNot(String memberName);
 }
