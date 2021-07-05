@@ -58,9 +58,12 @@ public class Member extends Time {
     @Column(length = 50)
     private LocalDate birthDate;
 
+    @Column
+    private boolean birthDateSolar = true;
+
     @Builder
     public Member(String memberId, String phone, String memberName, String password, int vacation, Authority authority,
-                  LocalDate joiningDate, String address, String email, String images, LocalDate birthDate){
+                  LocalDate joiningDate, String address, String email, String images, LocalDate birthDate, boolean birthDateSolar){
         this.memberId = memberId;
         this.phone = phone;
         this.memberName = memberName;
@@ -72,5 +75,7 @@ public class Member extends Time {
         this.email = email;
         this.images = images;
         this.birthDate = birthDate;
+        this.birthDateSolar = birthDateSolar;
+
     }
 }

@@ -39,7 +39,7 @@ public class AccountController {
         return ResponseEntity.ok(accountService.readMemberDetail(memberId));
     }
 
-   // 회원 정보 수정
+    //회원 정보 수정
     @PutMapping("/{memberId}")
     public ResponseEntity<Update_AccountDTO_RES> updateMember(@PathVariable String memberId,
                                                               @RequestBody Update_AccountDTO_REQ updateAccountDTOReq){

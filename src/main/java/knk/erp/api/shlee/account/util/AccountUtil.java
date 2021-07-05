@@ -43,6 +43,16 @@ public class AccountUtil {
         if(updateAccountDTOReq.getEmail() != null){
             member.setEmail(updateAccountDTOReq.getEmail());
         }
+
+        member.setImages(updateAccountDTOReq.getImages());
+
+        if(updateAccountDTOReq.getBirthDate() != null){
+            member.setBirthDate(updateAccountDTOReq.getBirthDate());
+        }
+
+        member.setBirthDateSolar(updateAccountDTOReq.isBirthDateSolar());
+
+
     }
 
     public void updateSelfMember(Member my, Update_AccountDTO_REQ updateAccountDTOReq, BCryptPasswordEncoder passwordEncoder){
@@ -67,6 +77,7 @@ public class AccountUtil {
             my.setBirthDate(updateAccountDTOReq.getBirthDate());
         }
 
+        my.setBirthDateSolar(updateAccountDTOReq.isBirthDateSolar());
 
     }
 
