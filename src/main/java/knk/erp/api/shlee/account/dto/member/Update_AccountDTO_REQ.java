@@ -20,4 +20,5 @@ public class Update_AccountDTO_REQ {
     private String email;
     private String images;
     private LocalDate birthDate;
+    private boolean birthDateSolar;
 }

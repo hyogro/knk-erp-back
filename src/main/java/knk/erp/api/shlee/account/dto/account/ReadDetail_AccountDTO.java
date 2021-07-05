@@ -23,4 +23,5 @@ public class ReadDetail_AccountDTO {
     private LocalDate joiningDate;
     private String images;
     private LocalDate birthDate;
+    private boolean birthDateSolar;
 }

@@ -31,7 +31,7 @@ public class MyPageService {
 
             return new GetMyInfo_MyPageDTO_RES("GMI001", new Read_MemberDTO(my.getMemberId(), null, my.getPhone(),
                     my.getMemberName(), my.getVacation(), my.getDepartment().getDepartmentName(), my.getAuthority().toString(),
-                    my.getAddress(), my.getEmail(), my.getJoiningDate(), my.getImages(), my.getBirthDate()));
+                    my.getAddress(), my.getEmail(), my.getJoiningDate(), my.getImages(), my.getBirthDate(), my.isBirthDateSolar()));
         }catch(Exception e){
             return new GetMyInfo_MyPageDTO_RES("GMI002", e.getMessage());
         }
