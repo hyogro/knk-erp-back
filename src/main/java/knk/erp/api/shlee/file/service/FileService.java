@@ -391,11 +391,10 @@ public class FileService {
             cell.setCellStyle(dataGStyle);
             cell.setCellValue(vacation.getApprover2().getMemberName());
 
-
         }
-
         for (int i = 0; i < 7; i++) {
             sheet.autoSizeColumn(i);
+            sheet.setColumnWidth(i, (sheet.getColumnWidth(i))+512 );
         }
 
 
