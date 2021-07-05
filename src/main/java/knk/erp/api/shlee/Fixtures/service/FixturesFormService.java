@@ -137,12 +137,12 @@ public class FixturesFormService {
             List<FixturesForm> fixturesList;
             List<FixturesForm> pageSize;
             switch(searchType){
-                case "미처리":
+                case "승인미처리":
                     fixturesList = fixturesFormRepository.findAllByCheckIsFalseAndDeletedIsFalse(pageable);
                     pageSize = fixturesFormRepository.findAllByCheckIsFalseAndDeletedIsFalse();
                     break;
 
-                case "처리완료":
+                case "승인처리완료":
                     fixturesList = fixturesFormRepository.findAllByCheckIsTrueAndDeletedIsFalse(pageable);
                     pageSize = fixturesFormRepository.findAllByCheckIsTrueAndDeletedIsFalse();
                     break;
