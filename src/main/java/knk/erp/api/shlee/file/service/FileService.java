@@ -303,4 +303,144 @@ public class FileService {
         }
     }
 
+    private InputStream makeVacationWorkbookFile(LocalDate startDate, LocalDate endDate) throws IOException {
+
+        List<Attendance> attendanceList = attendanceRepository.findAll(AS.delFalse().and(AS.attendanceDateBetween(startDate, endDate)));
+
+        List<Vacation> vacationList = vacationRepository.findAll(VS.delFalse().and(VS.approve1Is(true)).and(VS.approve2Is(true)));
+
+        List<Member> memberList = memberRepository.findAllByDeletedIsFalse();
+        memberList.removeIf(i -> i.getMemberName().equals("관리자"));
+
+        LinkedHashMap<String, List<LocalDate>> sheetMap = makeAttendanceWorkbookSheetTitle(startDate, endDate);
+        HashMap<String, String> colAttendanceDataSet = new HashMap<>();
+        HashMap<String, String> colVacationDataSet = new HashMap<>();
+
+        for (Attendance attendance : attendanceList){
+            String key = attendance.getAuthor().getMemberId() + attendance.getAttendanceDate().toString();
+            String val = attendance.getOnWork() + "~" + attendance.getOffWork();
+
+            colAttendanceDataSet.put(key, val);
+        }
+
+        for(Vacation vacation : vacationList){
+            if(vacation.getType().equals("연차")){
+                int days = (int)ChronoUnit.DAYS.between(vacation.getStartDate(), vacation.getEndDate());
+                LocalDate targetDate = vacation.getStartDate().toLocalDate();
+                for(int i=0; i<=days; i++){
+                    String key = vacation.getAuthor().getMemberId() + targetDate.toString();
+                    String val = vacation.getType();
+                    colVacationDataSet.put(key,val);
+
+                    targetDate = targetDate.plusDays(1);
+                }
+            }
+            else{
+                String val;
+                if(vacation.getType().equals("시간제")){
+                    val = vacation.getStartDate().toLocalTime() + "~" + vacation.getEndDate().toLocalTime();
+                }
+                else {
+                    val = vacation.getType();
+                }
+                String key = vacation.getAuthor().getMemberId() + vacation.getStartDate().toLocalDate();
+                colVacationDataSet.put(key,val);
+            }
+        }
+
+        XSSFWorkbook wb = new XSSFWorkbook();
+
+        XSSFCellStyle titleStyle = getStyle(wb, "title");
+        XSSFCellStyle dnStyle = getStyle(wb, "DepMem");
+        XSSFCellStyle dataGStyle = getStyle(wb, "dataG");
+        XSSFCellStyle dataRStyle = getStyle(wb, "dataR");
+        XSSFCellStyle dataBStyle = getStyle(wb, "dataB");
+
+        for(String key : sheetMap.keySet()){
+            XSSFSheet sheet = wb.createSheet(key+" 출퇴근 정보");
+            Row row;
+            Cell cell;
+            int rowNum = 0;
+
+            // ↓↓↓↓ Header 세팅↓↓↓↓
+            row = sheet.createRow(rowNum++);
+            cell = row.createCell(0);
+            cell.setCellStyle(titleStyle);
+            cell.setCellValue("부서");
+            cell = row.createCell(1);
+            cell.setCellStyle(titleStyle);
+            cell.setCellValue("이름(아이디)");
+            int idx = 2;
+
+            // 날짜 세팅
+            for(LocalDate date : sheetMap.get(key)){
+                cell = row.createCell(idx);
+                cell.setCellStyle(titleStyle);
+                cell.setCellValue(date.toString());
+                idx++;
+            }
+            // ↑↑↑↑ Header 세팅↑↑↑↑
+
+            for(Member member : memberList){
+                row = sheet.createRow(rowNum++);
+                cell = row.createCell(0);
+                cell.setCellStyle(dnStyle);
+                cell.setCellValue(member.getDepartment().getDepartmentName());
+                cell = row.createCell(1);
+                cell.setCellStyle(dnStyle);
+                cell.setCellValue(member.getMemberName() + "(" + member.getMemberId() + ")");
+                int index = 2;
+                for(LocalDate date : sheetMap.get(key)){
+                    cell = row.createCell(index);
+                    String att = colAttendanceDataSet.get(member.getMemberId()+date.toString());
+                    String vac = colVacationDataSet.get(member.getMemberId()+ date);
+                    String col = "";
+                    if(att != null && vac == null) {
+                        cell.setCellStyle(dataBStyle);
+                        col += "○("+att+")"; //출근기록 있으면서 휴가기록 없는것
+                    }
+                    if(att != null && vac != null) {
+                        cell.setCellStyle(dataGStyle);
+                        col += "○("+att+")(휴가: "+vac+")"; //출근, 휴가기록 둘다 있는것
+                    }
+                    if(att == null && vac != null) {
+                        cell.setCellStyle(dataGStyle);
+                        col += "□("+vac+")";   //출근기록 없으면서 휴가기록 있는것
+                    }
+                    if(att == null && vac == null) {
+                        cell.setCellStyle(dataRStyle);
+                        col += "Ⅹ";
+                    }
+                    col = col.replace("null", "기록 없음");
+                    col = col.replace("T", " ");
+                    cell.setCellValue(col);
+                    index++;
+                }
+            }
+            for(int i = 0 ; i<idx; i++){
+                sheet.autoSizeColumn(i);
+            }
+        }
+
+
+
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        wb.write(bos);
+        byte[] bArray = bos.toByteArray();
+        return new ByteArrayInputStream(bArray);
+    }
+
+    public ResponseCM downloadExcelVacation(LocalDate startDate, LocalDate endDate){
+        try {
+            InputStream is = makeVacationWorkbookFile(startDate, endDate);
+            String location = "excel";
+
+            String fileName = saveEntity(location,startDate + "~" + endDate + "직원 휴가 장부.xlsx").getFileName();
+            resolveFile(is, location, fileName);
+            return new ResponseCM("ES001", fileName);
+        }catch (Exception e){
+            return new ResponseCM("ES002", e.getMessage());
+        }
+    }
+
 }
