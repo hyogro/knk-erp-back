@@ -1,6 +1,5 @@
 package knk.erp.api.shlee.Fixtures.service;
 
-import knk.erp.api.shlee.Fixtures.Util.FixturesUtil;
 import knk.erp.api.shlee.Fixtures.dto.*;
 import knk.erp.api.shlee.Fixtures.entity.Fixtures;
 import knk.erp.api.shlee.Fixtures.entity.FixturesForm;
@@ -9,6 +8,7 @@ import knk.erp.api.shlee.Fixtures.repository.FixturesRepository;
 import knk.erp.api.shlee.account.entity.Member;
 import knk.erp.api.shlee.account.entity.MemberRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.*;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -125,6 +125,44 @@ public class FixturesFormService {
             return new Delete_FixturesFormDTO_RES("DFF001");
         }catch(Exception e){
             return new Delete_FixturesFormDTO_RES("DFF002", e.getMessage());
+        }
+    }
+
+    // 비품 요청서 목록 보기
+    @Transactional
+    public ReadAll_FixturesFormDTO_RES readAllFixturesForm(Pageable pageable, String searchType){
+        try{
+            pageable = PageRequest.of(pageable.getPageNumber() <= 0 ? 0 : pageable.getPageNumber() - 1, 15,
+                    Sort.by("createDate").descending());
+            List<FixturesForm> fixturesList;
+            List<FixturesForm> pageSize;
+            switch(searchType){
+                case "미처리":
+                    fixturesList = fixturesFormRepository.findAllByCheckIsFalseAndDeletedIsFalse(pageable);
+                    pageSize = fixturesFormRepository.findAllByCheckIsFalseAndDeletedIsFalse();
+                    break;
+
+                case "처리완료":
+                    fixturesList = fixturesFormRepository.findAllByCheckIsTrueAndDeletedIsFalse(pageable);
+                    pageSize = fixturesFormRepository.findAllByCheckIsTrueAndDeletedIsFalse();
+                    break;
+
+                default:
+                    fixturesList = fixturesFormRepository.findAllByDeletedIsFalse(pageable);
+                    pageSize = fixturesFormRepository.findAllByDeletedIsFalse();
+                    break;
+            }
+            Page<FixturesForm> fixturesPage = new PageImpl<>(fixturesList, pageable, fixturesList.size());
+            Page<ReadAll_FixturesFormDTO> page = fixturesPage.map(fixturesForm -> new ReadAll_FixturesFormDTO(fixturesForm.getId(),
+                    fixturesForm.getCreateDate().toLocalDate(), fixturesForm.isCheck()));
+
+            int size = pageSize.size() / 15;
+            if(pageSize.size()%15 != 0) size++;
+
+            return new ReadAll_FixturesFormDTO_RES("RAFF001", page, size);
+
+        }catch(Exception e){
+            return new ReadAll_FixturesFormDTO_RES("RAFF002", e.getMessage());
         }
     }
 }

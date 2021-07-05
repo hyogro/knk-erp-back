@@ -2,10 +2,11 @@ package knk.erp.api.shlee.Fixtures.controller;
 
 import knk.erp.api.shlee.Fixtures.dto.*;
 import knk.erp.api.shlee.Fixtures.service.FixturesFormService;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+
 
 @RestController
 @RequestMapping("/fixtures")
@@ -49,6 +50,11 @@ public class FixturesFormController {
 
 
     //GET 남이쓴거 목록 가져오기(페이징, 권한)
+    @GetMapping("/listAll")
+    public ResponseEntity<ReadAll_FixturesFormDTO_RES> readAllFixturesForm(Pageable pageable,
+                                                                           @RequestParam String searchType){
+        return ResponseEntity.ok(fixturesFormService.readAllFixturesForm(pageable, searchType));
+    }
 
     //PUT 품목에 대한 승인, 거절 여부 변경
 
