@@ -31,6 +31,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.Period;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
@@ -301,8 +302,10 @@ public class FileService {
     }
 
     private InputStream makeVacationWorkbookFile(LocalDate startDate, LocalDate endDate) throws IOException {
+        LocalDateTime sd = LocalDateTime.of(startDate, LocalTime.MIN);
+        LocalDateTime ed = LocalDateTime.of(endDate, LocalTime.MAX);
 
-        List<Vacation> vacationList = vacationRepository.findAll(VS.delFalse().and(VS.approve1Is(true)).and(VS.approve2Is(true)).and(VS.vacationDateBetween(startDate, endDate)));
+        List<Vacation> vacationList = vacationRepository.findAll(VS.delFalse().and(VS.approve1Is(true)).and(VS.approve2Is(true)).and(VS.vacationDateBetween(sd, ed)));
 
 
         XSSFWorkbook wb = new XSSFWorkbook();
