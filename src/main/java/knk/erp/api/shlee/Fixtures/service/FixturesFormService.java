@@ -1,6 +1,5 @@
 package knk.erp.api.shlee.Fixtures.service;
 
-import knk.erp.api.shlee.Fixtures.Util.FixturesUtil;
 import knk.erp.api.shlee.Fixtures.dto.*;
 import knk.erp.api.shlee.Fixtures.entity.Fixtures;
 import knk.erp.api.shlee.Fixtures.entity.FixturesForm;
@@ -9,6 +8,7 @@ import knk.erp.api.shlee.Fixtures.repository.FixturesRepository;
 import knk.erp.api.shlee.account.entity.Member;
 import knk.erp.api.shlee.account.entity.MemberRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.*;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -125,6 +125,82 @@ public class FixturesFormService {
             return new Delete_FixturesFormDTO_RES("DFF001");
         }catch(Exception e){
             return new Delete_FixturesFormDTO_RES("DFF002", e.getMessage());
+        }
+    }
+
+    // 비품 요청서 목록 보기
+    @Transactional
+    public ReadAll_FixturesFormDTO_RES readAllFixturesForm(Pageable pageable, String searchType){
+        try{
+            pageable = PageRequest.of(pageable.getPageNumber() <= 0 ? 0 : pageable.getPageNumber() - 1, 15,
+                    Sort.by("createDate").descending());
+            List<FixturesForm> fixturesList;
+            List<FixturesForm> pageSize;
+            switch(searchType){
+                case "승인미처리":
+                    fixturesList = fixturesFormRepository.findAllByCheckIsFalseAndDeletedIsFalse(pageable);
+                    pageSize = fixturesFormRepository.findAllByCheckIsFalseAndDeletedIsFalse();
+                    break;
+
+                case "승인처리완료":
+                    fixturesList = fixturesFormRepository.findAllByCheckIsTrueAndDeletedIsFalse(pageable);
+                    pageSize = fixturesFormRepository.findAllByCheckIsTrueAndDeletedIsFalse();
+                    break;
+
+                default:
+                    fixturesList = fixturesFormRepository.findAllByDeletedIsFalse(pageable);
+                    pageSize = fixturesFormRepository.findAllByDeletedIsFalse();
+                    break;
+            }
+            Page<FixturesForm> fixturesPage = new PageImpl<>(fixturesList, pageable, fixturesList.size());
+            Page<ReadAll_FixturesFormDTO> page = fixturesPage.map(fixturesForm -> new ReadAll_FixturesFormDTO(fixturesForm.getId(),
+                    fixturesForm.getCreateDate().toLocalDate(), fixturesForm.isCheck()));
+
+            int size = pageSize.size() / 15;
+            if(pageSize.size()%15 != 0) size++;
+
+            return new ReadAll_FixturesFormDTO_RES("RAFF001", page, size);
+
+        }catch(Exception e){
+            return new ReadAll_FixturesFormDTO_RES("RAFF002", e.getMessage());
+        }
+    }
+
+    // 비품 승인 및 거절
+    public Confrim_FixturesDTO_RES confirmFixtures(Long fixturesFormId, Confirm_FixturesDTO confirmFixturesDTO){
+        try{
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            Member approver = memberRepository.findByMemberIdAndDeletedIsFalse(authentication.getName());
+            FixturesForm fixturesForm = fixturesFormRepository.findByIdAndDeletedIsFalse(fixturesFormId);
+            for(Long i : confirmFixturesDTO.getFixturesId()){
+                Fixtures target = fixturesRepository.findByIdAndDeletedIsFalse(i);
+                target.setConfirm(confirmFixturesDTO.isConfirm());
+                fixturesRepository.save(target);
+            }
+            fixturesForm.setCheck(true);
+            fixturesForm.setApprover(approver);
+            fixturesFormRepository.save(fixturesForm);
+
+            return new Confrim_FixturesDTO_RES("CFT001");
+        }catch(Exception e){
+            return new Confrim_FixturesDTO_RES("CFT002", e.getMessage());
+        }
+    }
+
+    // 비품 구매 여부 변경
+    public Purchase_FixturesDTO_RES purchaseFixtures(Long fixturesFormId, Purchase_FixturesDTO purchaseFixturesDTO){
+        try{
+            FixturesForm fixturesForm = fixturesFormRepository.findByIdAndDeletedIsFalse(fixturesFormId);
+            for(Long i : purchaseFixturesDTO.getFixturesId()){
+                Fixtures target = fixturesRepository.findByIdAndDeletedIsFalse(i);
+                target.setPurchase(purchaseFixturesDTO.isPurchase());
+                fixturesRepository.save(target);
+            }
+            fixturesFormRepository.save(fixturesForm);
+
+            return new Purchase_FixturesDTO_RES("PFT001");
+        }catch(Exception e){
+            return new Purchase_FixturesDTO_RES("PFT002", e.getMessage());
         }
     }
 }
