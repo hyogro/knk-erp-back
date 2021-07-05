@@ -165,4 +165,22 @@ public class FixturesFormService {
             return new ReadAll_FixturesFormDTO_RES("RAFF002", e.getMessage());
         }
     }
+
+    // 비품 승인 및 거절
+    public Confrim_FixturesDTO_RES confirmFixtures(Long fixturesFormId, Confirm_FixturesDTO confirmFixturesDTO){
+        try{
+            FixturesForm fixturesForm = fixturesFormRepository.findByIdAndDeletedIsFalse(fixturesFormId);
+            for(Long i : confirmFixturesDTO.getFixturesId()){
+                Fixtures target = fixturesRepository.findByIdAndDeletedIsFalse(i);
+                target.setConfirm(confirmFixturesDTO.isConfirm());
+                fixturesRepository.save(target);
+            }
+            fixturesForm.setCheck(true);
+            fixturesFormRepository.save(fixturesForm);
+
+            return new Confrim_FixturesDTO_RES("CFT001");
+        }catch(Exception e){
+            return new Confrim_FixturesDTO_RES("CFT002", e.getMessage());
+        }
+    }
 }

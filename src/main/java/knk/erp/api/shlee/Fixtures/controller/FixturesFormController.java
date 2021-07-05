@@ -49,7 +49,7 @@ public class FixturesFormController {
     }
 
 
-    //GET 남이쓴거 목록 가져오기(페이징, 권한)
+    // 비품 요청서 전체/미처리/처리완료 목록 보기(ROLE_LVL3 이상, ROLE_MANAGE)
     @GetMapping("/listAll")
     public ResponseEntity<ReadAll_FixturesFormDTO_RES> readAllFixturesForm(Pageable pageable,
                                                                            @RequestParam String searchType){
@@ -57,6 +57,11 @@ public class FixturesFormController {
     }
 
     //PUT 품목에 대한 승인, 거절 여부 변경
+    @PutMapping("/confirm/{fixturesFormId}")
+    public ResponseEntity<Confrim_FixturesDTO_RES> confirmFixtures(@PathVariable Long fixturesFormId,
+                                                                   @RequestBody Confirm_FixturesDTO confirmFixturesDTO){
+        return ResponseEntity.ok(fixturesFormService.confirmFixtures(fixturesFormId, confirmFixturesDTO));
+    }
 
     //PUT 품목에 대한 구매 여부 변경
 

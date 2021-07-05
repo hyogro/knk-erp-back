@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface FixturesRepository extends JpaRepository<Fixtures, Long> {
-
+    Fixtures findByIdAndDeletedIsFalse(Long id);
 }

@@ -33,7 +33,7 @@ public class FixturesForm extends Time {
     @JoinColumn(name = "fixtures_form_id")
     private List<Fixtures> fixturesList;
 
-    //확인여부()
+    // 처리여부
     @Column
     private boolean check;
 
