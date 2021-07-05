@@ -56,14 +56,14 @@ public class FixturesFormController {
         return ResponseEntity.ok(fixturesFormService.readAllFixturesForm(pageable, searchType));
     }
 
-    // 비품 승인 및 거절
+    // 비품 승인 및 거절(ROLE_LVL3 이상)
     @PutMapping("/confirm/{fixturesFormId}")
     public ResponseEntity<Confrim_FixturesDTO_RES> confirmFixtures(@PathVariable Long fixturesFormId,
                                                                    @RequestBody Confirm_FixturesDTO confirmFixturesDTO){
         return ResponseEntity.ok(fixturesFormService.confirmFixtures(fixturesFormId, confirmFixturesDTO));
     }
 
-    //PUT 품목에 대한 구매 여부 변경
+    // PUT 품목에 대한 구매 여부 변경(ROLE_LVL3 이상, ROLE_MANAGE)
     @PutMapping("/purchase/{fixturesFormId}")
     public ResponseEntity<Purchase_FixturesDTO_RES> purchaseFixtures(@PathVariable Long fixturesFormId,
                                                                      @RequestBody Purchase_FixturesDTO purchaseFixturesDTO){
