@@ -52,7 +52,9 @@ public class AccountUtil {
 
         member.setBirthDateSolar(updateAccountDTOReq.isBirthDateSolar());
 
-
+        if(updateAccountDTOReq.getPosition() != null){
+            member.setPosition(updateAccountDTOReq.getPosition());
+        }
     }
 
     public void updateSelfMember(Member my, Update_AccountDTO_REQ updateAccountDTOReq, BCryptPasswordEncoder passwordEncoder){

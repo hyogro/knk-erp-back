@@ -75,4 +75,10 @@ public class DepartmentController {
     public ResponseEntity<RES_DepNameAndMemCount> readDepartmentNameAndMemberCount(){
         return ResponseEntity.ok(departmentService.readDepartmentNameAndMemberCount());
     }
+
+    // 조직도 보기
+    @GetMapping("/readOrganizationChart")
+    public ResponseEntity<Read_OrganizationChartDTO_RES> readOrganizationChart(){
+        return ResponseEntity.ok(departmentService.readOrganizationChart());
+    }
 }

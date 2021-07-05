@@ -13,4 +13,5 @@ public class ReadAll_FixturesFormDTO {
     private Long id;
     private LocalDate createDate;
     private boolean check;
+    private String authorName;
 }

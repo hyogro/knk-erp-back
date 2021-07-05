@@ -19,6 +19,10 @@ public class Member extends Time {
     @GeneratedValue
     private Long id;
 
+    //2021-07-05 김효준 추가
+    @Column(length = 5)
+    private String position;
+
     //2021-06-25 이상훈 추가 unique = true
     @Column(nullable = false, length = 20, unique = true)
     private String memberId;
@@ -63,7 +67,8 @@ public class Member extends Time {
 
     @Builder
     public Member(String memberId, String phone, String memberName, String password, int vacation, Authority authority,
-                  LocalDate joiningDate, String address, String email, String images, LocalDate birthDate, boolean birthDateSolar){
+                  LocalDate joiningDate, String address, String email, String images, LocalDate birthDate, boolean birthDateSolar,
+                  String position){
         this.memberId = memberId;
         this.phone = phone;
         this.memberName = memberName;
@@ -76,6 +81,6 @@ public class Member extends Time {
         this.images = images;
         this.birthDate = birthDate;
         this.birthDateSolar = birthDateSolar;
-
+        this.position = position;
     }
 }

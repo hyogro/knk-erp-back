@@ -255,4 +255,26 @@ public class DepartmentService {
             return new RES_DepNameAndMemCount("RDAM002", e.getMessage());
         }
     }
+
+    // 조직도 불러오기
+    @Transactional
+    public Read_OrganizationChartDTO_RES readOrganizationChart(){
+        try{
+            List<Department> all = departmentRepository.findAllByDeletedFalse();
+            List<OrganizationChartDTO> chartList = new ArrayList<>();
+            for(Department d : all){
+                if(!d.getDepartmentName().equals("부서미지정")){
+                    List<OrganizationChartMemberInfoDTO> thisMemberList = new ArrayList<>();
+                    List<Member> dMember = d.getMemberList();
+                    for(Member m : dMember){
+                        thisMemberList.add(new OrganizationChartMemberInfoDTO(m.getMemberName(), m.getImages(), m.getPosition(), m.getPhone()));
+                    }
+                    chartList.add(new OrganizationChartDTO(d.getDepartmentName(), thisMemberList));
+                }
+            }
+            return new Read_OrganizationChartDTO_RES("ROC001", chartList);
+        }catch(Exception e){
+            return new Read_OrganizationChartDTO_RES("ROC002", e.getMessage());
+        }
+    }
 }

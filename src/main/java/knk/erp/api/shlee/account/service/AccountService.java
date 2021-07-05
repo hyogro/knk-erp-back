@@ -90,7 +90,7 @@ public class AccountService {
 
             for(Member m : memberList){
                 info.add(new Read_AccountDTO(m.getMemberId(), m.getMemberName(), m.getDepartment().getDepartmentName(), m.getPhone(),
-                        m.getJoiningDate()));
+                        m.getJoiningDate(), m.getPosition()));
             }
 
             return new Read_AccountDTO_RES("RA001", info);
@@ -106,7 +106,8 @@ public class AccountService {
             Member target = memberRepository.findByMemberIdAndDeletedIsFalse(memberId);
             return new ReadDetail_AccountDTO_RES("RDA001", new ReadDetail_AccountDTO(target.getMemberId(), target.getMemberName(),null,
                     target.getAuthority().toString(), target.getPhone(), target.getVacation(), target.getDepartment().getId(),
-                    target.getDepartment().getDepartmentName(), target.getAddress(), target.getEmail(), target.getJoiningDate(), target.getImages(), target.getBirthDate(), target.isBirthDateSolar()));
+                    target.getDepartment().getDepartmentName(), target.getAddress(), target.getEmail(), target.getJoiningDate(), target.getImages(),
+                    target.getBirthDate(), target.isBirthDateSolar(), target.getPosition()));
         }catch(Exception e){
             return new ReadDetail_AccountDTO_RES("RDA002", e.getMessage());
         }
