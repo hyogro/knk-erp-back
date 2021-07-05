@@ -186,4 +186,21 @@ public class FixturesFormService {
             return new Confrim_FixturesDTO_RES("CFT002", e.getMessage());
         }
     }
+
+    // 비품 구매 여부 변경
+    public Purchase_FixturesDTO_RES purchaseFixtures(Long fixturesFormId, Purchase_FixturesDTO purchaseFixturesDTO){
+        try{
+            FixturesForm fixturesForm = fixturesFormRepository.findByIdAndDeletedIsFalse(fixturesFormId);
+            for(Long i : purchaseFixturesDTO.getFixturesId()){
+                Fixtures target = fixturesRepository.findByIdAndDeletedIsFalse(i);
+                target.setPurchase(purchaseFixturesDTO.isPurchase());
+                fixturesRepository.save(target);
+            }
+            fixturesFormRepository.save(fixturesForm);
+
+            return new Purchase_FixturesDTO_RES("PFT001");
+        }catch(Exception e){
+            return new Purchase_FixturesDTO_RES("PFT002", e.getMessage());
+        }
+    }
 }

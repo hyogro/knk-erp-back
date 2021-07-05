@@ -56,7 +56,7 @@ public class FixturesFormController {
         return ResponseEntity.ok(fixturesFormService.readAllFixturesForm(pageable, searchType));
     }
 
-    //PUT 품목에 대한 승인, 거절 여부 변경
+    // 비품 승인 및 거절
     @PutMapping("/confirm/{fixturesFormId}")
     public ResponseEntity<Confrim_FixturesDTO_RES> confirmFixtures(@PathVariable Long fixturesFormId,
                                                                    @RequestBody Confirm_FixturesDTO confirmFixturesDTO){
@@ -64,5 +64,10 @@ public class FixturesFormController {
     }
 
     //PUT 품목에 대한 구매 여부 변경
+    @PutMapping("/purchase/{fixturesFormId}")
+    public ResponseEntity<Purchase_FixturesDTO_RES> purchaseFixtures(@PathVariable Long fixturesFormId,
+                                                                     @RequestBody Purchase_FixturesDTO purchaseFixturesDTO){
+        return ResponseEntity.ok(fixturesFormService.purchaseFixtures(fixturesFormId, purchaseFixturesDTO));
+    }
 
 }
