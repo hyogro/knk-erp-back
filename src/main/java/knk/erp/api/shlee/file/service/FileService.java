@@ -373,11 +373,11 @@ public class FileService {
 
             cell = row.createCell(3);
             cell.setCellStyle(dataGStyle);
-            cell.setCellValue(vacation.getStartDate());
+            cell.setCellValue(dateToKorean(vacation.getStartDate()));
 
             cell = row.createCell(4);
             cell.setCellStyle(dataGStyle);
-            cell.setCellValue(vacation.getEndDate());
+            cell.setCellValue(dateToKorean(vacation.getEndDate()));
 
             cell = row.createCell(5);
             cell.setCellStyle(dataGStyle);
@@ -403,6 +403,10 @@ public class FileService {
         wb.write(bos);
         byte[] bArray = bos.toByteArray();
         return new ByteArrayInputStream(bArray);
+    }
+
+    private String dateToKorean(LocalDateTime td){
+        return td.getYear()+"년 "+ td.getMonthValue() + "월 " + td.getDayOfMonth() + "일 " + td.getHour() + "시 " + td.getMinute() + "분 ";
     }
 
     public ResponseCM downloadExcelVacation(LocalDate startDate, LocalDate endDate) {
