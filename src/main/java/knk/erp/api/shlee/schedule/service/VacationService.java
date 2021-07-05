@@ -14,8 +14,7 @@ import knk.erp.api.shlee.schedule.responseEntity.vacation.*;
 import knk.erp.api.shlee.schedule.specification.VS;
 import knk.erp.api.shlee.schedule.util.VacationUtil;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -144,6 +143,28 @@ public class VacationService {
     }
 
     //승인, 거부할 휴가목록 조회
+    public ResponseCMDL readVacationListForManage() {
+        try {
+            List<Vacation> vacationList = new ArrayList<>();
+
+            if (commonUtil.checkLevel() == 2) {
+                Member member = getMember();
+                assert member != null;
+                Long did = member.getDepartment().getId();
+                vacationList = vacationRepository.findAll(VS.delFalse().and(VS.rejectIs(false)).and(VS.did(did)).and(VS.approve1Is(true))
+                .or(VS.delFalse().and(VS.rejectIs(true)).and(VS.did(did)).and(VS.approve1Is(false))), Sort.by("createDate").descending());
+
+            } else if (3 <= commonUtil.checkLevel()) {
+                vacationList = vacationRepository.findAll(VS.delFalse().and(VS.rejectIs(false)).and(VS.approve2Is(true))
+                .or(VS.delFalse().and(VS.rejectIs(true)).and(VS.approve2Is(false))), Sort.by("createDate").descending());
+            }
+            return new ResponseCMDL("RVL001", util.VacationListToDTO(vacationList));
+        } catch (Exception e) {
+            return new ResponseCMDL("RVL002", e.getMessage());
+        }
+    }
+
+    //승인, 거부할 휴가목록 조회
     public ResponseCMDL readVacationListForApprove() {
         try {
             List<Vacation> vacationList = new ArrayList<>();
@@ -152,10 +173,12 @@ public class VacationService {
                 Member member = getMember();
                 assert member != null;
                 Long did = member.getDepartment().getId();
-                vacationList = vacationRepository.findAll(VS.delFalse().and(VS.rejectIs(false)).and(VS.did(did)).and(VS.approve1Is(false)));
+                vacationList = vacationRepository.findAll(VS.delFalse().and(VS.rejectIs(false)).and(VS.did(did)).and(VS.approve1Is(false))
+                        , Sort.by("createDate").descending());
 
             } else if (3 <= commonUtil.checkLevel()) {
-                vacationList = vacationRepository.findAll(VS.delFalse().and(VS.rejectIs(false)).and(VS.approve2Is(false)));
+                vacationList = vacationRepository.findAll(VS.delFalse().and(VS.rejectIs(false)).and(VS.approve2Is(false))
+                        , Sort.by("createDate").descending());
             }
             return new ResponseCMDL("RVL001", util.VacationListToDTO(vacationList));
         } catch (Exception e) {
@@ -221,7 +244,8 @@ public class VacationService {
             vacation.setApproval1(true);
             vacation.setApprover1(getMember());
             return true;
-        } else if (3 <= commonUtil.checkLevel()) {
+        }
+        else if (3 <= commonUtil.checkLevel()) {
             if (!vacation.isApproval1()) {
                 vacation.setApproval1(true);
                 vacation.setApprover1(getMember());

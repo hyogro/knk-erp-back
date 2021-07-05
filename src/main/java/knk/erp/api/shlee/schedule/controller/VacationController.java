@@ -67,6 +67,14 @@ public class VacationController {
     }
 
     /**
+     * 승인했거나, 거절했었던 휴가목록 읽기
+     **/
+    @GetMapping("/approve/history")
+    public ResponseEntity<ResponseCMDL> readVacationListForManage() {
+        return ResponseEntity.ok(vacationService.readVacationListForManage());
+    }
+
+    /**
      * 승인해야 할 휴가목록 읽기
      **/
     @GetMapping("/approve")
