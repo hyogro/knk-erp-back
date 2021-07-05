@@ -50,8 +50,8 @@ public class AS {//AttendanceSpecification
         return (root, query, builder) -> {
 
             List<Predicate> predicates = new ArrayList<>();
-            predicates.add(builder.greaterThan(root.get("attendanceDate"), sd));
-            predicates.add(builder.lessThan(root.get("attendanceDate"), ed));
+            predicates.add(builder.greaterThanOrEqualTo(root.get("attendanceDate"), sd));
+            predicates.add(builder.lessThanOrEqualTo(root.get("attendanceDate"), ed));
 
             return builder.and(predicates.toArray(new Predicate[0]));
         };

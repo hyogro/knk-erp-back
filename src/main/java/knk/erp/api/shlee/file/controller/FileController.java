@@ -33,8 +33,15 @@ public class FileController {
 
     @GetMapping("/download/excel/attendance")
     public ResponseEntity<ResponseCM> downloadExcelAttendance(@RequestParam("startDate") String startDate,
-                                        @RequestParam("endDate") String endDate){
+                                                              @RequestParam("endDate") String endDate){
         return ResponseEntity.ok(fileService.downloadExcelAttendance(LocalDate.parse(startDate), LocalDate.parse(endDate)));
+
+    }
+
+    @GetMapping("/download/excel/vacation")
+    public ResponseEntity<ResponseCM> downloadExcelVacation(@RequestParam("startDate") String startDate,
+                                                              @RequestParam("endDate") String endDate){
+        return ResponseEntity.ok(fileService.downloadExcelVacation(LocalDate.parse(startDate), LocalDate.parse(endDate)));
 
     }
 }

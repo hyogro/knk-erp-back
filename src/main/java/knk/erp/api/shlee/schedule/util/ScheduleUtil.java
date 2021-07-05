@@ -1,5 +1,6 @@
 package knk.erp.api.shlee.schedule.util;
 
+import knk.erp.api.shlee.account.entity.Member;
 import knk.erp.api.shlee.schedule.dto.Schedule.ScheduleDTO;
 import knk.erp.api.shlee.schedule.dto.Schedule.ScheduleDetailData;
 import knk.erp.api.shlee.schedule.dto.Schedule.ScheduleListData;
@@ -11,6 +12,15 @@ import java.util.List;
 
 @Component
 public class ScheduleUtil {
+
+    public List<Object> AnniversaryListToDTO(int year, List<Member> memberList){
+        List<Object> scheduleDTOList = new ArrayList<>();
+        for(Member member : memberList){
+            scheduleDTOList.add(new ScheduleListData(year, member));
+        }
+        return scheduleDTOList;
+    }
+
     public List<Object> ScheduleListToDTO(List<Schedule> scheduleList){
         List<Object> scheduleDTOList = new ArrayList<>();
         for(Schedule schedule : scheduleList){
