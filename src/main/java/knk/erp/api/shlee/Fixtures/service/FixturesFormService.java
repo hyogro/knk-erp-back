@@ -169,6 +169,8 @@ public class FixturesFormService {
     // 비품 승인 및 거절
     public Confrim_FixturesDTO_RES confirmFixtures(Long fixturesFormId, Confirm_FixturesDTO confirmFixturesDTO){
         try{
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            Member approver = memberRepository.findByMemberIdAndDeletedIsFalse(authentication.getName());
             FixturesForm fixturesForm = fixturesFormRepository.findByIdAndDeletedIsFalse(fixturesFormId);
             for(Long i : confirmFixturesDTO.getFixturesId()){
                 Fixtures target = fixturesRepository.findByIdAndDeletedIsFalse(i);
@@ -176,6 +178,7 @@ public class FixturesFormService {
                 fixturesRepository.save(target);
             }
             fixturesForm.setCheck(true);
+            fixturesForm.setApprover(approver);
             fixturesFormRepository.save(fixturesForm);
 
             return new Confrim_FixturesDTO_RES("CFT001");
