@@ -42,5 +42,9 @@ public class RAS {//RectifyAttendanceSpecification
         return (root, query, builder) -> builder.equal(root.get("approval1"), t);
     }
 
+    public static Specification<RectifyAttendance> attendanceDate(LocalDate td){//approval1 is
+        return (root, query, builder) -> builder.equal(root.get("attendanceDate"), td);
+    }
+
 
 }

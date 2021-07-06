@@ -77,6 +77,8 @@ public class FixturesFormService {
     @Transactional
     public Update_FixturesFormDTO_RES updateFixturesForm(Long fixturesFormId, Update_FixturesFormDTO_REQ updateFixturesFormDTOReq){
         try{
+            System.out.println(updateFixturesFormDTOReq.toString());
+            System.out.println(updateFixturesFormDTOReq.getUpdateFixturesDTOReq().size());
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             Member my = memberRepository.findByMemberIdAndDeletedIsFalse(authentication.getName());
             FixturesForm targetForm = fixturesFormRepository.findByIdAndDeletedIsFalse(fixturesFormId);

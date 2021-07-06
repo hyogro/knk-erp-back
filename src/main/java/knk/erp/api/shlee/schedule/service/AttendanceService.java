@@ -124,13 +124,20 @@ public class AttendanceService {
             RectifyAttendance rectifyAttendance = rectifyAttendanceDTO.toEntity();
             rectifyAttendance.setAuthor(getMember());
 
+            Optional<RectifyAttendance> rectifyAttendanceOptional = rectifyAttendanceRepository.findOne(RAS.mid(getMemberId()).and(
+                    RAS.attendanceDate(rectifyAttendance.getAttendanceDate()).and(RAS.delFalse())
+            ));
+
+            if(rectifyAttendanceOptional.isPresent()){
+                return new ResponseCM("CRA003");//그 당일에 이미 정정요청 존재함
+            }
+
             //레벨에 따른 1,2차 승인여부 변경
             rectifyApproved(rectifyAttendance);
             RectifyAttendance done = rectifyAttendanceRepository.save(rectifyAttendance);
 
             //1,2차 승인시 출,퇴근 정보 등록
             rectifyToAttendance(done.getId());
-
             return new ResponseCM("CRA001");
         } catch (Exception e) {
             //실패 - Exception 발생
@@ -149,8 +156,16 @@ public class AttendanceService {
 
             Attendance attendance = attendanceOptional.get();
 
+            Optional<RectifyAttendance> rectifyAttendanceOptional = rectifyAttendanceRepository.findOne(RAS.mid(getMemberId()).and(
+                    RAS.attendanceDate(attendance.getAttendanceDate()).and(RAS.delFalse())
+            ));
+            if(rectifyAttendanceOptional.isPresent()){
+                return new ResponseCM("URA003");//그 당일에 이미 정정요청 존재함
+            }
+
             RectifyAttendance rectifyAttendance = util.AttendanceToRectify(attendance, rectifyAttendanceDTO);
             rectifyAttendance.setAuthor(getMember());
+
             //레벨에 따른 1,2차 승인여부 변경
             rectifyApproved(rectifyAttendance);
             RectifyAttendance done = rectifyAttendanceRepository.save(rectifyAttendance);

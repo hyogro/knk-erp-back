@@ -56,8 +56,11 @@ public class AS {//AttendanceSpecification
             return builder.and(predicates.toArray(new Predicate[0]));
         };
     }
+
     public static Specification<Attendance> offWorked(){
         return (root, query, builder) -> builder.isNotNull(root.get("offWork"));
     }
+
+
 
 }
