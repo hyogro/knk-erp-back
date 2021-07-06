@@ -15,4 +15,5 @@ public class ReadDetail_FixturesFormDTO {
     private String authorName;
     private String authorId;
     private LocalDate createDate;
+    private boolean check;
 }
