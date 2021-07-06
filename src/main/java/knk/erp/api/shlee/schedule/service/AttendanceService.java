@@ -58,6 +58,14 @@ public class AttendanceService {
             boolean isOnWorked = (int) attendanceRepository.count(AS.delFalse().and(AS.mid(memberId)).and(AS.atteDate(today))) != 0;
             if (isOnWorked) return new ResponseCM("ON003");
 
+            Optional<RectifyAttendance> rectifyAttendanceOptional = rectifyAttendanceRepository.findOne(RAS.mid(getMemberId()).and(
+                    RAS.attendanceDate(today).and(RAS.delFalse())
+            ));
+
+            if(rectifyAttendanceOptional.isPresent()){
+                return new ResponseCM("ON004");//그 당일에 이미 정정요청 존재함
+            }
+
             AttendanceDTO attendanceDTO = new AttendanceDTO(today, onWorkTime);
             Attendance attendance = attendanceDTO.toEntity();
             attendance.setAuthor(getMember());
@@ -131,6 +139,7 @@ public class AttendanceService {
             if(rectifyAttendanceOptional.isPresent()){
                 return new ResponseCM("CRA003");//그 당일에 이미 정정요청 존재함
             }
+
 
             //레벨에 따른 1,2차 승인여부 변경
             rectifyApproved(rectifyAttendance);
