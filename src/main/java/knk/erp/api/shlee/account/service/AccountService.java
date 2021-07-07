@@ -23,7 +23,6 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class AccountService {
-
     private final MemberRepository memberRepository;
     private final DepartmentRepository departmentRepository;
     private final BCryptPasswordEncoder passwordEncoder;
