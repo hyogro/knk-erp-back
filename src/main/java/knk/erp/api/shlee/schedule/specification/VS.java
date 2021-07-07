@@ -55,6 +55,7 @@ public class VS {//VacationSpecification
                 root.get("startDate"),
                 root.get("endDate"));
     }
+
     public static Specification<Vacation> vacationDateBetween(LocalDateTime sd, LocalDateTime ed){
         return (root, query, builder) -> {
 
