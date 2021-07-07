@@ -66,15 +66,15 @@ public class VacationService {
 
             switch (vacation.getType()) {
                 case "연차":
-                    int date = (int)ChronoUnit.DAYS.between(startDate, end) + 1;
-                    usedVacation += (date*8);
+                    int date = (int) ChronoUnit.DAYS.between(startDate, end) + 1;
+                    usedVacation += (date * 8);
                     break;
                 case "오후반차":
                 case "오전반차":
                     usedVacation += 4;
                     break;
                 case "시간제":
-                    usedVacation += (int)ChronoUnit.HOURS.between(startDate, end);
+                    usedVacation += (int) ChronoUnit.HOURS.between(startDate, end);
                     break;
             }
         }
@@ -105,6 +105,7 @@ public class VacationService {
             return new ResponseCMDL("RVL002", e.getMessage());
         }
     }
+
     //모든 휴가목록 조회
     public ResponseCMDL readAllVacationList() {
         try {
@@ -143,20 +144,26 @@ public class VacationService {
     }
 
     //승인, 거부할 휴가목록 조회
-    public ResponseCMDL readVacationListForManage() {
+    public ResponseCMDL readVacationListForManage(LocalDate startDate, LocalDate endDate) {
         try {
             List<Vacation> vacationList = new ArrayList<>();
+            LocalDateTime sd = LocalDateTime.of(startDate, LocalTime.MIN);
+            LocalDateTime ed = LocalDateTime.of(endDate, LocalTime.MAX);
 
             if (commonUtil.checkLevel() == 2) {
                 Member member = getMember();
                 assert member != null;
                 Long did = member.getDepartment().getId();
-                vacationList = vacationRepository.findAll(VS.delFalse().and(VS.rejectIs(false)).and(VS.did(did)).and(VS.approve1Is(true))
-                .or(VS.delFalse().and(VS.rejectIs(true)).and(VS.did(did)).and(VS.approve1Is(false))), Sort.by("createDate").descending());
+                vacationList = vacationRepository.findAll(
+                        VS.delFalse().and(VS.rejectIs(false)).and(VS.did(did)).and(VS.approve1Is(true)).and(VS.vacationDateBetween(sd, ed))
+                        .or(VS.delFalse().and(VS.rejectIs(true)).and(VS.did(did)).and(VS.approve1Is(false)).and(VS.vacationDateBetween(sd, ed)))
+                        , Sort.by("createDate").descending());
 
             } else if (3 <= commonUtil.checkLevel()) {
-                vacationList = vacationRepository.findAll(VS.delFalse().and(VS.rejectIs(false)).and(VS.approve2Is(true))
-                .or(VS.delFalse().and(VS.rejectIs(true)).and(VS.approve2Is(false))), Sort.by("createDate").descending());
+                vacationList = vacationRepository.findAll(
+                        VS.delFalse().and(VS.rejectIs(false)).and(VS.approve2Is(true)).and(VS.vacationDateBetween(sd, ed))
+                        .or(VS.delFalse().and(VS.rejectIs(true)).and(VS.approve2Is(false)).and(VS.vacationDateBetween(sd, ed)))
+                        , Sort.by("createDate").descending());
             }
             return new ResponseCMDL("RVL001", util.VacationListToDTO(vacationList));
         } catch (Exception e) {
@@ -165,19 +172,23 @@ public class VacationService {
     }
 
     //승인, 거부할 휴가목록 조회
-    public ResponseCMDL readVacationListForApprove() {
+    public ResponseCMDL readVacationListForApprove(LocalDate startDate, LocalDate endDate) {
         try {
             List<Vacation> vacationList = new ArrayList<>();
+            LocalDateTime sd = LocalDateTime.of(startDate, LocalTime.MIN);
+            LocalDateTime ed = LocalDateTime.of(endDate, LocalTime.MAX);
 
             if (commonUtil.checkLevel() == 2) {
                 Member member = getMember();
                 assert member != null;
                 Long did = member.getDepartment().getId();
-                vacationList = vacationRepository.findAll(VS.delFalse().and(VS.rejectIs(false)).and(VS.did(did)).and(VS.approve1Is(false))
+                vacationList = vacationRepository.findAll(VS.delFalse().and(VS.rejectIs(false)).and(VS.did(did)).and(VS.approve1Is(false)
+                                .and(VS.vacationDateBetween(sd, ed)))
                         , Sort.by("createDate").descending());
 
             } else if (3 <= commonUtil.checkLevel()) {
-                vacationList = vacationRepository.findAll(VS.delFalse().and(VS.rejectIs(false)).and(VS.approve2Is(false))
+                vacationList = vacationRepository.findAll(VS.delFalse().and(VS.rejectIs(false)).and(VS.approve2Is(false)
+                                .and(VS.vacationDateBetween(sd, ed)))
                         , Sort.by("createDate").descending());
             }
             return new ResponseCMDL("RVL001", util.VacationListToDTO(vacationList));
@@ -218,7 +229,7 @@ public class VacationService {
 
                 Vacation vacation = vacationRepository.getOne(vid);
                 vacation.setReject(true);
-                vacation.setRejectMemo(member.getMemberName() + ") "+reject.getRejectMemo());
+                vacation.setRejectMemo(member.getMemberName() + ") " + reject.getRejectMemo());
 
                 if (vacation.isApproval1() && vacation.isApproval2()) return new ResponseCM("RV004");
 
@@ -244,8 +255,7 @@ public class VacationService {
             vacation.setApproval1(true);
             vacation.setApprover1(getMember());
             return true;
-        }
-        else if (3 <= commonUtil.checkLevel()) {
+        } else if (3 <= commonUtil.checkLevel()) {
             if (!vacation.isApproval1()) {
                 vacation.setApproval1(true);
                 vacation.setApprover1(getMember());

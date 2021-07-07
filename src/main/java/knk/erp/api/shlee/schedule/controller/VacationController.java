@@ -9,6 +9,8 @@ import knk.erp.api.shlee.schedule.service.VacationService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+
 @RestController
 @RequestMapping("/vacation")
 public class VacationController {
@@ -70,16 +72,18 @@ public class VacationController {
      * 승인했거나, 거절했었던 휴가목록 읽기
      **/
     @GetMapping("/approve/history")
-    public ResponseEntity<ResponseCMDL> readVacationListForManage() {
-        return ResponseEntity.ok(vacationService.readVacationListForManage());
+    public ResponseEntity<ResponseCMDL> readVacationListForManage(@RequestParam("startDate") String startDate,
+                                                                  @RequestParam("endDate") String endDate) {
+        return ResponseEntity.ok(vacationService.readVacationListForManage(LocalDate.parse(startDate), LocalDate.parse(endDate)));
     }
 
     /**
      * 승인해야 할 휴가목록 읽기
      **/
     @GetMapping("/approve")
-    public ResponseEntity<ResponseCMDL> readVacationListForApprove() {
-        return ResponseEntity.ok(vacationService.readVacationListForApprove());
+    public ResponseEntity<ResponseCMDL> readVacationListForApprove(@RequestParam("startDate") String startDate,
+                                                                   @RequestParam("endDate") String endDate) {
+        return ResponseEntity.ok(vacationService.readVacationListForApprove(LocalDate.parse(startDate), LocalDate.parse(endDate)));
     }
 
     /**
