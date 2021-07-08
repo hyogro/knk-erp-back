@@ -44,7 +44,9 @@ public class AccountUtil {
             member.setEmail(updateAccountDTOReq.getEmail());
         }
 
-        member.setImages(updateAccountDTOReq.getImages());
+        if(updateAccountDTOReq.getImages() != null){
+            member.setImages(updateAccountDTOReq.getImages());
+        }
 
         if(updateAccountDTOReq.getBirthDate() != null){
             member.setBirthDate(updateAccountDTOReq.getBirthDate());

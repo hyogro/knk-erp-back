@@ -22,7 +22,7 @@ public class SecurityUtil {
             }
             else update_level = 0;
 
-            return my_level > update_level;
+            return my_level >= update_level;
         }
 
         return false;
