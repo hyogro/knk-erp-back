@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @RestController
 @RequestMapping("/vacation")
@@ -49,7 +50,7 @@ public class VacationController {
     @GetMapping("/all")
     public ResponseEntity<ResponseCMDL> readAllVacationList(@RequestParam("startDate") String startDate,
                                                             @RequestParam("endDate") String endDate) {
-        return ResponseEntity.ok(vacationService.readAllVacationList(LocalDate.parse(startDate), LocalDate.parse(endDate)));
+        return ResponseEntity.ok(vacationService.readAllVacationList(LocalDateTime.parse(startDate), LocalDateTime.parse(endDate)));
     }
 
 
