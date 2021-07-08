@@ -57,7 +57,7 @@ public class VS {//VacationSpecification
     }
 
     public static Specification<Vacation> vacationDateBetween(LocalDateTime sd, LocalDateTime ed){
-        return (root, query, builder) -> {
+        return (root, query, builder) ->   {
 
             List<Predicate> predicates = new ArrayList<>();
             predicates.add(builder.greaterThanOrEqualTo(root.get("endDate"), sd));
