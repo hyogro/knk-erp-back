@@ -160,6 +160,15 @@ public class FileService {
                 style.setBorderLeft(BorderStyle.THIN);
                 style.setBorderRight(BorderStyle.THIN);
                 break;
+            case "dataY":
+                style.setAlignment(HorizontalAlignment.LEFT);
+                style.setFillForegroundColor(IndexedColors.LIGHT_YELLOW.getIndex());
+                style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+                style.setBorderTop(BorderStyle.THIN);
+                style.setBorderBottom(BorderStyle.THIN);
+                style.setBorderLeft(BorderStyle.THIN);
+                style.setBorderRight(BorderStyle.THIN);
+                break;
         }
         return style;
     }
@@ -214,6 +223,7 @@ public class FileService {
         XSSFCellStyle dataGStyle = getStyle(wb, "dataG");
         XSSFCellStyle dataRStyle = getStyle(wb, "dataR");
         XSSFCellStyle dataBStyle = getStyle(wb, "dataB");
+        XSSFCellStyle dataYStyle = getStyle(wb, "dataY");
 
         for (String key : sheetMap.keySet()) {
             XSSFSheet sheet = wb.createSheet(key + " 출퇴근 정보");
@@ -234,7 +244,11 @@ public class FileService {
             // 날짜 세팅
             for (LocalDate date : sheetMap.get(key)) {
                 cell = row.createCell(idx);
-                cell.setCellStyle(titleStyle);
+                if(5 < date.getDayOfWeek().getValue()){
+                    cell.setCellStyle(dataRStyle);
+                }else {
+                    cell.setCellStyle(titleStyle);
+                }
                 cell.setCellValue(date.toString());
                 idx++;
             }
@@ -254,22 +268,33 @@ public class FileService {
                     String att = colAttendanceDataSet.get(member.getMemberId() + date.toString());
                     String vac = colVacationDataSet.get(member.getMemberId() + date);
                     String col = "";
-                    if (att != null && vac == null) {
-                        cell.setCellStyle(dataBStyle);
-                        col += "○(" + att + ")"; //출근기록 있으면서 휴가기록 없는것
+                    if (att != null) {
+                        if (vac == null) {
+                            cell.setCellStyle(dataBStyle);
+                            col += "○(" + att + ")"; //출근기록 있으면서 휴가기록 없는것
+                        } else {
+                            cell.setCellStyle(dataGStyle);
+                            col += "○(" + att + ")(휴가: " + vac + ")"; //출근, 휴가기록 둘다 있는것
+                        }
+
+                        try {
+                            int offTime = Integer.parseInt(att.split("~")[1].split(":")[0]);
+                            if(21 <= offTime) cell.setCellStyle(dataYStyle);
+                        }
+                        catch (Exception ignored){
+                        }
+
+                    } else {
+                        if (vac != null) {
+                            cell.setCellStyle(dataGStyle);
+                            col += "□(" + vac + ")";   //출근기록 없으면서 휴가기록 있는것
+                        }
+                        else {
+                            cell.setCellStyle(dataRStyle); //결근
+                            col += "Ⅹ";
+                        }
                     }
-                    if (att != null && vac != null) {
-                        cell.setCellStyle(dataGStyle);
-                        col += "○(" + att + ")(휴가: " + vac + ")"; //출근, 휴가기록 둘다 있는것
-                    }
-                    if (att == null && vac != null) {
-                        cell.setCellStyle(dataGStyle);
-                        col += "□(" + vac + ")";   //출근기록 없으면서 휴가기록 있는것
-                    }
-                    if (att == null && vac == null) {
-                        cell.setCellStyle(dataRStyle);
-                        col += "Ⅹ";
-                    }
+
                     col = col.replace("null", "기록 없음");
                     col = col.replace("T", " ");
                     cell.setCellValue(col);
@@ -355,7 +380,7 @@ public class FileService {
 
         // ↑↑↑↑ Header 세팅↑↑↑↑
 
-        for (Vacation vacation : vacationList){
+        for (Vacation vacation : vacationList) {
             Member member = vacation.getAuthor();
             row = sheet.createRow(rowNum++);
 
@@ -394,7 +419,7 @@ public class FileService {
         }
         for (int i = 0; i < 7; i++) {
             sheet.autoSizeColumn(i);
-            sheet.setColumnWidth(i, (sheet.getColumnWidth(i))+512 );
+            sheet.setColumnWidth(i, (sheet.getColumnWidth(i)) + 512);
         }
 
 
@@ -404,8 +429,8 @@ public class FileService {
         return new ByteArrayInputStream(bArray);
     }
 
-    private String dateToKorean(LocalDateTime td){
-        return td.getYear()+"년 "+ td.getMonthValue() + "월 " + td.getDayOfMonth() + "일 " + td.getHour() + "시 " + td.getMinute() + "분 ";
+    private String dateToKorean(LocalDateTime td) {
+        return td.getYear() + "년 " + td.getMonthValue() + "월 " + td.getDayOfMonth() + "일 " + td.getHour() + "시 " + td.getMinute() + "분 ";
     }
 
     public ResponseCM downloadExcelVacation(LocalDate startDate, LocalDate endDate) {
