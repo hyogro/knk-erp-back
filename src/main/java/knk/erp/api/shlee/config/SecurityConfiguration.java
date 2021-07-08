@@ -52,8 +52,10 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .antMatchers("/fixtures/confirm/*").hasAnyRole("LVL3", "LVL4", "ADMIN")
 
                 // 회원 정보 목록 읽어오기, 회원 정보 수정, 회원 삭제, 회원 생성, 회원 정보 상세보기는 관리자 이상만 가능하도록 설정
-                .antMatchers("/account/readMember", "/account/{memberId}", "/account", "/account/signup")
+                .antMatchers("/account/readMember", "/account/{memberId}", "/account/signup")
                 .hasAnyRole("LVL3", "LVL4", "ADMIN")
+
+                .antMatchers("/account").hasAnyRole("LVL3", "LVL4", "ADMIN", "MANAGE")
 
                 .antMatchers("/department/readDepartmentNameAndMemberCount").authenticated()
 
