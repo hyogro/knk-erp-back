@@ -169,6 +169,24 @@ public class FileService {
                 style.setBorderLeft(BorderStyle.THIN);
                 style.setBorderRight(BorderStyle.THIN);
                 break;
+            case "dataSat":
+                style.setAlignment(HorizontalAlignment.LEFT);
+                style.setFillForegroundColor(IndexedColors.BLUE_GREY.getIndex());
+                style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+                style.setBorderTop(BorderStyle.THIN);
+                style.setBorderBottom(BorderStyle.THIN);
+                style.setBorderLeft(BorderStyle.THIN);
+                style.setBorderRight(BorderStyle.THIN);
+                break;
+            case "dataSun":
+                style.setAlignment(HorizontalAlignment.LEFT);
+                style.setFillForegroundColor(IndexedColors.RED.getIndex());
+                style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+                style.setBorderTop(BorderStyle.THIN);
+                style.setBorderBottom(BorderStyle.THIN);
+                style.setBorderLeft(BorderStyle.THIN);
+                style.setBorderRight(BorderStyle.THIN);
+                break;
         }
         return style;
     }
@@ -244,9 +262,13 @@ public class FileService {
             // 날짜 세팅
             for (LocalDate date : sheetMap.get(key)) {
                 cell = row.createCell(idx);
-                if(5 < date.getDayOfWeek().getValue()){
+                if(date.getDayOfWeek().getValue() == 6){
                     cell.setCellStyle(dataRStyle);
-                }else {
+                }
+                else if(date.getDayOfWeek().getValue() == 7){
+                    cell.setCellStyle(dataRStyle);
+                }
+                else {
                     cell.setCellStyle(titleStyle);
                 }
                 cell.setCellValue(date.toString());
