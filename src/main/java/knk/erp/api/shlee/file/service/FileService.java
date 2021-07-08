@@ -242,6 +242,8 @@ public class FileService {
         XSSFCellStyle dataRStyle = getStyle(wb, "dataR");
         XSSFCellStyle dataBStyle = getStyle(wb, "dataB");
         XSSFCellStyle dataYStyle = getStyle(wb, "dataY");
+        XSSFCellStyle dataSat = getStyle(wb, "dataSat");
+        XSSFCellStyle dataSun = getStyle(wb, "dataSun");
 
         for (String key : sheetMap.keySet()) {
             XSSFSheet sheet = wb.createSheet(key + " 출퇴근 정보");
@@ -263,10 +265,10 @@ public class FileService {
             for (LocalDate date : sheetMap.get(key)) {
                 cell = row.createCell(idx);
                 if(date.getDayOfWeek().getValue() == 6){
-                    cell.setCellStyle(dataRStyle);
+                    cell.setCellStyle(dataSat);
                 }
                 else if(date.getDayOfWeek().getValue() == 7){
-                    cell.setCellStyle(dataRStyle);
+                    cell.setCellStyle(dataSun);
                 }
                 else {
                     cell.setCellStyle(titleStyle);
