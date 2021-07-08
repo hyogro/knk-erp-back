@@ -107,9 +107,12 @@ public class VacationService {
     }
 
     //모든 휴가목록 조회
-    public ResponseCMDL readAllVacationList() {
+    public ResponseCMDL readAllVacationList(LocalDate startDate, LocalDate endDate) {
         try {
-            List<Vacation> vacationList = vacationRepository.findAll(VS.delFalse().and(VS.approve1Is(true).and(VS.approve2Is(true))));
+            LocalDateTime sd = LocalDateTime.of(startDate, LocalTime.MIN);
+            LocalDateTime ed = LocalDateTime.of(endDate, LocalTime.MAX);
+
+            List<Vacation> vacationList = vacationRepository.findAll(VS.delFalse().and(VS.approve1Is(true).and(VS.approve2Is(true).and(VS.vacationDateBetween(sd, ed)))));
             return new ResponseCMDL("RVL001", util.VacationListToDTO(vacationList));
         } catch (Exception e) {
             return new ResponseCMDL("RVL002", e.getMessage());

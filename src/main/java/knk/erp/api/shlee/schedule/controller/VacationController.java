@@ -47,8 +47,9 @@ public class VacationController {
      * 휴가 목록 읽기
      **/
     @GetMapping("/all")
-    public ResponseEntity<ResponseCMDL> readAllVacationList() {
-        return ResponseEntity.ok(vacationService.readAllVacationList());
+    public ResponseEntity<ResponseCMDL> readAllVacationList(@RequestParam("startDate") String startDate,
+                                                            @RequestParam("endDate") String endDate) {
+        return ResponseEntity.ok(vacationService.readAllVacationList(LocalDate.parse(startDate), LocalDate.parse(endDate)));
     }
 
 
