@@ -262,10 +262,9 @@ public class DepartmentService {
         try{
             List<Department> all = departmentRepository.findAllByDeletedFalse();
             List<OrganizationChartDTO> chartList = new ArrayList<>();
-            List<OrganizationChartMemberInfoDTO> memberList = new ArrayList<>();
             for(Department d : all){
                 if(!d.getDepartmentName().equals("부서미지정")){
-                    memberList.clear();
+                    List<OrganizationChartMemberInfoDTO> memberList = new ArrayList<>();
                     List<Member> dMember = d.getMemberList();
                     for(Member m : dMember){
                         memberList.add(new OrganizationChartMemberInfoDTO(m.getMemberName(), m.getPosition(), m.getPhone()));
