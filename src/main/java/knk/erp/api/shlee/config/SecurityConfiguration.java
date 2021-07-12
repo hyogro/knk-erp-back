@@ -57,7 +57,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
                 .antMatchers("/account").hasAnyRole("LVL3", "LVL4", "ADMIN", "MANAGE")
 
-                .antMatchers("/department/readDepartmentNameAndMemberCount", "department/readOrganizationChart").authenticated()
+                .antMatchers("/department/readDepartmentNameAndMemberCount", "/department/readOrganizationChart").authenticated()
 
                 // 부서 관리는 관리자 이상만 가능하게 설정
                 .antMatchers("/department/{dep_id}", "/department/updateLeader/{dep_id}",
