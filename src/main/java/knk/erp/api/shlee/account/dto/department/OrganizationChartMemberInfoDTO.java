@@ -9,7 +9,6 @@ import lombok.*;
 @NoArgsConstructor
 public class OrganizationChartMemberInfoDTO {
     private String memberName;
-    private String images;
     private String position;
     private String phone;
 }

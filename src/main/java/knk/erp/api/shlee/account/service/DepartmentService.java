@@ -267,7 +267,7 @@ public class DepartmentService {
                     List<OrganizationChartMemberInfoDTO> thisMemberList = new ArrayList<>();
                     List<Member> dMember = d.getMemberList();
                     for(Member m : dMember){
-                        thisMemberList.add(new OrganizationChartMemberInfoDTO(m.getMemberName(), m.getImages(), m.getPosition(), m.getPhone()));
+                        thisMemberList.add(new OrganizationChartMemberInfoDTO(m.getMemberName(), m.getPosition(), m.getPhone()));
                     }
                     chartList.add(new OrganizationChartDTO(d.getDepartmentName(), thisMemberList));
                 }
