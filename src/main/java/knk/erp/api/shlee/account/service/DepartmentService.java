@@ -262,14 +262,37 @@ public class DepartmentService {
         try{
             List<Department> all = departmentRepository.findAllByDeletedFalse();
             List<OrganizationChartDTO> chartList = new ArrayList<>();
+            List<OrganizationChartMemberInfoDTO> memberList = new ArrayList<>();
             for(Department d : all){
                 if(!d.getDepartmentName().equals("부서미지정")){
-                    List<OrganizationChartMemberInfoDTO> thisMemberList = new ArrayList<>();
+                    memberList.clear();
                     List<Member> dMember = d.getMemberList();
                     for(Member m : dMember){
-                        thisMemberList.add(new OrganizationChartMemberInfoDTO(m.getMemberName(), m.getPosition(), m.getPhone()));
+                        memberList.add(new OrganizationChartMemberInfoDTO(m.getMemberName(), m.getPosition(), m.getPhone()));
                     }
-                    chartList.add(new OrganizationChartDTO(d.getDepartmentName(), thisMemberList));
+                    chartList.add(new OrganizationChartDTO(d.getDepartmentName(), memberList));
+                }
+            }
+            OrganizationChartDTO temp;
+            OrganizationChartDTO chart;
+            for(int i = 0; i< chartList.size(); i++){
+                chart = chartList.get(i);
+                switch (chart.getDepartmentName()) {
+                    case "운영부":
+                        temp = chartList.get(0);
+                        chartList.set(0, chart);
+                        chartList.set(i, temp);
+                        break;
+                    case "사업부":
+                        temp = chartList.get(1);
+                        chartList.set(1, chart);
+                        chartList.set(i, temp);
+                        break;
+                    case "기술":
+                        temp = chartList.get(2);
+                        chartList.set(2, chart);
+                        chartList.set(i, temp);
+                        break;
                 }
             }
             return new Read_OrganizationChartDTO_RES("ROC001", chartList);
