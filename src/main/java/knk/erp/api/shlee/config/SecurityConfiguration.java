@@ -62,8 +62,6 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                         "/department/addMember/{dep_id}", "/department/deleteMember/{dep_id}")
                 .hasAnyRole("LVL3", "LVL4", "ADMIN")
 
-                .antMatchers("/department/readDepartmentNameAndMemberCount").authenticated()
-
                 // 나머지 API 는 권한 인증 필요
                 .anyRequest().authenticated()
                 .and()
