@@ -14,6 +14,7 @@ public class Login_TokenDTO_RES {
     private String code;
     private String message;
     private TokenDto tokenDto;
+    private String memberName;
     private LinkedHashMap<String, String> help_codeList = new LinkedHashMap<>();
 
     private void createCodeList(){
@@ -29,9 +30,10 @@ public class Login_TokenDTO_RES {
     }
 
     //ok
-    public Login_TokenDTO_RES(String code, TokenDto tokenDto) {
+    public Login_TokenDTO_RES(String code, TokenDto tokenDto, String memberName) {
         createCodeList();
         this.code = code;
         this.tokenDto = tokenDto;
+        this.memberName = memberName;
     }
 }
