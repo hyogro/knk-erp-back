@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Getter
@@ -21,6 +22,7 @@ public class AddVacationListData {
     private String giverName;
     private String receiverId;
     private String receiverName;
+    private LocalDate createDate;
 
     public AddVacationListData(AddVacation addVacation){
         this.id = addVacation.getId();
@@ -30,5 +32,6 @@ public class AddVacationListData {
         this.giverName = addVacation.getGiver().getMemberName();
         this.receiverId = addVacation.getReceiver().getMemberId();
         this.receiverName = addVacation.getReceiver().getMemberName();
+        this.createDate = addVacation.getCreateDate().toLocalDate();
     }
 }

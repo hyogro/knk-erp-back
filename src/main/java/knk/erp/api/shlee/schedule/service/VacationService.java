@@ -77,7 +77,7 @@ public class VacationService {
     public ResponseCMD readAddVacationDetail(Long avid){
         try {
             AddVacation addVacation = addVacationRepository.getOne(avid);
-            return new ResponseCMD("RAVD001", new AddVacationListData(addVacation));
+            return new ResponseCMD("RAVD001", new AddVacationDetailData(addVacation));
 
         }catch (Exception e){
             return new ResponseCMD("RAVD002", e.getMessage());
