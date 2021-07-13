@@ -21,6 +21,49 @@ public class VacationController {
         this.vacationService = vacationService;
     }
 
+    /**
+     * 추가휴가 생성
+     **/
+    @PostMapping("/add")
+    public ResponseEntity<ResponseCM> createAddVacation(@RequestBody AddVacationDTO addVacationDTO){
+        return ResponseEntity.ok(vacationService.createAddVacation(addVacationDTO));
+    }
+
+    /**
+     * 추가휴가 전체 목록조회
+     **/
+    @GetMapping("/add/list")
+    public ResponseEntity<ResponseCMDL> readAddVacationAllList(){
+        return ResponseEntity.ok(vacationService.readAddVacationAllList());
+    }
+
+
+    /**
+     * 추가휴가 특정 회원 목록조회
+     **/
+    @GetMapping("/add/list/{mid}")
+    public ResponseEntity<ResponseCMDL> readAddVacationList(@PathVariable("mid") String memberId){
+        return ResponseEntity.ok(vacationService.readAddVacationList(memberId));
+    }
+
+    /**
+     * 추가휴가 상세조회
+     **/
+    @GetMapping("/add/{avid}")
+    public ResponseEntity<ResponseCMD> readAddVacationList(@PathVariable("avid") Long avid){
+        return ResponseEntity.ok(vacationService.readAddVacationDetail(avid));
+    }
+
+    /**
+     * 추가휴가 삭제
+     **/
+    @DeleteMapping("/add/{avid}")
+    public ResponseEntity<ResponseCM> deleteAddVacation(@PathVariable("avid") Long avid){
+        return ResponseEntity.ok(vacationService.deleteAddVacation(avid));
+    }
+
+
+
     //휴가정보 조회
     @GetMapping("info/{mid}")
     public ResponseEntity<ResponseCMD> readVacationInfo(@PathVariable("mid") String memberId){
