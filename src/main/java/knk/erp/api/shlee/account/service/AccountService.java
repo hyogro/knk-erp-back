@@ -74,7 +74,9 @@ public class AccountService {
 
             TokenDto tokenDto = tokenProvider.generateTokenDto(authentication);
 
-            return new Login_TokenDTO_RES("LI001", tokenDto);
+            Member me = memberRepository.findByMemberIdAndDeletedIsFalse(authentication.getName());
+
+            return new Login_TokenDTO_RES("LI001", tokenDto, me.getMemberName());
         }catch(Exception e){
             return new Login_TokenDTO_RES("LI002", e.getMessage());
         }
