@@ -46,7 +46,7 @@ public class VacationService {
             addVacation.setGiver(giver);
             addVacationRepository.save(addVacation);
             return new ResponseCM("CAV001");
-        }catch (Exception e){
+        }catch (Exception e){ 
             return new ResponseCM("CAV002", e.getMessage());
         }
     }
