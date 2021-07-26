@@ -269,7 +269,8 @@ public class AttendanceService {
         try {
 
             LocalDate today = LocalDate.now();
-            LocalDateTime now = LocalDateTime.now();
+            LocalDateTime st = LocalDateTime.of(today, LocalTime.MIN);
+            LocalDateTime et = LocalDateTime.of(today, LocalTime.MAX);
 
             if (commonUtil.checkLevel() == 2) {
                 Department department = getDepartment();
@@ -277,7 +278,7 @@ public class AttendanceService {
 
                 List<Attendance> onWorkList = attendanceRepository.findAll(AS.delFalse().and(AS.atteDate(today).and(AS.did(departmentId))));
                 List<Attendance> offWorkList = attendanceRepository.findAll(AS.delFalse().and(AS.atteDate(today).and(AS.offWorked()).and(AS.did(departmentId))));
-                List<Vacation> vacationList = vacationRepository.findAll(VS.delFalse().and(VS.did(departmentId)).and(VS.targetDateBetween(now)).and(VS.approve1Is(true)).and(VS.approve2Is(true)));
+                List<Vacation> vacationList = vacationRepository.findAll(VS.delFalse().and(VS.did(departmentId)).and(VS.vacationDateBetween(st,et)).and(VS.approve1Is(true)).and(VS.approve2Is(true)));
                 List<Attendance> lateWorkList = new ArrayList<>(onWorkList);
                 List<Member> yetWorkList = department.getMemberList();
 
@@ -286,7 +287,7 @@ public class AttendanceService {
             } else if (3 <= commonUtil.checkLevel()) {
                 List<Attendance> onWorkList = attendanceRepository.findAll(AS.delFalse().and(AS.atteDate(today)));
                 List<Attendance> offWorkList = attendanceRepository.findAll(AS.delFalse().and(AS.atteDate(today).and(AS.offWorked())));
-                List<Vacation> vacationList = vacationRepository.findAll(VS.delFalse().and(VS.targetDateBetween(now)).and(VS.approve1Is(true)).and(VS.approve2Is(true)));
+                List<Vacation> vacationList = vacationRepository.findAll(VS.delFalse().and(VS.vacationDateBetween(st,et)).and(VS.approve1Is(true)).and(VS.approve2Is(true)));
                 List<Attendance> lateWorkList = new ArrayList<>(onWorkList);
                 List<Member> yetWorkList = memberRepository.findAll();
 

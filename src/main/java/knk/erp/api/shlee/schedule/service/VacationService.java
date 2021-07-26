@@ -5,12 +5,15 @@ import knk.erp.api.shlee.account.entity.Member;
 import knk.erp.api.shlee.account.entity.MemberRepository;
 import knk.erp.api.shlee.common.util.CommonUtil;
 import knk.erp.api.shlee.schedule.dto.Vacation.*;
+import knk.erp.api.shlee.schedule.entity.AddVacation;
 import knk.erp.api.shlee.schedule.entity.Vacation;
+import knk.erp.api.shlee.schedule.repository.AddVacationRepository;
 import knk.erp.api.shlee.schedule.repository.VacationRepository;
 import knk.erp.api.shlee.schedule.responseEntity.ResponseCM;
 import knk.erp.api.shlee.schedule.responseEntity.ResponseCMD;
 import knk.erp.api.shlee.schedule.responseEntity.ResponseCMDL;
 import knk.erp.api.shlee.schedule.responseEntity.vacation.*;
+import knk.erp.api.shlee.schedule.specification.AVS;
 import knk.erp.api.shlee.schedule.specification.VS;
 import knk.erp.api.shlee.schedule.util.VacationUtil;
 import lombok.RequiredArgsConstructor;
@@ -28,11 +31,72 @@ import java.util.List;
 @RequiredArgsConstructor
 public class VacationService {
     private final VacationRepository vacationRepository;
+    private final AddVacationRepository addVacationRepository;
     private final CommonUtil commonUtil;
     private final VacationUtil util;
     private final MemberRepository memberRepository;
 
-    //개인 휴가정보 조회
+    //추가휴가 생성
+    public ResponseCM createAddVacation(AddVacationDTO addVacationDTO){
+        try {
+            AddVacation addVacation = addVacationDTO.toEntity();
+            Member receiver = memberRepository.findAllByMemberIdAndDeletedIsFalse(addVacationDTO.getReceiverId());
+            Member giver = getMember();
+            addVacation.setReceiver(receiver);
+            addVacation.setGiver(giver);
+            addVacationRepository.save(addVacation);
+            return new ResponseCM("CAV001");
+        }catch (Exception e){ 
+            return new ResponseCM("CAV002", e.getMessage());
+        }
+    }
+
+    //추가휴가 전체 목록조회
+    public ResponseCMDL readAddVacationAllList(){
+        try {
+            List<AddVacation> addVacationList = addVacationRepository.findAll(AVS.delFalse());
+            return new ResponseCMDL("RAVL001", util.AddVacationListToDTO(addVacationList));
+
+        }catch (Exception e){
+            return new ResponseCMDL("RAVL002", e.getMessage());
+        }
+    }
+
+    //추가휴가 특정 회원 목록조회
+    public ResponseCMDL readAddVacationList(String memberId){
+        try {
+            List<AddVacation> addVacationList = addVacationRepository.findAll(AVS.delFalse().and(AVS.mid(memberId)));
+            return new ResponseCMDL("RAVL001", util.AddVacationListToDTO(addVacationList));
+
+        }catch (Exception e){
+            return new ResponseCMDL("RAVL002", e.getMessage());
+        }
+    }
+
+    //추가휴가 상세조회
+    public ResponseCMD readAddVacationDetail(Long avid){
+        try {
+            AddVacation addVacation = addVacationRepository.getOne(avid);
+            return new ResponseCMD("RAVD001", new AddVacationDetailData(addVacation));
+
+        }catch (Exception e){
+            return new ResponseCMD("RAVD002", e.getMessage());
+        }
+    }
+
+    //추가휴가 삭제
+    public ResponseCM deleteAddVacation(Long avid){
+        try {
+            AddVacation addVacation = addVacationRepository.getOne(avid);
+            addVacation.setDeleted(true);
+            addVacationRepository.save(addVacation);
+            return new ResponseCM("DAV001");
+        }catch (Exception e){
+            return new ResponseCM("DAV002", e.getMessage());
+        }
+    }
+
+    //개인 휴가정보조회
     public ResponseCMD readVacationInfo(String memberId) {
         try {
             Member member = memberRepository.findAllByMemberIdAndDeletedIsFalse(memberId);
@@ -40,7 +104,11 @@ public class VacationService {
             LocalDate today = LocalDate.now();
             int totalVacation;
             int usedVacation = getUsedVacation(memberId);
-            int addVacation = member.getVacation();
+            int addVacationVal = 0;
+            List<AddVacation> addVacationList = addVacationRepository.findAll(AVS.delFalse().and(AVS.mid(memberId)));
+            for(AddVacation addVacation : addVacationList){
+                addVacationVal += addVacation.getDate();
+            }
 
             Period period = Period.between(joiningDate, today);
 
@@ -50,7 +118,7 @@ public class VacationService {
                 totalVacation = (15 + ((period.getYears() - 1) / 2)) * 60 * 8; //연차갯수 * 분 * 시간
             }
 
-            return new ResponseCMD("RVI001", new VacationInfo(totalVacation, usedVacation, addVacation));
+            return new ResponseCMD("RVI001", new VacationInfo(totalVacation, usedVacation, addVacationVal));
         } catch (Exception e) {
             return new ResponseCMD("RVI002", new VacationInfo(-1, -1, -1));
         }
