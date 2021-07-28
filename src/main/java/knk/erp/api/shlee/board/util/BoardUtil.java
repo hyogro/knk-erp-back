@@ -76,7 +76,7 @@ public class BoardUtil {
 
             case "참조":
                 Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-                boardList = findAllByReferenceMemberId(authentication, boardRepository.findAllByBoardTypeAndDeletedFalse(boardType, pageable));
+                boardList = findAllByReferenceMemberId(authentication, boardRepository.findAllByBoardTypeAndDeletedFalse(boardType));
                 break;
 
             default:

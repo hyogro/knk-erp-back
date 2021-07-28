@@ -69,7 +69,6 @@ public class AccountService {
         UsernamePasswordAuthenticationToken authenticationToken = MemberDTOReq.toAuthentication();
 
         try{
-
             Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
 
             TokenDto tokenDto = tokenProvider.generateTokenDto(authentication);
