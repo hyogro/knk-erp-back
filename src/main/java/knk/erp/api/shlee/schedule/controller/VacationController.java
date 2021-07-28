@@ -126,9 +126,8 @@ public class VacationController {
      * 승인해야 할 휴가목록 읽기
      **/
     @GetMapping("/approve")
-    public ResponseEntity<ResponseCMDL> readVacationListForApprove(@RequestParam("startDate") String startDate,
-                                                                   @RequestParam("endDate") String endDate) {
-        return ResponseEntity.ok(vacationService.readVacationListForApprove(LocalDate.parse(startDate), LocalDate.parse(endDate)));
+    public ResponseEntity<ResponseCMDL> readVacationListForApprove() {
+        return ResponseEntity.ok(vacationService.readVacationListForApprove());
     }
 
     /**
