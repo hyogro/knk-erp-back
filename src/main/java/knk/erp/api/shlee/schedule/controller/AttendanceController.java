@@ -25,8 +25,8 @@ public class AttendanceController {
      * 출근 기록
      **/
     @PostMapping("/onWork")
-    public ResponseEntity<ResponseCM> onWork() {
-        return ResponseEntity.ok(attendanceService.onWork());
+    public ResponseEntity<ResponseCM> onWork(@RequestBody UuidDTO uuidDTO) {
+        return ResponseEntity.ok(attendanceService.onWork(uuidDTO));
     }
 
     /**

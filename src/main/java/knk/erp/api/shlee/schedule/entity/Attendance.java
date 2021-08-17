@@ -32,10 +32,14 @@ public class Attendance extends Time {
     @Column
     private LocalTime offWork;
 
+    @Column
+    private String uuid;
+
     @Builder
-    public Attendance(LocalDate attendanceDate, LocalTime onWork, LocalTime offWork) {
+    public Attendance(LocalDate attendanceDate, LocalTime onWork, LocalTime offWork, String uuid) {
         this.attendanceDate = attendanceDate;
         this.onWork = onWork;
         this.offWork = offWork;
+        this.uuid = uuid;
     }
 }

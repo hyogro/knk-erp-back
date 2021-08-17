@@ -48,7 +48,7 @@ public class AttendanceService {
     private final DepartmentRepository departmentRepository;
 
     //출근 기록
-    public ResponseCM onWork() {
+    public ResponseCM onWork(UuidDTO uuidDTO) {
         try {
             String memberId = getMemberId();
             LocalDate today = LocalDate.now();
@@ -66,7 +66,7 @@ public class AttendanceService {
                 return new ResponseCM("ON004");//그 당일에 이미 정정요청 존재함
             }
 
-            AttendanceDTO attendanceDTO = new AttendanceDTO(today, onWorkTime);
+            AttendanceDTO attendanceDTO = new AttendanceDTO(today, onWorkTime, uuidDTO.getUuid());
             Attendance attendance = attendanceDTO.toEntity();
             attendance.setAuthor(getMember());
             attendanceRepository.save(attendance);

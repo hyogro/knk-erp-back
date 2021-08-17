@@ -19,19 +19,22 @@ public class AttendanceDTO{
     private LocalDate attendanceDate;
     private LocalTime onWork;
     private LocalTime offWork;
+    private String uuid;
 
     public AttendanceDTO(Attendance attendance){
         this.id = attendance.getId();
         this.attendanceDate = attendance.getAttendanceDate();
         this.onWork = attendance.getOnWork();
         this.offWork = attendance.getOffWork();
+        this.uuid = attendance.getUuid();
     }
-    public AttendanceDTO(LocalDate attendanceDate, LocalTime onWork){
+    public AttendanceDTO(LocalDate attendanceDate, LocalTime onWork, String uuid){
         this.attendanceDate = attendanceDate;
         this.onWork = onWork;
+        this.uuid = uuid;
     }
 
     public Attendance toEntity(){
-        return Attendance.builder().attendanceDate(attendanceDate).onWork(onWork).offWork(offWork).build();
+        return Attendance.builder().attendanceDate(attendanceDate).onWork(onWork).offWork(offWork).uuid(uuid).build();
     }
 }
