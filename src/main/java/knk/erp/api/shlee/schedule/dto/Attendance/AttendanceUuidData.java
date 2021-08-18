@@ -13,22 +13,31 @@ import java.time.LocalTime;
 @Setter
 @ToString
 @AllArgsConstructor
-public class AttendanceListData {
+public class AttendanceUuidData {
 
-    private Long id;
+    private Long mid;
+    private String memberName;
+    private String memberId;
+
+    private Long aid;
     private LocalDate attendanceDate;
     private LocalTime onWork;
     private LocalTime offWork;
     private String uuid;
 
-    public AttendanceListData(Attendance attendance){
-        this.id = attendance.getId();
+    public AttendanceUuidData(Attendance attendance){
+
+        this.mid = attendance.getAuthor().getId();
+        this.memberName = attendance.getAuthor().getMemberName();
+        this.memberId = attendance.getAuthor().getMemberId();
+
+        this.aid = attendance.getId();
         this.attendanceDate = attendance.getAttendanceDate();
         this.onWork = attendance.getOnWork();
         this.offWork = attendance.getOffWork();
         this.uuid = attendance.getUuid();
     }
-    public AttendanceListData(LocalDate attendanceDate, LocalTime onWork){
+    public AttendanceUuidData(LocalDate attendanceDate, LocalTime onWork){
         this.attendanceDate = attendanceDate;
         this.onWork = onWork;
     }

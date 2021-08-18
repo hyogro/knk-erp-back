@@ -31,6 +31,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -312,6 +313,20 @@ public class AttendanceService {
             return new ResponseCMD("RA002", e.getMessage());
         }
     }
+
+    //uuid 중복되는 출, 퇴근기록 조회
+    public ResponseCMDL readDuplicateAttendanceList(LocalDate date) {
+        try {
+            List<Attendance> attendanceList = attendanceRepository.findAll(AS.delFalse().and(AS.atteDate(date)));
+            //List<String> uuidList = attendanceList.stream().map(Attendance::getUuid).collect(Collectors.toList());
+            return new ResponseCMDL("RAUL001", util.AttendanceUuidListToDTO(attendanceList));
+        } catch (Exception e) {
+            //실패 - Exception 발생
+            return new ResponseCMDL("RAUL002", e.getMessage());
+        }
+    }
+
+
 
     //맴버의 출근 여부 확인
     private boolean checkAttendance(Member member, List<Attendance> onWorkList) {
