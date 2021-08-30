@@ -33,7 +33,7 @@ public class Fixtures extends Time {
     private boolean purchase;
 
     //비고
-    @Column(length = 50)
+    @Column(length = 250)
     private String memo;
 
 
