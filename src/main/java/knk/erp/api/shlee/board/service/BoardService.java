@@ -4,10 +4,7 @@ import knk.erp.api.shlee.account.entity.Authority;
 import knk.erp.api.shlee.account.entity.Member;
 import knk.erp.api.shlee.account.entity.MemberRepository;
 import knk.erp.api.shlee.board.dto.board.*;
-import knk.erp.api.shlee.board.dto.boardlist.BoardListDTO;
-import knk.erp.api.shlee.board.dto.boardlist.NoticeLatestDTO_RES;
-import knk.erp.api.shlee.board.dto.boardlist.Read_NoticeBoardDTO_RES;
-import knk.erp.api.shlee.board.dto.boardlist.Read_WorkBoardListDTO_RES;
+import knk.erp.api.shlee.board.dto.boardlist.*;
 import knk.erp.api.shlee.board.entity.Board;
 import knk.erp.api.shlee.board.entity.BoardRepository;
 import knk.erp.api.shlee.board.util.BoardUtil;
@@ -163,6 +160,43 @@ public class BoardService {
             return new Read_WorkBoardListDTO_RES("RWB001", page, totalPage);
         }catch(Exception e){
             return new Read_WorkBoardListDTO_RES("RWB002", e.getMessage());
+        }
+    }
+
+    // 현장팀 게시판 목록 보기
+    @Transactional
+    public Read_FieldTeamBoardListDTO_RES fieldTeamBoardList(Pageable pageable, String searchType, String keyword){
+        try {
+            Page<BoardListDTO> page = boardUtil.searchBoard(searchType, keyword, "현장팀게시판", boardRepository, pageable);
+            int totalPage = boardUtil.getBoardSize("현장팀게시판", boardRepository, searchType, keyword);
+
+            return new Read_FieldTeamBoardListDTO_RES("RFTB001", page, totalPage);
+        }catch(Exception e){
+            return new Read_FieldTeamBoardListDTO_RES("RFTB002", e.getMessage());
+        }
+    }
+
+    // 자재관리 게시판 목록 보기
+    public Read_MaterialsBoardListDTO_RES materialsBoardList(Pageable pageable, String searchType, String keyword) {
+        try {
+            Page<BoardListDTO> page = boardUtil.searchBoard(searchType, keyword, "자재게시판", boardRepository, pageable);
+            int totalPage = boardUtil.getBoardSize("자재게시판", boardRepository, searchType, keyword);
+
+            return new Read_MaterialsBoardListDTO_RES("RMB001", page, totalPage);
+        }catch(Exception e){
+            return new Read_MaterialsBoardListDTO_RES("RMB002", e.getMessage());
+        }
+    }
+
+    // 장기 자재 현황 게시판
+    public Read_LongtermMaterialsBoardListDTO_RES longtermMaterialsBoardList(Pageable pageable, String searchType, String keyword){
+        try {
+            Page<BoardListDTO> page = boardUtil.searchBoard(searchType, keyword, "장기자재현황게시판", boardRepository, pageable);
+            int totalPage = boardUtil.getBoardSize("장기자재현황게시판", boardRepository, searchType, keyword);
+
+            return new Read_LongtermMaterialsBoardListDTO_RES("RLMB001", page, totalPage);
+        }catch(Exception e){
+            return new Read_LongtermMaterialsBoardListDTO_RES("RLMB002", e.getMessage());
         }
     }
 

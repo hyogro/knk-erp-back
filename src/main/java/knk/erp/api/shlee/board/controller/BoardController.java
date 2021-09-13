@@ -1,11 +1,10 @@
 package knk.erp.api.shlee.board.controller;
 
 import knk.erp.api.shlee.board.dto.board.*;
-import knk.erp.api.shlee.board.dto.boardlist.NoticeLatestDTO_RES;
-import knk.erp.api.shlee.board.dto.boardlist.Read_NoticeBoardDTO_RES;
-import knk.erp.api.shlee.board.dto.boardlist.Read_WorkBoardListDTO_RES;
+import knk.erp.api.shlee.board.dto.boardlist.*;
 import knk.erp.api.shlee.board.service.BoardService;
 import lombok.RequiredArgsConstructor;
+import org.apache.coyote.Response;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
@@ -48,6 +47,30 @@ public class BoardController {
                                                                @RequestParam("searchType") String searchType,
                                                                @RequestParam("keyword") String keyword){
         return ResponseEntity.ok(boardService.workBoardList(pageable, searchType, keyword));
+    }
+
+    // 현장팀게시판 목록 보기
+    @GetMapping("/fieldTeamBoardList")
+    public ResponseEntity<Read_FieldTeamBoardListDTO_RES> fieldTeamBoardList(Pageable pageable,
+                                                                             @RequestParam("searchType") String searchType,
+                                                                             @RequestParam("keyword") String keyword){
+        return ResponseEntity.ok(boardService.fieldTeamBoardList(pageable, searchType, keyword));
+    }
+
+    // 자재게시판 목록 보기
+    @GetMapping("/materialsBoardList")
+    public ResponseEntity<Read_MaterialsBoardListDTO_RES> materialsBoardList(Pageable pageable,
+                                                                             @RequestParam("searchType") String searchType,
+                                                                             @RequestParam("keyword") String keyword){
+        return ResponseEntity.ok(boardService.materialsBoardList(pageable, searchType, keyword));
+    }
+
+    // 장기자재현황게시판 목록 보기
+    @GetMapping("/longtermMaterialsBoardList")
+    public ResponseEntity<Read_LongtermMaterialsBoardListDTO_RES> longtermMaterialsBoardList(Pageable pageable,
+                                                                                             @RequestParam("searchType") String searchType,
+                                                                                             @RequestParam("keyword") String keyword){
+        return ResponseEntity.ok(boardService.longtermMaterialsBoardList(pageable, searchType, keyword));
     }
 
     // 공지사항 목록 보기

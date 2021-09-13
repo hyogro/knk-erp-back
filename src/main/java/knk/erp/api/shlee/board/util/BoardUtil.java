@@ -22,8 +22,8 @@ public class BoardUtil {
         int totalPage;
         int elementsSize;
 
-        if(boardType.equals("업무게시판")) elementsSize = 10;
-        else elementsSize = 15;
+        if(boardType.equals("공지사항")) elementsSize = 15;
+        else elementsSize = 10;
 
         switch (searchType) {
             case "제목검색":
