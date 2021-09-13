@@ -336,7 +336,18 @@ public class AttendanceService {
         return false;
     }
 
-    //맴버의 휴가 여부 확인
+    //지각 맴버의 휴가 여부 확인
+    private boolean checkVacationLate(Attendance attendance, List<Vacation> vacationList) {
+        LocalDateTime onWorkTime = LocalDateTime.of(LocalDate.now(), attendance.getOnWork());
+        for (Vacation vacation : vacationList) {
+            if (vacation.getAuthor().equals(attendance.getAuthor())) {
+                return vacation.getEndDate().isAfter(onWorkTime);
+            }
+        }
+        return false;
+    }
+
+    //결근 맴버의 휴가 여부 확인
     private boolean checkVacation(Member member, List<Vacation> vacationList) {
         LocalDateTime now = LocalDateTime.now();
         for (Vacation vacation : vacationList) {
@@ -354,7 +365,7 @@ public class AttendanceService {
         LocalTime nine = LocalTime.of(9, 0, 0);
 
         lateWorkList.removeIf(a -> a.getOnWork().isBefore(nine));// 9시 이전 출근자 삭제 = 지각 인원
-        lateWorkList.removeIf(a -> checkVacation(a.getAuthor(), vacationList));// 휴가자 삭제 = 지각 인원
+        lateWorkList.removeIf(a -> checkVacationLate(a, vacationList));// 휴가자 삭제 = 지각 인원
 
         yetWorkList.removeIf(member -> checkAttendance(member, onWorkList)); //출근자 삭제 = 미출근 인원
         yetWorkList.removeIf(member -> checkVacation(member, vacationList)); // 휴가자 삭제 = 미출근 인원
