@@ -1,9 +1,6 @@
 package knk.erp.api.shlee.schedule.util;
 
-import knk.erp.api.shlee.schedule.dto.Attendance.AttendanceDTO;
-import knk.erp.api.shlee.schedule.dto.Attendance.AttendanceListData;
-import knk.erp.api.shlee.schedule.dto.Attendance.RectifyAttendanceDTO;
-import knk.erp.api.shlee.schedule.dto.Attendance.RectifyAttendanceListData;
+import knk.erp.api.shlee.schedule.dto.Attendance.*;
 import knk.erp.api.shlee.schedule.dto.Schedule.ScheduleDTO;
 import knk.erp.api.shlee.schedule.entity.Attendance;
 import knk.erp.api.shlee.schedule.entity.RectifyAttendance;
@@ -15,6 +12,15 @@ import java.util.List;
 
 @Component
 public class AttendanceUtil {
+
+    public List<Object> AttendanceUuidListToDTO(List<Attendance> attendanceList){
+        List<Object> attendanceUuidDTOList = new ArrayList<>();
+        for(Attendance attendance : attendanceList){
+            attendanceUuidDTOList.add(new AttendanceUuidData(attendance));
+        }
+        return attendanceUuidDTOList;
+    }
+
     public List<Object> AttendanceListToDTO(List<Attendance> attendanceList){
         List<Object> attendanceDTOList = new ArrayList<>();
         for(Attendance attendance : attendanceList){

@@ -241,23 +241,19 @@ public class VacationService {
     }
 
     //승인, 거부할 휴가목록 조회
-    public ResponseCMDL readVacationListForApprove(LocalDate startDate, LocalDate endDate) {
+    public ResponseCMDL readVacationListForApprove() {
         try {
             List<Vacation> vacationList = new ArrayList<>();
-            LocalDateTime sd = LocalDateTime.of(startDate, LocalTime.MIN);
-            LocalDateTime ed = LocalDateTime.of(endDate, LocalTime.MAX);
 
             if (commonUtil.checkLevel() == 2) {
                 Member member = getMember();
                 assert member != null;
                 Long did = member.getDepartment().getId();
-                vacationList = vacationRepository.findAll(VS.delFalse().and(VS.rejectIs(false)).and(VS.did(did)).and(VS.approve1Is(false)
-                                .and(VS.vacationDateBetween(sd, ed)))
+                vacationList = vacationRepository.findAll(VS.delFalse().and(VS.rejectIs(false)).and(VS.did(did)).and(VS.approve1Is(false))
                         , Sort.by("createDate").descending());
 
             } else if (3 <= commonUtil.checkLevel()) {
-                vacationList = vacationRepository.findAll(VS.delFalse().and(VS.rejectIs(false)).and(VS.approve2Is(false)
-                                .and(VS.vacationDateBetween(sd, ed)))
+                vacationList = vacationRepository.findAll(VS.delFalse().and(VS.rejectIs(false)).and(VS.approve2Is(false))
                         , Sort.by("createDate").descending());
             }
             return new ResponseCMDL("RVL001", util.VacationListToDTO(vacationList));

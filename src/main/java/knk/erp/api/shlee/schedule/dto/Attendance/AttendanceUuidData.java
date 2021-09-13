@@ -13,28 +13,36 @@ import java.time.LocalTime;
 @Setter
 @ToString
 @AllArgsConstructor
-public class AttendanceDTO{
+public class AttendanceUuidData {
 
-    private Long id;
+    private Long mid;
+    private String memberName;
+    private String memberId;
+
+    private Long aid;
     private LocalDate attendanceDate;
     private LocalTime onWork;
     private LocalTime offWork;
     private String uuid;
 
-    public AttendanceDTO(Attendance attendance){
-        this.id = attendance.getId();
+    public AttendanceUuidData(Attendance attendance){
+
+        this.mid = attendance.getAuthor().getId();
+        this.memberName = attendance.getAuthor().getMemberName();
+        this.memberId = attendance.getAuthor().getMemberId();
+
+        this.aid = attendance.getId();
         this.attendanceDate = attendance.getAttendanceDate();
         this.onWork = attendance.getOnWork();
         this.offWork = attendance.getOffWork();
         this.uuid = attendance.getUuid();
     }
-    public AttendanceDTO(LocalDate attendanceDate, LocalTime onWork, String uuid){
+    public AttendanceUuidData(LocalDate attendanceDate, LocalTime onWork){
         this.attendanceDate = attendanceDate;
         this.onWork = onWork;
-        this.uuid = uuid;
     }
 
     public Attendance toEntity(){
-        return Attendance.builder().attendanceDate(attendanceDate).onWork(onWork).offWork(offWork).uuid(uuid).build();
+        return Attendance.builder().attendanceDate(attendanceDate).onWork(onWork).offWork(offWork).build();
     }
 }

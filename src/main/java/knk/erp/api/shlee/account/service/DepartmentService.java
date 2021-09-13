@@ -171,9 +171,11 @@ public class DepartmentService {
                 m.setDepartment(departmentRepository.findByDepartmentNameAndDeletedFalse("부서미지정"));
             }
 
-            if(target.getLeader().getAuthority().equals(Authority.ROLE_LVL2)){
-                target.getLeader().setAuthority(Authority.ROLE_LVL1);
-                memberRepository.save(target.getLeader());
+            if(target.getLeader() != null){
+                if(target.getLeader().getAuthority().equals(Authority.ROLE_LVL2)){
+                    target.getLeader().setAuthority(Authority.ROLE_LVL1);
+                    memberRepository.save(target.getLeader());
+                }
             }
 
             target.setLeader(null);

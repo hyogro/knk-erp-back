@@ -19,12 +19,14 @@ public class AttendanceListData {
     private LocalDate attendanceDate;
     private LocalTime onWork;
     private LocalTime offWork;
+    private String uuid;
 
     public AttendanceListData(Attendance attendance){
         this.id = attendance.getId();
         this.attendanceDate = attendance.getAttendanceDate();
         this.onWork = attendance.getOnWork();
         this.offWork = attendance.getOffWork();
+        this.uuid = attendance.getUuid();
     }
     public AttendanceListData(LocalDate attendanceDate, LocalTime onWork){
         this.attendanceDate = attendanceDate;

@@ -25,8 +25,8 @@ public class AttendanceController {
      * 출근 기록
      **/
     @PostMapping("/onWork")
-    public ResponseEntity<ResponseCM> onWork() {
-        return ResponseEntity.ok(attendanceService.onWork());
+    public ResponseEntity<ResponseCM> onWork(@RequestBody UuidDTO uuidDTO) {
+        return ResponseEntity.ok(attendanceService.onWork(uuidDTO));
     }
 
     /**
@@ -124,5 +124,13 @@ public class AttendanceController {
     @GetMapping("today")
     public ResponseEntity<ResponseCMD> readAttendanceToday() {
         return ResponseEntity.ok(attendanceService.readAttendanceToday());
+    }
+
+    /**
+     * uuid 중복되는 출,퇴근 기록목록 조회
+     **/
+    @GetMapping("/duplicate")
+    public ResponseEntity<ResponseCMDL> readDuplicateAttendanceList(@RequestParam("date") String date) {
+        return ResponseEntity.ok(attendanceService.readDuplicateAttendanceList(LocalDate.parse(date)));
     }
 }
