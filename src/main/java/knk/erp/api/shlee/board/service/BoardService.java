@@ -138,8 +138,7 @@ public class BoardService {
 
             if(!target.getWriterMemberId().equals(deleter.getMemberId())) {
                 return new Delete_BoardDTO_RES("DB003", "게시글 작성자가 아님");
-            }
-            else {
+            }else{
                 target.setDeleted(true);
                 boardRepository.save(target);
 
@@ -173,30 +172,6 @@ public class BoardService {
             return new Read_FieldTeamBoardListDTO_RES("RFTB001", page, totalPage);
         }catch(Exception e){
             return new Read_FieldTeamBoardListDTO_RES("RFTB002", e.getMessage());
-        }
-    }
-
-    // 자재관리 게시판 목록 보기
-    public Read_MaterialsBoardListDTO_RES materialsBoardList(Pageable pageable, String searchType, String keyword) {
-        try {
-            Page<BoardListDTO> page = boardUtil.searchBoard(searchType, keyword, "자재게시판", boardRepository, pageable);
-            int totalPage = boardUtil.getBoardSize("자재게시판", boardRepository, searchType, keyword);
-
-            return new Read_MaterialsBoardListDTO_RES("RMB001", page, totalPage);
-        }catch(Exception e){
-            return new Read_MaterialsBoardListDTO_RES("RMB002", e.getMessage());
-        }
-    }
-
-    // 장기 자재 현황 게시판
-    public Read_LongtermMaterialsBoardListDTO_RES longtermMaterialsBoardList(Pageable pageable, String searchType, String keyword){
-        try {
-            Page<BoardListDTO> page = boardUtil.searchBoard(searchType, keyword, "장기자재현황게시판", boardRepository, pageable);
-            int totalPage = boardUtil.getBoardSize("장기자재현황게시판", boardRepository, searchType, keyword);
-
-            return new Read_LongtermMaterialsBoardListDTO_RES("RLMB001", page, totalPage);
-        }catch(Exception e){
-            return new Read_LongtermMaterialsBoardListDTO_RES("RLMB002", e.getMessage());
         }
     }
 
