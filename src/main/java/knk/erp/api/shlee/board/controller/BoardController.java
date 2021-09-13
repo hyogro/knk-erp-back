@@ -57,22 +57,6 @@ public class BoardController {
         return ResponseEntity.ok(boardService.fieldTeamBoardList(pageable, searchType, keyword));
     }
 
-    // 자재게시판 목록 보기
-    @GetMapping("/materialsBoardList")
-    public ResponseEntity<Read_MaterialsBoardListDTO_RES> materialsBoardList(Pageable pageable,
-                                                                             @RequestParam("searchType") String searchType,
-                                                                             @RequestParam("keyword") String keyword){
-        return ResponseEntity.ok(boardService.materialsBoardList(pageable, searchType, keyword));
-    }
-
-    // 장기자재현황게시판 목록 보기
-    @GetMapping("/longtermMaterialsBoardList")
-    public ResponseEntity<Read_LongtermMaterialsBoardListDTO_RES> longtermMaterialsBoardList(Pageable pageable,
-                                                                                             @RequestParam("searchType") String searchType,
-                                                                                             @RequestParam("keyword") String keyword){
-        return ResponseEntity.ok(boardService.longtermMaterialsBoardList(pageable, searchType, keyword));
-    }
-
     // 공지사항 목록 보기
     @GetMapping("/noticeBoardList")
     public ResponseEntity<Read_NoticeBoardDTO_RES> noticeBoardList(Pageable pageable,
