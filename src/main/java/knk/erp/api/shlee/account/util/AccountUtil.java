@@ -102,6 +102,9 @@ public class AccountUtil {
         else if(updateAccountDTOReq.getAuthority().equals("ROLE_MANAGE")){
             authority = Authority.ROLE_MANAGE;
         }
+        else if(updateAccountDTOReq.getAuthority().equals("ROLE_MATERIALS")){
+            authority = Authority.ROLE_MATERIALS;
+        }
         else{
             authority = Authority.ROLE_LVL1;
         }

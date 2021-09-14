@@ -135,7 +135,7 @@ public class DepartmentService {
             if(department.getLeader() != null){
                 Member previous_leader = department.getLeader();
 
-                if(previous_leader.getAuthority().equals(Authority.ROLE_LVL2)){
+                if(previous_leader.getAuthority().equals(Authority.ROLE_LVL2) || previous_leader.getAuthority().equals(Authority.ROLE_MATERIALS)){
                     previous_leader.setAuthority(Authority.ROLE_LVL1);
                     memberRepository.save(previous_leader);
                 }
@@ -144,7 +144,7 @@ public class DepartmentService {
             if(leader.getDepartment() == department){
                 department.setLeader(leader);
 
-                if(leader.getAuthority().equals(Authority.ROLE_LVL1)){
+                if(leader.getAuthority().equals(Authority.ROLE_LVL1) || leader.getAuthority().equals(Authority.ROLE_MANAGE)){
                     leader.setAuthority(Authority.ROLE_LVL2);
                     memberRepository.save(leader);
                 }

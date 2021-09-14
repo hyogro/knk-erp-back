@@ -6,6 +6,7 @@ import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -44,6 +45,10 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 // 로그인 API 권한없이 접근 가능하도록 설정
                 .authorizeRequests()
                 .antMatchers("/account/login").permitAll()
+
+                // 장기자재현황
+                .antMatchers(HttpMethod.POST, "/materials").hasAnyRole("MATERIALS")
+                .antMatchers(HttpMethod.GET,"/materials").authenticated()
 
                 // 비품 요청서 목록보기
                 .antMatchers("/fixtures/listAll", "/fixtures/purchase/*").hasAnyRole("LVL3", "LVL4", "ADMIN", "MANAGE")
