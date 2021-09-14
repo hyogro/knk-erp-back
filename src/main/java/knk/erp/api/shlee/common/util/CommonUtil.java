@@ -1,7 +1,7 @@
 package knk.erp.api.shlee.common.util;
 
-import knk.erp.api.shlee.account.entity.Authority;
-import knk.erp.api.shlee.account.entity.Member;
+import knk.erp.api.shlee.domain.account.entity.Authority;
+import knk.erp.api.shlee.domain.account.entity.Member;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;

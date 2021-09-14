@@ -1,6 +1,8 @@
 package knk.erp.api.shlee.config;
 
 import knk.erp.api.shlee.common.jwt.TokenProvider;
+import knk.erp.api.shlee.exception.component.CustomAccessDeniedHandler;
+import knk.erp.api.shlee.exception.component.CustomAuthenticationEntryPoint;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
@@ -71,6 +73,11 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
                 // 나머지 API 는 권한 인증 필요
                 .anyRequest().authenticated()
+                .and()
+
+                .exceptionHandling()
+                .authenticationEntryPoint(new CustomAuthenticationEntryPoint())
+                .accessDeniedHandler(new CustomAccessDeniedHandler())
                 .and()
 
                 // 토큰을 활용하면 세션이 필요 없으므로 STATELESS 로 설정하여 Session 을 사용하지 않는다.
