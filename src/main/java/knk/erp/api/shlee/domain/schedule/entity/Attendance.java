@@ -49,7 +49,7 @@ public class Attendance extends Time {
     }
 
     public void doOffWork(){
-        this.onWork = LocalTime.now();
+        this.offWork = LocalTime.now();
     }
 
 }

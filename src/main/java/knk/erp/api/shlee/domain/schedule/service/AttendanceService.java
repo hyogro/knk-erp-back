@@ -36,6 +36,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -104,7 +105,6 @@ public class AttendanceService {
 
     //퇴근 기록
     public void offWork() {
-
         //근대기록을 조회하며, 존재하지 않을 시 실패
         Attendance attendance = throwIfAttendanceNotExistOrReturn();
 
@@ -126,22 +126,18 @@ public class AttendanceService {
     }
 
     private void throwIfAlreadyOffWorkExist(Attendance attendance) {
+        System.out.println(attendance.getOffWork());
         if (attendance.getOffWork() != null) {
             throw new AttendanceOffWorkExistException();
         }
     }
 
     //출, 퇴근기록 조회
-    public ResponseCMDL readAttendanceList(LocalDate startDate, LocalDate endDate) {
-        try {
-            String memberId = getMemberId();
+    public List<AttendanceDto> readAttendanceList(LocalDate startDate, LocalDate endDate) {
+        String memberId = EntityUtil.getInstance().getMemberId();
+        List<Attendance> attendanceList = attendanceRepository.findAll(AS.searchWithDateBetween(memberId, startDate, endDate));
+        return attendanceList.stream().map(AttendanceDto::new).collect(Collectors.toList());
 
-            List<Attendance> attendanceList = attendanceRepository.findAll(AS.delFalse().and(AS.mid(memberId)).and(AS.attendanceDateBetween(startDate, endDate)));
-            return new ResponseCMDL("RAL001", util.AttendanceListToDTO(attendanceList));
-        } catch (Exception e) {
-            //실패 - Exception 발생
-            return new ResponseCMDL("RAL002", e.getMessage());
-        }
     }
 
     //개인 출,퇴근 상세 조회

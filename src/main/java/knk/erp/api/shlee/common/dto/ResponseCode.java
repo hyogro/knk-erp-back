@@ -36,6 +36,7 @@ public enum ResponseCode {
      **/
     ON_WORK_SUCCESS("A5501"),
     OFF_WORK_SUCCESS("A5502"),
+    READ_ATTENDANCE_SUCCESS("A5503"),
 
 
     ;

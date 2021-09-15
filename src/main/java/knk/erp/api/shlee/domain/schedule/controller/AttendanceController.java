@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @RestController
 @RequestMapping("/attendance")
@@ -53,12 +54,21 @@ public class AttendanceController {
     }
 
     /**
+     * 날짜 범위로 본인의
      * 출,퇴근 기록목록 조회
      **/
-    @GetMapping("")
-    public ResponseEntity<ResponseCMDL> readAttendanceList(@RequestParam("startDate") String startDate,
+    @GetMapping("/list")
+    public ResponseEntity<ResponseData> readAttendanceList(@RequestParam("startDate") String startDate,
                                                            @RequestParam("endDate") String endDate) {
-        return ResponseEntity.ok(attendanceService.readAttendanceList(LocalDate.parse(startDate), LocalDate.parse(endDate)));
+        List<AttendanceDto> attendanceDtoList = attendanceService.readAttendanceList(LocalDate.parse(startDate), LocalDate.parse(endDate));
+
+        knk.erp.api.shlee.common.dto.ResponseCMD responseCMD = knk.erp.api.shlee.common.dto.ResponseCMD
+                .builder()
+                .responseCode(ResponseCode.READ_ATTENDANCE_SUCCESS)
+                .data(attendanceDtoList)
+                .build();
+
+        return new ResponseEntity<>(responseCMD, HttpStatus.OK);
     }
 
     /**
