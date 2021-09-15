@@ -6,8 +6,6 @@ import knk.erp.api.shlee.domain.account.dto.member.MemberDTO_REQ;
 import knk.erp.api.shlee.domain.account.service.AccountService;
 import knk.erp.api.shlee.domain.account.service.DepartmentService;
 import knk.erp.api.shlee.domain.schedule.controller.AttendanceController;
-import knk.erp.api.shlee.domain.schedule.dto.Attendance.UuidDTO;
-import knk.erp.api.shlee.domain.schedule.entity.Attendance;
 import knk.erp.api.shlee.exception.component.CustomControllerAdvice;
 import org.json.JSONObject;
 import org.junit.jupiter.api.*;
@@ -84,10 +82,10 @@ class AttendanceTest {
     @Order(20)
     @WithUserDetails("test_id")
     public void 출근기록_성공() throws Exception {
-        String testUuid = "just-test-uuid";
-        UuidDTO uuidDTO = UuidDTO.builder().uuid(testUuid).build();
+        Map<String, String> map = new HashMap<>();
+        map.put("uuid", "just-test-uuid");
 
-        String requestBody = objectMapper.writeValueAsString(uuidDTO);
+        String requestBody = objectMapper.writeValueAsString(map);
 
         MvcResult result = attendanceMvc.perform(
                 MockMvcRequestBuilders.post("/attendance/onWork")
@@ -104,10 +102,10 @@ class AttendanceTest {
     @Order(21)
     @WithUserDetails("test_id")
     public void 출근기록_실패_하루에_두번출근은_안되지() throws Exception {
-        String testUuid = "just-test-uuid";
-        UuidDTO uuidDTO = UuidDTO.builder().uuid(testUuid).build();
+        Map<String, String> map = new HashMap<>();
+        map.put("uuid", "just-test-uuid");
 
-        String requestBody = objectMapper.writeValueAsString(uuidDTO);
+        String requestBody = objectMapper.writeValueAsString(map);
 
         MvcResult result = attendanceMvc.perform(
                 MockMvcRequestBuilders.post("/attendance/onWork")

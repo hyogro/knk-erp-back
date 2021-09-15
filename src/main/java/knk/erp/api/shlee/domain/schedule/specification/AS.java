@@ -16,7 +16,7 @@ import java.util.List;
 
 public class AS {//AttendanceSpecification
 
-    public static Specification<Attendance> searchWithDateMemberId(LocalDate today, String memberId){
+    public static Specification<Attendance> searchWithDateAndMemberId(LocalDate today, String memberId){
         return (root, query, builder) -> {
             List<Predicate> predicate = getPredicateWithDateMemberId(today, memberId, root, builder);
             return builder.and(predicate.toArray(new Predicate[0]));
@@ -27,8 +27,10 @@ public class AS {//AttendanceSpecification
         List<Predicate> predicate = new ArrayList<>();
         //삭제되지 않았고
         predicate.add(builder.isFalse(root.get("deleted")));
+
         //오늘 일자이며
         predicate.add(builder.equal(root.get("attendanceDate"), today));
+
         //작성자
         Join<Schedule, Member> sm = root.join("author");
         predicate.add(builder.equal(sm.get("memberId"), memberId));

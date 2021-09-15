@@ -18,7 +18,7 @@ import java.util.List;
 public class RAS {//RectifyAttendanceSpecification
 
 
-    public static Specification<RectifyAttendance> searchWithDateMemberId(LocalDate today, String memberId){
+    public static Specification<RectifyAttendance> searchWithDateAndMemberId(LocalDate today, String memberId){
         return (root, query, builder) -> {
             List<Predicate> predicate = getPredicateWithDateMemberId(today, memberId, root, builder);
             return builder.and(predicate.toArray(new Predicate[0]));

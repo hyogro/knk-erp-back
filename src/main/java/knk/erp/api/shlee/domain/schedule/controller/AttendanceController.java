@@ -26,8 +26,9 @@ public class AttendanceController {
      * 출근 기록
      **/
     @PostMapping("/onWork")
-    public ResponseEntity<ResponseData> onWork(@RequestBody UuidDTO uuidDTO) {
-        attendanceService.onWork(uuidDTO);
+    public ResponseEntity<ResponseData> onWork(@RequestBody String uuid) {
+        attendanceService.onWork(uuid);
+
         knk.erp.api.shlee.common.dto.ResponseCM responseCM = knk.erp.api.shlee.common.dto.ResponseCM
                 .builder()
                 .responseCode(ResponseCode.ON_WORK_SUCCESS)
@@ -40,8 +41,14 @@ public class AttendanceController {
      * 퇴근 기록
      **/
     @PostMapping("/offWork")
-    public ResponseEntity<ResponseCM> offWork() {
-        return ResponseEntity.ok(attendanceService.offWork());
+    public ResponseEntity<ResponseData> offWork() {
+        attendanceService.offWork();
+        knk.erp.api.shlee.common.dto.ResponseCM responseCM = knk.erp.api.shlee.common.dto.ResponseCM
+                .builder()
+                .responseCode(ResponseCode.ON_WORK_SUCCESS)
+                .build();
+
+        return new ResponseEntity<>(responseCM, HttpStatus.OK);
     }
 
     /**

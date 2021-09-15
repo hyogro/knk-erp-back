@@ -34,6 +34,7 @@ public enum ExceptionCode {
     ATTENDANCE_NOT_EXIST(400, "E5502", "근태 정보가 존재하지 않습니다."),
     RECTIFY_ATTENDANCE_EXIST(400, "E5503", "근태 정정요청 정보가 존재합니다."),
     RECTIFY_ATTENDANCE_NOT_EXIST(400, "E5504", "근태 정정요청 정보가 존재하지 않습니다."),
+    ATTENDANCE_OFF_WORK_EXIST(400, "E5505", "출근정보가 존재합니다."),
 
     ;
 

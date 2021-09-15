@@ -1,5 +1,6 @@
 package knk.erp.api.shlee.domain.schedule.service;
 
+import knk.erp.api.shlee.common.util.EntityUtil;
 import knk.erp.api.shlee.domain.account.entity.Department;
 import knk.erp.api.shlee.domain.account.entity.DepartmentRepository;
 import knk.erp.api.shlee.domain.account.entity.Member;
@@ -19,9 +20,9 @@ import knk.erp.api.shlee.domain.schedule.specification.AS;
 import knk.erp.api.shlee.domain.schedule.specification.RAS;
 import knk.erp.api.shlee.domain.schedule.specification.VS;
 import knk.erp.api.shlee.domain.schedule.util.AttendanceUtil;
-import knk.erp.api.shlee.exception.exceptions.AttendanceExistException;
-import knk.erp.api.shlee.exception.exceptions.AttendanceNotExistException;
-import knk.erp.api.shlee.exception.exceptions.RectifyAttendanceExistException;
+import knk.erp.api.shlee.exception.exceptions.Schedule.AttendanceExistException;
+import knk.erp.api.shlee.exception.exceptions.Schedule.AttendanceNotExistException;
+import knk.erp.api.shlee.exception.exceptions.Schedule.RectifyAttendanceExistException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -51,81 +52,83 @@ public class AttendanceService {
     private final DepartmentRepository departmentRepository;
 
     //출근 기록
-    public void onWork(UuidDTO uuidDTO) {
-        LocalDate today = LocalDate.now();
-        LocalTime onWorkTime = LocalTime.now();
-
+    public void onWork(String uuid) {
         //기존 출근내역이 있으면 실패
         throwIfAttendanceExist();
 
         //기존 정정요청이 있으면 실패
         throwIfRectifyAttendanceExist();
 
-        Attendance attendance = AttendanceDTO
+        Attendance attendance = AttendanceDto
                 .builder()
-                .attendanceDate(today)
-                .onWork(onWorkTime)
-                .uuid(uuidDTO.getUuid())
+                .uuid(uuid)
                 .build()
                 .toEntity();
-        attendance.setAuthor(getMember());
+        attendance.doOnWork();
+
+        Member author = EntityUtil.getInstance().getMember(memberRepository);
+        attendance.setAuthor(author);
 
         attendanceRepository.save(attendance);
     }
 
-    private void throwIfAttendanceExist() {
+    private Optional<Attendance> getTodayAttendanceOpt() {
         LocalDate today = LocalDate.now();
-        String memberId = getMemberId();
-        if (attendanceRepository.findOne(AS.searchWithDateMemberId(today, memberId)).isPresent()) {
+        String memberId = EntityUtil.getInstance().getMemberId();
+
+        return attendanceRepository.findOne(AS.searchWithDateAndMemberId(today, memberId));
+    }
+
+    private Optional<RectifyAttendance> getTodayRectifyAttendanceOpt() {
+        LocalDate today = LocalDate.now();
+        String memberId = EntityUtil.getInstance().getMemberId();
+
+        return rectifyAttendanceRepository.findOne(RAS.searchWithDateAndMemberId(today, memberId));
+    }
+
+    private void throwIfAttendanceExist() {
+        Optional<Attendance> todayAttendanceOpt = getTodayAttendanceOpt();
+        if (todayAttendanceOpt.isPresent()) {
             throw new AttendanceExistException();
         }
     }
 
     private void throwIfRectifyAttendanceExist() {
-        LocalDate today = LocalDate.now();
-        String memberId = getMemberId();
-        if (rectifyAttendanceRepository.findOne(RAS.searchWithDateMemberId(today, memberId)).isPresent()) {
+        Optional<RectifyAttendance> rectifyAttendance = getTodayRectifyAttendanceOpt();
+
+        if (rectifyAttendance.isPresent()) {
             throw new RectifyAttendanceExistException();
         }
     }
 
     //퇴근 기록
-    public ResponseCM offWork() {
-        try {
-            String memberId = getMemberId();
-            LocalDate today = LocalDate.now();
-            LocalTime offWorkTime = LocalTime.now();
+    public void offWork() {
+        LocalDate today = LocalDate.now();
+        String memberId = EntityUtil.getInstance().getMemberId();
 
-            Optional<Attendance> attendanceOptional = attendanceRepository.findOne(AS.delFalse().and(AS.mid(memberId)).and(AS.atteDate(today)));
-            if (!attendanceOptional.isPresent()) return new ResponseCM("OFF004");
+        //근대기록을 조회하며, 존재하지 않을 시 실패
+        Attendance attendance = throwIfAttendanceNotExistOrReturn();
 
-            //실패 - 기존 퇴근기록 있으면 수정불가
-            Attendance attendance = attendanceOptional.get();
-            if (attendance.getOffWork() != null) return new ResponseCM("OFF003");
+        //기존 퇴근내역이 있으면 실패
+        throwIfAlreadyOffWorkExist(attendance);
 
-            //성공 - 기존 퇴근기록 없으면 생성 후 응답
-            attendance.setOffWork(offWorkTime);
-            attendanceRepository.save(attendance);
-            return new ResponseCM("OFF001");
-        } catch (Exception e) {
-            //실패 - Exception 발생
-            return new ResponseCM("OFF002", e.getMessage());
-        }
+        attendance.doOffWork();
+        attendanceRepository.save(attendance);
     }
 
-    private void throwIfAttendanceNotExist() {
-        LocalDate today = LocalDate.now();
-        String memberId = getMemberId();
-        if (!attendanceRepository.findOne(AS.searchWithDateMemberId(today, memberId)).isPresent()) {
+    private Attendance throwIfAttendanceNotExistOrReturn() {
+        Optional<Attendance> todayAttendanceOpt = getTodayAttendanceOpt();
+
+        if (!todayAttendanceOpt.isPresent()) {
             throw new AttendanceNotExistException();
         }
+
+        return todayAttendanceOpt.get();
     }
 
-    private void throwIfRectifyAttendanceNotExist() {
-        LocalDate today = LocalDate.now();
-        String memberId = getMemberId();
-        if (!rectifyAttendanceRepository.findOne(RAS.searchWithDateMemberId(today, memberId)).isPresent()) {
-            throw new RectifyAttendanceExistException();
+    private void throwIfAlreadyOffWorkExist(Attendance attendance) {
+        if (attendance.getOffWork() != null) {
+
         }
     }
 
@@ -334,7 +337,7 @@ public class AttendanceService {
             String memberId = getMemberId();
             LocalDate today = LocalDate.now();
             Optional<Attendance> attendance = attendanceRepository.findOne(AS.delFalse().and(AS.atteDate(today).and(AS.mid(memberId))));
-            return attendance.map(value -> new ResponseCMD("RA001", new AttendanceDTO(value))).orElseGet(() -> new ResponseCMD("RA003"));
+            return attendance.map(value -> new ResponseCMD("RA001", new AttendanceDto(value))).orElseGet(() -> new ResponseCMD("RA003"));
         } catch (Exception e) {
             return new ResponseCMD("RA002", e.getMessage());
         }
