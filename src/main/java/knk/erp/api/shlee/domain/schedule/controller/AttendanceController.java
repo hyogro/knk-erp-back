@@ -43,9 +43,10 @@ public class AttendanceController {
     @PostMapping("/offWork")
     public ResponseEntity<ResponseData> offWork() {
         attendanceService.offWork();
+
         knk.erp.api.shlee.common.dto.ResponseCM responseCM = knk.erp.api.shlee.common.dto.ResponseCM
                 .builder()
-                .responseCode(ResponseCode.ON_WORK_SUCCESS)
+                .responseCode(ResponseCode.OFF_WORK_SUCCESS)
                 .build();
 
         return new ResponseEntity<>(responseCM, HttpStatus.OK);

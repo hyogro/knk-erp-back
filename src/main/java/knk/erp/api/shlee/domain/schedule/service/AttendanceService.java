@@ -22,6 +22,7 @@ import knk.erp.api.shlee.domain.schedule.specification.VS;
 import knk.erp.api.shlee.domain.schedule.util.AttendanceUtil;
 import knk.erp.api.shlee.exception.exceptions.Schedule.AttendanceExistException;
 import knk.erp.api.shlee.exception.exceptions.Schedule.AttendanceNotExistException;
+import knk.erp.api.shlee.exception.exceptions.Schedule.AttendanceOffWorkExistException;
 import knk.erp.api.shlee.exception.exceptions.Schedule.RectifyAttendanceExistException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
@@ -103,8 +104,6 @@ public class AttendanceService {
 
     //퇴근 기록
     public void offWork() {
-        LocalDate today = LocalDate.now();
-        String memberId = EntityUtil.getInstance().getMemberId();
 
         //근대기록을 조회하며, 존재하지 않을 시 실패
         Attendance attendance = throwIfAttendanceNotExistOrReturn();
@@ -128,7 +127,7 @@ public class AttendanceService {
 
     private void throwIfAlreadyOffWorkExist(Attendance attendance) {
         if (attendance.getOffWork() != null) {
-
+            throw new AttendanceOffWorkExistException();
         }
     }
 

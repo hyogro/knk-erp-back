@@ -35,6 +35,7 @@ public enum ResponseCode {
      * Schedule - Attendance A55**
      **/
     ON_WORK_SUCCESS("A5501"),
+    OFF_WORK_SUCCESS("A5502"),
 
 
     ;
