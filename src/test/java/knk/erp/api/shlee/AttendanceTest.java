@@ -220,6 +220,19 @@ class AttendanceTest {
 
     }
 
+    @Test
+    @Order(32)
+    @WithUserDetails("test_id")
+    public void 출퇴근정보_있는거_조회() throws Exception {
+        MvcResult result = attendanceMvc.perform(
+                MockMvcRequestBuilders.get("/attendance/"+3))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andReturn();
+
+        String code = this.getCode(result);
+        assertThat(code).isEqualTo("A5503");
+    }
+
     //응답코드 가져오기
     private String getCode(MvcResult result) throws UnsupportedEncodingException {
         System.out.println(">> response >> " + result.getResponse().getContentAsString());

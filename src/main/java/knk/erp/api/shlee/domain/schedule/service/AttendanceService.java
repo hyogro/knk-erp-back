@@ -28,6 +28,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -54,6 +55,7 @@ public class AttendanceService {
     private final DepartmentRepository departmentRepository;
 
     //출근 기록
+    @Transactional
     public void onWork(String uuid) {
         //기존 출근내역이 있으면 실패
         throwIfAttendanceExist();
@@ -104,6 +106,7 @@ public class AttendanceService {
     }
 
     //퇴근 기록
+    @Transactional
     public void offWork() {
         //근대기록을 조회하며, 존재하지 않을 시 실패
         Attendance attendance = throwIfAttendanceNotExistOrReturn();
@@ -116,23 +119,17 @@ public class AttendanceService {
     }
 
     private Attendance throwIfAttendanceNotExistOrReturn() {
-        Optional<Attendance> todayAttendanceOpt = getTodayAttendanceOpt();
-
-        if (!todayAttendanceOpt.isPresent()) {
-            throw new AttendanceNotExistException();
-        }
-
-        return todayAttendanceOpt.get();
+        return getTodayAttendanceOpt().orElseThrow(AttendanceNotExistException::new);
     }
 
     private void throwIfAlreadyOffWorkExist(Attendance attendance) {
-        System.out.println(attendance.getOffWork());
         if (attendance.getOffWork() != null) {
             throw new AttendanceOffWorkExistException();
         }
     }
 
     //출, 퇴근기록 조회
+    @Transactional
     public List<AttendanceDto> readAttendanceList(LocalDate startDate, LocalDate endDate) {
         String memberId = EntityUtil.getInstance().getMemberId();
         List<Attendance> attendanceList = attendanceRepository.findAll(AS.searchWithDateBetween(memberId, startDate, endDate));
@@ -141,16 +138,13 @@ public class AttendanceService {
     }
 
     //개인 출,퇴근 상세 조회
-    public ResponseCMD readAttendance(Long aid) {
-        try {
-            Attendance attendance = attendanceRepository.getOne(aid);
-            return new ResponseCMD("RAD001", new AttendanceDetailData(attendance));
-        } catch (Exception e) {
-            return new ResponseCMD("RAD002", e.getMessage());
-        }
+    @Transactional
+    public AttendanceDto readAttendance(Long aid) {
+        return new AttendanceDto(attendanceRepository.getOne(aid));
     }
 
     //출,퇴근기록 정정 요청 -> 정정요청 신규 생성
+    @Transactional
     public ResponseCM createRectifyAttendance(RectifyAttendanceDTO rectifyAttendanceDTO) {
         try {
             //성공 - 생성 후 응답
@@ -180,6 +174,7 @@ public class AttendanceService {
     }
 
     //출,퇴근기록 정정 요청 -> 출퇴근 기록으로 정정요청 생성
+    @Transactional
     public ResponseCM updateRectifyAttendance(Long aid, RectifyAttendanceDTO rectifyAttendanceDTO) {
         try {
             Optional<Attendance> attendanceOptional = attendanceRepository.findOne(AS.delFalse().and(AS.id(aid)));
@@ -218,6 +213,7 @@ public class AttendanceService {
     }
 
     //출,퇴근 정정요청목록 조회
+    @Transactional
     public ResponseCMDL readRectifyAttendanceList() {
         try {
             String memberId = getMemberId();
@@ -231,6 +227,7 @@ public class AttendanceService {
     }
 
     //출,퇴근 정정요청상세 조회
+    @Transactional
     public ResponseCMD readRectifyAttendance(Long rid) {
         try {
             RectifyAttendance rectifyAttendance = rectifyAttendanceRepository.getOne(rid);
@@ -242,6 +239,7 @@ public class AttendanceService {
     }
 
     //출,퇴근 정정요청 삭제
+    @Transactional
     public ResponseCM deleteRectifyAttendance(Long rid) {
         try {
             RectifyAttendance rectifyAttendance = rectifyAttendanceRepository.getOne(rid);
@@ -256,6 +254,7 @@ public class AttendanceService {
     }
 
     //승인해야할 출,퇴근 정정요청목록 조회
+    @Transactional
     public ResponseCMDL readRectifyAttendanceListForApprove() {
         try {
             String memberId = getMemberId();
@@ -275,6 +274,7 @@ public class AttendanceService {
     }
 
     //출,퇴근 정정 승인 레벨 2, 레벨 3만 접근 가능.
+    @Transactional
     public ResponseCM approveRectifyAttendance(Long rid) {
         try {
             RectifyAttendance rectifyAttendance = rectifyAttendanceRepository.getOne(rid);
@@ -290,6 +290,7 @@ public class AttendanceService {
     }
 
     //출,퇴근 요약정보 조회
+    @Transactional
     public ResponseCMD readAttendanceSummary() {
         try {
 
@@ -327,6 +328,7 @@ public class AttendanceService {
     }
 
     //개인 출,퇴근 당일정보 조회
+    @Transactional
     public ResponseCMD readAttendanceToday() {
         try {
             String memberId = getMemberId();
@@ -339,6 +341,7 @@ public class AttendanceService {
     }
 
     //uuid 중복되는 출, 퇴근기록 조회
+    @Transactional
     public ResponseCMDL readDuplicateAttendanceList(LocalDate date) {
         try {
             List<Attendance> attendanceList = attendanceRepository.findAll(AS.delFalse().and(AS.atteDate(date)));

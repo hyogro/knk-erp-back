@@ -27,12 +27,6 @@ public class AttendanceDto {
         this.uuid = attendance.getUuid();
     }
 
-    public AttendanceDto(LocalDate attendanceDate, LocalTime onWork, String uuid){
-        this.attendanceDate = attendanceDate;
-        this.onWork = onWork;
-        this.uuid = uuid;
-    }
-
     public Attendance toEntity(){
         return Attendance
                 .builder()

@@ -75,12 +75,19 @@ public class AttendanceController {
      * 출,퇴근 기록 조회
      **/
     @GetMapping("/{aid}")
-    public ResponseEntity<ResponseCMD> readAttendance(@PathVariable("aid") Long aid) {
-        return ResponseEntity.ok(attendanceService.readAttendance(aid));
+    public ResponseEntity<ResponseData> readAttendance(@PathVariable("aid") Long aid) {
+        AttendanceDto attendanceDto = attendanceService.readAttendance(aid);
+        knk.erp.api.shlee.common.dto.ResponseCMD responseCMD = knk.erp.api.shlee.common.dto.ResponseCMD
+                .builder()
+                .responseCode(ResponseCode.READ_ATTENDANCE_SUCCESS)
+                .data(attendanceDto)
+                .build();
+
+        return new ResponseEntity<>(responseCMD, HttpStatus.OK);
     }
 
     /**
-     * 출,퇴근 기록 정정 요청
+     * 새로운 근태정보 정정요청 생성
      **/
     @PostMapping("/rectify")
     public ResponseEntity<ResponseCM> createRectifyAttendance(@RequestBody RectifyAttendanceDTO rectifyAttendanceDTO) {
@@ -88,7 +95,7 @@ public class AttendanceController {
     }
 
     /**
-     * 퇴근 기록 정정 요청
+     * 기존 근태정보로 정정요청 생성
      **/
     @PostMapping("/rectify/{aid}")
     public ResponseEntity<ResponseCM> updateRectifyAttendance(@PathVariable("aid") Long aid, @RequestBody RectifyAttendanceDTO rectifyAttendanceDTO) {
