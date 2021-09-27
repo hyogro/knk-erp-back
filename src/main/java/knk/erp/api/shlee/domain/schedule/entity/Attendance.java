@@ -12,10 +12,14 @@ import java.time.LocalTime;
 @ToString
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@SequenceGenerator(
+        name = "attendance_id_generator",
+        sequenceName = "atte_id_seq"
+)
 public class Attendance extends Time {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "attendance_id_generator")
     private Long id;
 
     @ManyToOne
@@ -49,7 +53,7 @@ public class Attendance extends Time {
     }
 
     public void doOffWork(){
-        this.onWork = LocalTime.now();
+        this.offWork = LocalTime.now();
     }
 
 }

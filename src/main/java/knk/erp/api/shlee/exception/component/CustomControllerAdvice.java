@@ -53,7 +53,7 @@ public class CustomControllerAdvice {
     private ExceptionPayload generateExceptionPayload(CustomException e){
         return ExceptionPayload
                 .create()
-                .status(HttpStatus.BAD_REQUEST.value())
+                .status(e.getExceptionCode().getStatus())
                 .code(e.getExceptionCode().getCode())
                 .message(e.getMessage());
     }

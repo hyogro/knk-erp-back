@@ -16,27 +16,53 @@ import java.util.List;
 
 public class AS {//AttendanceSpecification
 
-    public static Specification<Attendance> searchWithDateAndMemberId(LocalDate today, String memberId){
+    /**날짜와 맴버아이디로 조회**/
+    public static Specification<Attendance> searchWithDateAndMemberId(LocalDate date, String memberId){
         return (root, query, builder) -> {
-            List<Predicate> predicate = getPredicateWithDateMemberId(today, memberId, root, builder);
+            List<Predicate> predicate = getPredicateWithDateAndMemberIdAndNotDeleted(date, memberId, root, builder);
             return builder.and(predicate.toArray(new Predicate[0]));
         };
     }
-
-    private static List<Predicate> getPredicateWithDateMemberId(LocalDate today, String memberId, Root<Attendance> root, CriteriaBuilder builder) {
+    private static List<Predicate> getPredicateWithDateAndMemberIdAndNotDeleted(LocalDate date, String memberId, Root<Attendance> root, CriteriaBuilder builder) {
         List<Predicate> predicate = new ArrayList<>();
         //삭제되지 않았고
         predicate.add(builder.isFalse(root.get("deleted")));
 
         //오늘 일자이며
-        predicate.add(builder.equal(root.get("attendanceDate"), today));
+        predicate.add(builder.equal(root.get("attendanceDate"), date));
 
         //작성자
-        Join<Schedule, Member> sm = root.join("author");
-        predicate.add(builder.equal(sm.get("memberId"), memberId));
+        predicate.add(withMemberId(memberId, root, builder));
 
         return predicate;
     }
+
+
+    /**날짜범위로 조회**/
+    public static Specification<Attendance> searchWithDateBetween(String memberId, LocalDate startDate, LocalDate endDate){
+        return (root, query, builder) -> {
+            List<Predicate> predicate = getPredicateWithDateBetweenAndNotDeleted(memberId, startDate, endDate, root, builder);
+            return builder.and(predicate.toArray(new Predicate[0]));
+        };
+    }
+    private static List<Predicate> getPredicateWithDateBetweenAndNotDeleted(String memberId, LocalDate startDate, LocalDate endDate, Root<Attendance> root, CriteriaBuilder builder) {
+        List<Predicate> predicate = new ArrayList<>();
+        //삭제되지 않았고
+        predicate.add(builder.isFalse(root.get("deleted")));
+
+        //시작일보다 같거나 크며
+        predicate.add(builder.greaterThanOrEqualTo(root.get("attendanceDate"), startDate));
+
+        //종료일보다 같거나 작을때
+        predicate.add(builder.lessThanOrEqualTo(root.get("attendanceDate"), endDate));
+
+        //작성자
+        predicate.add(withMemberId(memberId, root, builder));
+
+        return predicate;
+    }
+
+
 
     public static Specification<Attendance> id(Long id){//deleteFalse
         return (root, query, builder) -> builder.equal(root.get("id"), id);
@@ -84,5 +110,9 @@ public class AS {//AttendanceSpecification
     }
 
 
+    private static Predicate withMemberId(String memberId, Root<Attendance> root, CriteriaBuilder builder){
+        Join<Schedule, Member> sm = root.join("author");
+        return builder.equal(sm.get("memberId"), memberId);
+    }
 
 }
