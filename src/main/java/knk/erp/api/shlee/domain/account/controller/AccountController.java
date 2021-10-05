@@ -1,10 +1,14 @@
 package knk.erp.api.shlee.domain.account.controller;
 
+import knk.erp.api.shlee.common.dto.ResponseCM;
+import knk.erp.api.shlee.common.dto.ResponseCode;
+import knk.erp.api.shlee.common.dto.ResponseData;
 import knk.erp.api.shlee.domain.account.dto.account.*;
 import knk.erp.api.shlee.domain.account.dto.member.MemberDTO_REQ;
 import knk.erp.api.shlee.domain.account.dto.member.Update_AccountDTO_REQ;
 import knk.erp.api.shlee.domain.account.service.AccountService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,13 +16,19 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @RequestMapping("/account")
 public class AccountController {
-
     private final AccountService accountService;
 
     // 회원가입
     @PostMapping("/signup")
-    public ResponseEntity<SignUp_MemberDTO_RES> signup(@RequestBody MemberDTO_REQ memberDTOReq){
-        return ResponseEntity.ok(accountService.signup(memberDTOReq));
+    public ResponseEntity<ResponseData> signup(@RequestBody MemberDTO_REQ memberDTOReq){
+        accountService.signup(memberDTOReq);
+
+        ResponseCM responseCM = ResponseCM
+                .builder()
+                .responseCode(ResponseCode.SIGNUP_USER_SUCCESS)
+                .build();
+
+        return new ResponseEntity<>(responseCM, HttpStatus.OK);
     }
 
     // 로그인

@@ -48,6 +48,10 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers("/account/login").permitAll()
 
+                // 평가표
+                .antMatchers(HttpMethod.POST, "/evaluation").hasAnyRole("LVL3", "LVL4", "ADMIN")
+                .antMatchers(HttpMethod.GET,"/evaluation").authenticated()
+
                 // 장기자재현황
                 .antMatchers(HttpMethod.POST, "/materials").hasAnyRole("MATERIALS")
                 .antMatchers(HttpMethod.GET,"/materials").authenticated()

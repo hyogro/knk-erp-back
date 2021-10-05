@@ -65,17 +65,25 @@ public class DepartmentService {
         try{
             Department department = departmentRepository.findByIdAndDeletedFalse(dep_id);
             List<Read_DepartmentMemberListDTO> memberList = new ArrayList<>();
+            String leaderId;
             String leaderName;
+            department.getMemberList().removeIf(m -> m.isDeleted());
 
             for(Member m : department.getMemberList()){
                 memberList.add(new Read_DepartmentMemberListDTO(m.getMemberId(), m.getMemberName()));
             }
 
-            if(department.getLeader() == null) leaderName = "파트장이 지정되지 않음";
-            else leaderName = department.getLeader().getMemberName();
+            if(department.getLeader() == null) {
+                leaderId = "파트장이 지정되지 않음";
+                leaderName = "파트장이 지정되지 않음";
+            }
+            else {
+                leaderId = department.getLeader().getMemberId();
+                leaderName = department.getLeader().getMemberName();
+            }
 
             return new ReadDetail_DepartmentDTO_RES("RDD001", new ReadDetail_DepartmentDTO(department.getDepartmentName(),
-                    leaderName, department.getMemberList().size()), memberList);
+                    leaderId, leaderName, department.getMemberList().size()), memberList);
         }catch(Exception e){
             return new ReadDetail_DepartmentDTO_RES("RDD002", e.getMessage());
         }
@@ -92,6 +100,7 @@ public class DepartmentService {
             List<Read_DepartmentMemberListDTO> memberList = new ArrayList<>();
 
             for(Department d : all){
+                d.getMemberList().removeIf(u -> u.isDeleted());
                 for(Member m : d.getMemberList()){
                     memberList.add(new Read_DepartmentMemberListDTO(m.getMemberId(), m.getMemberName()));
                 }
@@ -165,7 +174,12 @@ public class DepartmentService {
     public Delete_DepartmentDTO_RES deleteDepartment(Long dep_id) {
         try {
             Department target = departmentRepository.findByIdAndDeletedFalse(dep_id);
+            target.getMemberList().removeIf(m -> m.isDeleted());
             List<Member> memberList =  target.getMemberList();
+
+            if(memberList != null) {
+                return new Delete_DepartmentDTO_RES("DD003", "부서 삭제 실패 - 부서에 멤버 존재");
+            }
 
             for(Member m : memberList){
                 m.setDepartment(departmentRepository.findByDepartmentNameAndDeletedFalse("부서미지정"));

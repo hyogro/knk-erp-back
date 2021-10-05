@@ -31,25 +31,19 @@ public class AccountService {
     private final AccountUtil accountUtil;
     private final SecurityUtil securityUtil;
 
-    // 회원 가입
+    /* 회원 가입 */
     @Transactional
-    public SignUp_MemberDTO_RES signup(MemberDTO_REQ memberDTOReq){
-        try {
-            Member member = memberDTOReq.toMember(passwordEncoder);
-            Department department;
+    public void signup(MemberDTO_REQ memberDTOReq){
+        Member member = memberDTOReq.toMember(passwordEncoder);
+        Department department;
 
-            if(memberDTOReq.getDepartmentId() != null) department = departmentRepository.getOne(memberDTOReq.getDepartmentId());
-            else department = departmentRepository.findByDepartmentNameAndDeletedFalse("부서미지정");
+        if(memberDTOReq.getDepartmentId() != null) department = departmentRepository.getOne(memberDTOReq.getDepartmentId());
+        else department = departmentRepository.findByDepartmentNameAndDeletedFalse("부서미지정");
 
-            member.setDepartment(department);
-            memberRepository.save(member);
-            department.getMemberList().add(member);
-            departmentRepository.save(department);
-
-            return new SignUp_MemberDTO_RES("SU001");
-        }catch (Exception e){
-            return new SignUp_MemberDTO_RES("SU002", e.getMessage());
-        }
+        member.setDepartment(department);
+        memberRepository.save(member);
+        department.getMemberList().add(member);
+        departmentRepository.save(department);
     }
 
     // Id 중복체크

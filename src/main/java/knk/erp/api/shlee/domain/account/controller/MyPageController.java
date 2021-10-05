@@ -16,6 +16,7 @@ public class MyPageController {
     // 회원 본인 정보 불러오기
     @GetMapping("")
     public ResponseEntity<GetMyInfo_MyPageDTO_RES> getMyInfo(){
+
         return ResponseEntity.ok(myPageService.getMyInfo());
     }
 

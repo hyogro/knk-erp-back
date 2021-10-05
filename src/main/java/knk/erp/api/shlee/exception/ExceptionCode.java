@@ -24,10 +24,9 @@ public enum ExceptionCode {
     VERIFY_NUMBER_NOT_MATCHING(403, "E3500", "Verify Number is Not Matching"),
     ENCRYPT_FAIL(403, "E3600", "Encrypt Fail"),
 
-    //User
+    //Account
     NOT_FOUND_USER(400, "E1000", "Not Found User"),
     ALREADY_EXIST_USER(409, "E1100", "Already Exist User"),
-    ALREADY_EXIST_USER_EMAIL(409, "E1200", "Already Exist User Email"),
 
     //Schedule - Attendance E55**
     ATTENDANCE_EXIST(400, "E5501", "근태 정보가 존재합니다."),

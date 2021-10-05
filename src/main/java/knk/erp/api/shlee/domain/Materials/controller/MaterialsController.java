@@ -1,13 +1,12 @@
 package knk.erp.api.shlee.domain.Materials.controller;
 
 import knk.erp.api.shlee.domain.Materials.dto.Create_MaterialsDTO_RES;
+import knk.erp.api.shlee.domain.Materials.dto.MaterialsDTO;
 import knk.erp.api.shlee.domain.Materials.dto.Read_MaterialsDTO_RES;
 import knk.erp.api.shlee.domain.Materials.service.MaterialsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -17,8 +16,8 @@ public class MaterialsController {
 
     //장기자재현황 사진 파일 이름 리스트 저장
     @PostMapping("")
-    public ResponseEntity<Create_MaterialsDTO_RES> createMaterials(@RequestBody List<String> materials){
-        return ResponseEntity.ok(materialsService.createMaterials(materials));
+    public ResponseEntity<Create_MaterialsDTO_RES> createMaterials(@RequestBody MaterialsDTO materialsDTO){
+        return ResponseEntity.ok(materialsService.createMaterials(materialsDTO));
     }
 
     //장기자재현황 사진 파일 이름 리스트 Get
