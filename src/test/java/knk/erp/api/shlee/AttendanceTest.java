@@ -186,7 +186,7 @@ class AttendanceTest {
         LocalTime nine = LocalTime.of(9,0);
         LocalTime six = LocalTime.of(18,0);
         for (int i = 1; i < 11; i++) {
-            LocalDate date = LocalDate.of(2021, 9, i);
+            LocalDate date = LocalDate.of(2021, 10, i);
             Attendance attendance = Attendance
                     .builder()
                     .author(member)
@@ -204,8 +204,8 @@ class AttendanceTest {
     @WithUserDetails("test_id")
     public void 출퇴근정보_10일치_넣은거중에_5개만_조회해볼게() throws Exception {
         MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
-        map.add("startDate","2021-09-06");
-        map.add("endDate","2021-09-10");
+        map.add("startDate","2021-10-06");
+        map.add("endDate","2021-10-10");
 
         MvcResult result = attendanceMvc.perform(
                 MockMvcRequestBuilders.get("/attendance/list").params(map))
@@ -232,6 +232,8 @@ class AttendanceTest {
         String code = this.getCode(result);
         assertThat(code).isEqualTo("A5503");
     }
+
+
 
     //응답코드 가져오기
     private String getCode(MvcResult result) throws UnsupportedEncodingException {

@@ -77,6 +77,7 @@ public class AttendanceController {
     @GetMapping("/{aid}")
     public ResponseEntity<ResponseData> readAttendance(@PathVariable("aid") Long aid) {
         AttendanceDto attendanceDto = attendanceService.readAttendance(aid);
+
         knk.erp.api.shlee.common.dto.ResponseCMD responseCMD = knk.erp.api.shlee.common.dto.ResponseCMD
                 .builder()
                 .responseCode(ResponseCode.READ_ATTENDANCE_SUCCESS)
@@ -87,19 +88,35 @@ public class AttendanceController {
     }
 
     /**
-     * 새로운 근태정보 정정요청 생성
+     * 정정요청 생성
+     * 미 출근시 정정요청 생성
      **/
     @PostMapping("/rectify")
-    public ResponseEntity<ResponseCM> createRectifyAttendance(@RequestBody RectifyAttendanceDTO rectifyAttendanceDTO) {
-        return ResponseEntity.ok(attendanceService.createRectifyAttendance(rectifyAttendanceDTO));
+    public ResponseEntity<ResponseData> createRectifyAttendance(@RequestBody RectifyAttendanceDTO rectifyAttendanceDTO) {
+        attendanceService.createRectifyAttendance(rectifyAttendanceDTO);
+
+        knk.erp.api.shlee.common.dto.ResponseCM responseCM = knk.erp.api.shlee.common.dto.ResponseCM
+                .builder()
+                .responseCode(ResponseCode.CREATE_RECTIFY_ATTENDANCE_SUCCESS)
+                .build();
+
+        return new ResponseEntity<>(responseCM, HttpStatus.OK);
     }
 
     /**
-     * 기존 근태정보로 정정요청 생성
+     * 정정요청 생성
+     * 기존 출근기록 정정요청 생성
      **/
     @PostMapping("/rectify/{aid}")
-    public ResponseEntity<ResponseCM> updateRectifyAttendance(@PathVariable("aid") Long aid, @RequestBody RectifyAttendanceDTO rectifyAttendanceDTO) {
-        return ResponseEntity.ok(attendanceService.updateRectifyAttendance(aid, rectifyAttendanceDTO));
+    public ResponseEntity<ResponseData> updateRectifyAttendance(@PathVariable("aid") Long aid, @RequestBody RectifyAttendanceDTO rectifyAttendanceDTO) {
+        attendanceService.updateRectifyAttendance(aid, rectifyAttendanceDTO);
+
+        knk.erp.api.shlee.common.dto.ResponseCM responseCM = knk.erp.api.shlee.common.dto.ResponseCM
+                .builder()
+                .responseCode(ResponseCode.CREATE_RECTIFY_ATTENDANCE_SUCCESS)
+                .build();
+
+        return new ResponseEntity<>(responseCM, HttpStatus.OK);
     }
 
     /**

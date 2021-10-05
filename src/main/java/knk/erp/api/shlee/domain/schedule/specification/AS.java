@@ -3,6 +3,7 @@ package knk.erp.api.shlee.domain.schedule.specification;
 
 import knk.erp.api.shlee.domain.account.entity.Member;
 import knk.erp.api.shlee.domain.schedule.entity.Attendance;
+import knk.erp.api.shlee.domain.schedule.entity.RectifyAttendance;
 import knk.erp.api.shlee.domain.schedule.entity.Schedule;
 import org.springframework.data.jpa.domain.Specification;
 
@@ -58,6 +59,24 @@ public class AS {//AttendanceSpecification
 
         //작성자
         predicate.add(withMemberId(memberId, root, builder));
+
+        return predicate;
+    }
+
+    /**근태 아이디로 조회*/
+    public static Specification<Attendance> searchWithAttendanceId(Long attendanceId){
+        return (root, query, builder) -> {
+            List<Predicate> predicate = getPredicateWithAttendanceId(attendanceId, root, builder);
+            return builder.and(predicate.toArray(new Predicate[0]));
+        };
+    }
+
+    private static List<Predicate> getPredicateWithAttendanceId(Long attendanceId, Root<Attendance> root, CriteriaBuilder builder) {
+        List<Predicate> predicate = new ArrayList<>();
+        //삭제되지 않았고
+        predicate.add(builder.isFalse(root.get("deleted")));
+        //id가 일치하는 경우
+        predicate.add(builder.equal(root.get("id"), attendanceId));
 
         return predicate;
     }

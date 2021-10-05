@@ -38,6 +38,7 @@ public class RAS {//RectifyAttendanceSpecification
         return predicate;
     }
 
+
     public static Specification<RectifyAttendance> id(Long id){//deleteFalse
         return (root, query, builder) -> builder.equal(root.get("id"), id);
     }
@@ -53,6 +54,7 @@ public class RAS {//RectifyAttendanceSpecification
             return builder.equal(sm.get("memberId"), mid);
         };
     }
+
     public static Specification<RectifyAttendance> did(Long departmentId){//memberId
         return (root, query, builder) -> {
 

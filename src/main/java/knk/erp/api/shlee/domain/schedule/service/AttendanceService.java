@@ -84,6 +84,7 @@ public class AttendanceService {
     }
 
     private Optional<RectifyAttendance> getTodayRectifyAttendanceOpt() {
+
         LocalDate today = LocalDate.now();
         String memberId = EntityUtil.getInstance().getMemberId();
 
@@ -143,73 +144,68 @@ public class AttendanceService {
         return new AttendanceDto(attendanceRepository.getOne(aid));
     }
 
+    private void throwIfRectifyAttendanceAlreadyExist(LocalDate attendanceDate, String memberId) {
+        Optional<RectifyAttendance> rectifyAttendanceOptional = rectifyAttendanceRepository.findOne(RAS.searchWithDateAndMemberId(attendanceDate, memberId));
+
+        if (rectifyAttendanceOptional.isPresent()) {
+            throw new RectifyAttendanceExistException();
+        }
+
+    }
+
     //출,퇴근기록 정정 요청 -> 정정요청 신규 생성
     @Transactional
-    public ResponseCM createRectifyAttendance(RectifyAttendanceDTO rectifyAttendanceDTO) {
-        try {
-            //성공 - 생성 후 응답
-            RectifyAttendance rectifyAttendance = rectifyAttendanceDTO.toEntity();
-            rectifyAttendance.setAuthor(getMember());
+    public void createRectifyAttendance(RectifyAttendanceDTO rectifyAttendanceDTO) {
+        String memberId = EntityUtil.getInstance().getMemberId();
+        LocalDate attendanceDate = rectifyAttendanceDTO.getAttendanceDate();
+        throwIfRectifyAttendanceAlreadyExist(attendanceDate, memberId);
 
-            Optional<RectifyAttendance> rectifyAttendanceOptional = rectifyAttendanceRepository.findOne(RAS.mid(getMemberId()).and(
-                    RAS.attendanceDate(rectifyAttendance.getAttendanceDate()).and(RAS.delFalse())
-            ));
+        //성공 - 생성 후 응답
+        RectifyAttendance rectifyAttendance = rectifyAttendanceDTO.toEntity();
+        rectifyAttendance.setAuthor(getMember());
 
-            if (rectifyAttendanceOptional.isPresent()) {
-                return new ResponseCM("CRA003");//그 당일에 이미 정정요청 존재함
-            }
+        //TODO: 바꿔야함
+        //레벨에 따른 1,2차 승인여부 변경
+        rectifyApproved(rectifyAttendance);
+        RectifyAttendance done = rectifyAttendanceRepository.save(rectifyAttendance);
 
-
-            //레벨에 따른 1,2차 승인여부 변경
-            rectifyApproved(rectifyAttendance);
-            RectifyAttendance done = rectifyAttendanceRepository.save(rectifyAttendance);
-
-            //1,2차 승인시 출,퇴근 정보 등록
-            rectifyToAttendance(done.getId());
-            return new ResponseCM("CRA001");
-        } catch (Exception e) {
-            //실패 - Exception 발생
-            return new ResponseCM("CRA002", e.getMessage());
+        //TODO: 바꿔야함
+        //1,2차 승인시 출,퇴근 정보 등록
+        rectifyToAttendance(done.getId());
+    }
+    private Attendance throwIfAttendanceNotExist(Long attendanceId) {
+        Optional<Attendance> attendanceOptional = attendanceRepository.findOne(AS.searchWithAttendanceId(attendanceId));
+        if (attendanceOptional.isPresent()) {
+            throw new RectifyAttendanceExistException();
         }
+        return attendanceOptional.get();
     }
 
     //출,퇴근기록 정정 요청 -> 출퇴근 기록으로 정정요청 생성
     @Transactional
-    public ResponseCM updateRectifyAttendance(Long aid, RectifyAttendanceDTO rectifyAttendanceDTO) {
-        try {
-            Optional<Attendance> attendanceOptional = attendanceRepository.findOne(AS.delFalse().and(AS.id(aid)));
+    public void updateRectifyAttendance(Long aid, RectifyAttendanceDTO rectifyAttendanceDTO) {
+        String memberId = EntityUtil.getInstance().getMemberId();
+        LocalDate attendanceDate = rectifyAttendanceDTO.getAttendanceDate();
 
-            if (!attendanceOptional.isPresent()) {
-                return new ResponseCM("URA002");
-            }
+        //기존 근태정보가 존재하지 않으면 예외처리
+        Attendance attendance = throwIfAttendanceNotExist(aid);
 
-            Attendance attendance = attendanceOptional.get();
+        attendance.setDeleted(true);
+        attendanceRepository.save(attendance);
 
-            Optional<RectifyAttendance> rectifyAttendanceOptional = rectifyAttendanceRepository.findOne(RAS.mid(getMemberId()).and(
-                    RAS.attendanceDate(attendance.getAttendanceDate()).and(RAS.delFalse())
-            ));
-            if (rectifyAttendanceOptional.isPresent()) {
-                return new ResponseCM("URA003");//그 당일에 이미 정정요청 존재함
-            }
+        //기존 정정정보가 존재하면 예외처리
+        throwIfRectifyAttendanceAlreadyExist(attendanceDate, memberId);
 
-            RectifyAttendance rectifyAttendance = util.AttendanceToRectify(attendance, rectifyAttendanceDTO);
-            rectifyAttendance.setAuthor(getMember());
+        RectifyAttendance rectifyAttendance = rectifyAttendanceDTO.toEntity();
+        rectifyAttendance.setAuthor(EntityUtil.getInstance().getMember(memberRepository));
 
-            //레벨에 따른 1,2차 승인여부 변경
-            rectifyApproved(rectifyAttendance);
-            RectifyAttendance done = rectifyAttendanceRepository.save(rectifyAttendance);
+        //레벨에 따른 1,2차 승인여부 변경
+        rectifyApproved(rectifyAttendance);
+        RectifyAttendance done = rectifyAttendanceRepository.save(rectifyAttendance);
 
-            attendance.setDeleted(true);
-            attendanceRepository.save(attendance);
 
-            //1,2차 승인시 출,퇴근 정보 등록
-            rectifyToAttendance(done.getId());
-
-            return new ResponseCM("URA001");
-        } catch (Exception e) {
-            //실패 - Exception 발생
-            return new ResponseCM("URA002", e.getMessage());
-        }
+        //1,2차 승인시 출,퇴근 정보 등록
+        rectifyToAttendance(done.getId());
     }
 
     //출,퇴근 정정요청목록 조회
@@ -442,10 +438,7 @@ public class AttendanceService {
         if (rectifyAttendance.isApproval1() && rectifyAttendance.isApproval2() && !rectifyAttendance.isDeleted()) {
             Attendance attendance = util.RectifyToAttendance(rectifyAttendance);
             attendance.setAuthor(rectifyAttendance.getAuthor());
-            System.out.println("여기부터 들어오긴 왔다");
             Attendance a = attendanceRepository.save(attendance);
-            System.out.println(a.getAuthor().getMemberId());
-            System.out.println("여기까지 들어오긴 왔다");
 
             rectifyAttendance.setDeleted(true);
             rectifyAttendanceRepository.save(rectifyAttendance);
