@@ -17,6 +17,7 @@ public class Delete_DepartmentDTO_RES {
     private void createCodeList(){
         this.help_codeList.put("DD001", "부서 삭제 성공");
         this.help_codeList.put("DD002", "부서 삭제 실패");
+        this.help_codeList.put("DD003", "부서 삭제 실패 - 부서에 멤버 존재");
     }
 
     //error

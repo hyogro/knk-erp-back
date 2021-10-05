@@ -9,7 +9,7 @@ public enum ResponseCode {
     /**
      * User A1***
      **/
-    CREATE_USER_SUCCESS("A1000"),
+    SIGNUP_USER_SUCCESS("A1000"),
     READ_USER_SUCCESS("A1100"),
     UPDATE_USER_INFO_SUCCESS("A1200"),
     UPDATE_USER_PASSWORD_SUCCESS("A1210"),

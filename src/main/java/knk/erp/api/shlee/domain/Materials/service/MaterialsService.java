@@ -1,6 +1,7 @@
 package knk.erp.api.shlee.domain.Materials.service;
 
 import knk.erp.api.shlee.domain.Materials.dto.Create_MaterialsDTO_RES;
+import knk.erp.api.shlee.domain.Materials.dto.MaterialsDTO;
 import knk.erp.api.shlee.domain.Materials.dto.Read_MaterialsDTO_RES;
 import knk.erp.api.shlee.domain.Materials.entity.Materials;
 import knk.erp.api.shlee.domain.Materials.repository.MaterialsRepository;
@@ -12,8 +13,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
 @Service
 @RequiredArgsConstructor
 public class MaterialsService {
@@ -21,7 +20,7 @@ public class MaterialsService {
     private final MaterialsRepository materialsRepository;
 
     //장기자재현황 사진 파일 이름 리스트 저장
-    public Create_MaterialsDTO_RES createMaterials(List<String> materials) {
+    public Create_MaterialsDTO_RES createMaterials(MaterialsDTO materialsDTO) {
         try{
             Materials before = materialsRepository.findAllByDeletedFalse();
 
@@ -36,7 +35,7 @@ public class MaterialsService {
                 return new Create_MaterialsDTO_RES("CMTR003", "업로드 권한 없음");
             }
 
-            materialsRepository.save(Materials.builder().materials(materials).build());
+            materialsRepository.save(Materials.builder().materials(materialsDTO.getMaterials()).build());
 
             return new Create_MaterialsDTO_RES("CMTR001");
         }catch(Exception e){

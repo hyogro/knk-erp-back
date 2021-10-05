@@ -9,6 +9,7 @@ import lombok.*;
 @NoArgsConstructor
 public class ReadDetail_DepartmentDTO {
     private String departmentName;
+    private String leaderId;
     private String leaderName;
     private int headCount;
 }
