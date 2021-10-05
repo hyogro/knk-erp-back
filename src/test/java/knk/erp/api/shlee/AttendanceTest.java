@@ -9,6 +9,7 @@ import knk.erp.api.shlee.domain.account.entity.MemberRepository;
 import knk.erp.api.shlee.domain.account.service.AccountService;
 import knk.erp.api.shlee.domain.account.service.DepartmentService;
 import knk.erp.api.shlee.domain.schedule.controller.AttendanceController;
+import knk.erp.api.shlee.domain.schedule.dto.Attendance.RectifyAttendanceDTO;
 import knk.erp.api.shlee.domain.schedule.entity.Attendance;
 import knk.erp.api.shlee.domain.schedule.repository.AttendanceRepository;
 import knk.erp.api.shlee.exception.component.CustomControllerAdvice;
@@ -179,14 +180,14 @@ class AttendanceTest {
     @Test
     @Order(30)
     @WithUserDetails("test_id")
-    public void 출퇴근정보_10일치만_넣어볼게() {
+    public void 출퇴근정보_10일치만_넣어볼게() {//10월 1 ~ 11일
         List<Attendance> attendanceList = new ArrayList<>();
         Member member = EntityUtil.getInstance().getMember(memberRepository);
 
         LocalTime nine = LocalTime.of(9,0);
         LocalTime six = LocalTime.of(18,0);
-        for (int i = 1; i < 11; i++) {
-            LocalDate date = LocalDate.of(2021, 10, i);
+        for (int i = 10; i < 20; i++) {
+            LocalDate date = LocalDate.of(2021, 9, i);
             Attendance attendance = Attendance
                     .builder()
                     .author(member)
@@ -204,8 +205,8 @@ class AttendanceTest {
     @WithUserDetails("test_id")
     public void 출퇴근정보_10일치_넣은거중에_5개만_조회해볼게() throws Exception {
         MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
-        map.add("startDate","2021-10-06");
-        map.add("endDate","2021-10-10");
+        map.add("startDate","2021-09-11");
+        map.add("endDate","2021-09-15");
 
         MvcResult result = attendanceMvc.perform(
                 MockMvcRequestBuilders.get("/attendance/list").params(map))
@@ -231,6 +232,128 @@ class AttendanceTest {
 
         String code = this.getCode(result);
         assertThat(code).isEqualTo("A5503");
+    }
+
+    @Test
+    @Order(40)
+    @WithUserDetails("test_id")
+    public void 정정요청생성_실패_이미_해당일에_출퇴근정보_있음() throws Exception {
+
+        LocalDate date = LocalDate.of(2021,9, 10);
+        LocalTime nine = LocalTime.of(9,0);
+        LocalTime six = LocalTime.of(18,0);
+
+        RectifyAttendanceDTO rectifyAttendanceDTO = RectifyAttendanceDTO
+                .builder()
+                .attendanceDate(date)
+                .onWork(nine)
+                .offWork(six)
+                .memo("늦게왔어용_테스트")
+                .build();
+
+        String requestBody = objectMapper.writeValueAsString(rectifyAttendanceDTO);
+
+        MvcResult result = attendanceMvc.perform(
+                MockMvcRequestBuilders.post("/attendance/rectify")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestBody))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andReturn();
+
+
+        String code = this.getCode(result);
+        assertThat(code).isEqualTo("E5501");
+    }
+
+    @Test
+    @Order(41)
+    @WithUserDetails("test_id")
+    public void 정정요청생성_성공() throws Exception {
+
+        LocalDate date = LocalDate.of(2021,9, 25);
+        LocalTime nine = LocalTime.of(9,0);
+        LocalTime six = LocalTime.of(18,0);
+
+        RectifyAttendanceDTO rectifyAttendanceDTO = RectifyAttendanceDTO
+                .builder()
+                .attendanceDate(date)
+                .onWork(nine)
+                .offWork(six)
+                .memo("늦게왔어용_테스트")
+                .build();
+
+        String requestBody = objectMapper.writeValueAsString(rectifyAttendanceDTO);
+
+        MvcResult result = attendanceMvc.perform(
+                MockMvcRequestBuilders.post("/attendance/rectify")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestBody))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andReturn();
+
+
+        String code = this.getCode(result);
+        assertThat(code).isEqualTo("A5504");
+    }
+
+    @Test
+    @Order(42)
+    @WithUserDetails("test_id")
+    public void 정정요청생성_실패_이미_해당일에_정정요청_있음() throws Exception {
+
+        LocalDate date = LocalDate.of(2021,9, 25);
+        LocalTime nine = LocalTime.of(9,0);
+        LocalTime six = LocalTime.of(18,0);
+
+        RectifyAttendanceDTO rectifyAttendanceDTO = RectifyAttendanceDTO
+                .builder()
+                .attendanceDate(date)
+                .onWork(nine)
+                .offWork(six)
+                .memo("늦게왔어용_테스트")
+                .build();
+
+        String requestBody = objectMapper.writeValueAsString(rectifyAttendanceDTO);
+
+        MvcResult result = attendanceMvc.perform(
+                MockMvcRequestBuilders.post("/attendance/rectify")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestBody))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andReturn();
+
+
+        String code = this.getCode(result);
+        assertThat(code).isEqualTo("E5503");
+    }
+
+    @Test
+    @Order(43)
+    @WithUserDetails("test_id")
+    public void 정정요청생성_성공_기존출근정보_수정() throws Exception {
+
+        LocalTime nine = LocalTime.of(9,0);
+        LocalTime six = LocalTime.of(21,0);
+
+        RectifyAttendanceDTO rectifyAttendanceDTO = RectifyAttendanceDTO
+                .builder()
+                .onWork(nine)
+                .offWork(six)
+                .memo("늦게왔어용_테스트")
+                .build();
+
+        String requestBody = objectMapper.writeValueAsString(rectifyAttendanceDTO);
+
+        MvcResult result = attendanceMvc.perform(
+                MockMvcRequestBuilders.post("/attendance/rectify/"+3)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestBody))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andReturn();
+
+
+        String code = this.getCode(result);
+        assertThat(code).isEqualTo("A5504");
     }
 
 

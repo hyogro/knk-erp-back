@@ -58,7 +58,7 @@ public class AttendanceService {
     @Transactional
     public void onWork(String uuid) {
         //기존 출근내역이 있으면 실패
-        throwIfAttendanceExist();
+        throwIfTodayAttendanceExist();
 
         //기존 정정요청이 있으면 실패
         throwIfRectifyAttendanceExist();
@@ -76,11 +76,10 @@ public class AttendanceService {
         attendanceRepository.save(attendance);
     }
 
-    private Optional<Attendance> getTodayAttendanceOpt() {
-        LocalDate today = LocalDate.now();
+    private Optional<Attendance> getAttendanceOpt(LocalDate date) {
         String memberId = EntityUtil.getInstance().getMemberId();
 
-        return attendanceRepository.findOne(AS.searchWithDateAndMemberId(today, memberId));
+        return attendanceRepository.findOne(AS.searchWithDateAndMemberId(date, memberId));
     }
 
     private Optional<RectifyAttendance> getTodayRectifyAttendanceOpt() {
@@ -91,8 +90,9 @@ public class AttendanceService {
         return rectifyAttendanceRepository.findOne(RAS.searchWithDateAndMemberId(today, memberId));
     }
 
-    private void throwIfAttendanceExist() {
-        Optional<Attendance> todayAttendanceOpt = getTodayAttendanceOpt();
+    private void throwIfTodayAttendanceExist() {
+        LocalDate today = LocalDate.now();
+        Optional<Attendance> todayAttendanceOpt = getAttendanceOpt(today);
         if (todayAttendanceOpt.isPresent()) {
             throw new AttendanceExistException();
         }
@@ -120,7 +120,8 @@ public class AttendanceService {
     }
 
     private Attendance throwIfAttendanceNotExistOrReturn() {
-        return getTodayAttendanceOpt().orElseThrow(AttendanceNotExistException::new);
+        LocalDate today = LocalDate.now();
+        return getAttendanceOpt(today).orElseThrow(AttendanceNotExistException::new);
     }
 
     private void throwIfAlreadyOffWorkExist(Attendance attendance) {
@@ -144,7 +145,7 @@ public class AttendanceService {
         return new AttendanceDto(attendanceRepository.getOne(aid));
     }
 
-    private void throwIfRectifyAttendanceAlreadyExist(LocalDate attendanceDate, String memberId) {
+    private void throwIfRectifyAttendanceExist(LocalDate attendanceDate, String memberId) {
         Optional<RectifyAttendance> rectifyAttendanceOptional = rectifyAttendanceRepository.findOne(RAS.searchWithDateAndMemberId(attendanceDate, memberId));
 
         if (rectifyAttendanceOptional.isPresent()) {
@@ -152,17 +153,28 @@ public class AttendanceService {
         }
 
     }
+    private void throwIfAttendanceExist(LocalDate attendanceDate){
+        if(getAttendanceOpt(attendanceDate).isPresent()){
+            throw new AttendanceExistException();
+        }
+    }
 
     //출,퇴근기록 정정 요청 -> 정정요청 신규 생성
     @Transactional
     public void createRectifyAttendance(RectifyAttendanceDTO rectifyAttendanceDTO) {
         String memberId = EntityUtil.getInstance().getMemberId();
         LocalDate attendanceDate = rectifyAttendanceDTO.getAttendanceDate();
-        throwIfRectifyAttendanceAlreadyExist(attendanceDate, memberId);
+
+        //요청일에 출퇴근정보 존재하면 예외처리(다른방식으로 접근해야 함)
+        throwIfAttendanceExist(attendanceDate);
+
+        //요청일에 정정요청 이미 존재하면 예외처리
+        throwIfRectifyAttendanceExist(attendanceDate, memberId);
 
         //성공 - 생성 후 응답
         RectifyAttendance rectifyAttendance = rectifyAttendanceDTO.toEntity();
-        rectifyAttendance.setAuthor(getMember());
+        System.out.println(rectifyAttendance.getAttendanceDate());
+        rectifyAttendance.setAuthor(EntityUtil.getInstance().getMember(memberRepository));
 
         //TODO: 바꿔야함
         //레벨에 따른 1,2차 승인여부 변경
@@ -175,8 +187,8 @@ public class AttendanceService {
     }
     private Attendance throwIfAttendanceNotExist(Long attendanceId) {
         Optional<Attendance> attendanceOptional = attendanceRepository.findOne(AS.searchWithAttendanceId(attendanceId));
-        if (attendanceOptional.isPresent()) {
-            throw new RectifyAttendanceExistException();
+        if (!attendanceOptional.isPresent()) {
+            throw new AttendanceNotExistException();
         }
         return attendanceOptional.get();
     }
@@ -184,19 +196,23 @@ public class AttendanceService {
     //출,퇴근기록 정정 요청 -> 출퇴근 기록으로 정정요청 생성
     @Transactional
     public void updateRectifyAttendance(Long aid, RectifyAttendanceDTO rectifyAttendanceDTO) {
-        String memberId = EntityUtil.getInstance().getMemberId();
-        LocalDate attendanceDate = rectifyAttendanceDTO.getAttendanceDate();
+
 
         //기존 근태정보가 존재하지 않으면 예외처리
         Attendance attendance = throwIfAttendanceNotExist(aid);
-
         attendance.setDeleted(true);
         attendanceRepository.save(attendance);
 
-        //기존 정정정보가 존재하면 예외처리
-        throwIfRectifyAttendanceAlreadyExist(attendanceDate, memberId);
+        //요청일에 정정요청 이미 존재하면 예외처리
+        String memberId = EntityUtil.getInstance().getMemberId();
+        LocalDate attendanceDate = attendance.getAttendanceDate();
+        System.out.println(attendanceDate);
+        throwIfRectifyAttendanceExist(attendanceDate, memberId);
 
+        //성공 - 생성 후 응답
         RectifyAttendance rectifyAttendance = rectifyAttendanceDTO.toEntity();
+        rectifyAttendance.setAttendanceDate(attendance.getAttendanceDate());
+        rectifyAttendance.setTargetId(aid);
         rectifyAttendance.setAuthor(EntityUtil.getInstance().getMember(memberRepository));
 
         //레벨에 따른 1,2차 승인여부 변경

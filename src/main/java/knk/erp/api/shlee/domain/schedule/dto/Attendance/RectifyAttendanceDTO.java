@@ -11,6 +11,7 @@ import java.time.LocalTime;
 @ToString
 @AllArgsConstructor
 @RequiredArgsConstructor
+@Builder
 public class RectifyAttendanceDTO {
 
     private Long id;
