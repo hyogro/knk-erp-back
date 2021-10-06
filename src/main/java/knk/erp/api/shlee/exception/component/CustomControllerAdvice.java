@@ -2,7 +2,7 @@ package knk.erp.api.shlee.exception.component;
 
 import knk.erp.api.shlee.exception.ExceptionPayload;
 import knk.erp.api.shlee.exception.exceptions.*;
-import knk.erp.api.shlee.exception.exceptions.Schedule.*;
+import knk.erp.api.shlee.exception.exceptions.schedule.*;
 import knk.erp.api.shlee.exception.exceptions.common.DataNotExistException;
 import knk.erp.api.shlee.exception.exceptions.common.PermissionDeniedException;
 import lombok.extern.slf4j.Slf4j;
