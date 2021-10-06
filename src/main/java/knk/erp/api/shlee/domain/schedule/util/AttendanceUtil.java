@@ -27,7 +27,7 @@ public class AttendanceUtil {
         return attendanceDTOList;
     }
 
-    public List<Object> RectifyAttendanceListToDTO(List<RectifyAttendance> rectifyAttendanceList){
+    public List<Object> entityToDto(List<RectifyAttendance> rectifyAttendanceList){
         List<Object> rectifyAttendanceDTOList = new ArrayList<>();
         for(RectifyAttendance rectifyAttendance : rectifyAttendanceList){
             rectifyAttendanceDTOList.add(new RectifyAttendanceListData(rectifyAttendance));

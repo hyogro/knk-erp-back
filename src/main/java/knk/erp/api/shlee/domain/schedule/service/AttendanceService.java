@@ -5,7 +5,7 @@ import knk.erp.api.shlee.domain.account.entity.Department;
 import knk.erp.api.shlee.domain.account.entity.DepartmentRepository;
 import knk.erp.api.shlee.domain.account.entity.Member;
 import knk.erp.api.shlee.domain.account.entity.MemberRepository;
-import knk.erp.api.shlee.common.util.CommonUtil;
+import knk.erp.api.shlee.common.util.AuthorityUtil;
 import knk.erp.api.shlee.domain.schedule.dto.Attendance.*;
 import knk.erp.api.shlee.domain.schedule.entity.Attendance;
 import knk.erp.api.shlee.domain.schedule.entity.RectifyAttendance;
@@ -24,12 +24,14 @@ import knk.erp.api.shlee.exception.exceptions.Schedule.AttendanceExistException;
 import knk.erp.api.shlee.exception.exceptions.Schedule.AttendanceNotExistException;
 import knk.erp.api.shlee.exception.exceptions.Schedule.AttendanceOffWorkExistException;
 import knk.erp.api.shlee.exception.exceptions.Schedule.RectifyAttendanceExistException;
+import knk.erp.api.shlee.exception.exceptions.common.PermissionDeniedException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityNotFoundException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -45,8 +47,8 @@ public class AttendanceService {
     private final AttendanceRepository attendanceRepository;
     private final RectifyAttendanceRepository rectifyAttendanceRepository;
     private final VacationRepository vacationRepository;
-    private final AttendanceUtil util;
-    private final CommonUtil commonUtil;
+    private final AttendanceUtil dtoUtil;
+    private final AuthorityUtil authorityUtil;
 
     /**
      * 권한 여부 체크를 위한 사용자, 부서 리포지토리 접근
@@ -153,8 +155,9 @@ public class AttendanceService {
         }
 
     }
-    private void throwIfAttendanceExist(LocalDate attendanceDate){
-        if(getAttendanceOpt(attendanceDate).isPresent()){
+
+    private void throwIfAttendanceExist(LocalDate attendanceDate) {
+        if (getAttendanceOpt(attendanceDate).isPresent()) {
             throw new AttendanceExistException();
         }
     }
@@ -183,8 +186,9 @@ public class AttendanceService {
 
         //TODO: 바꿔야함
         //1,2차 승인시 출,퇴근 정보 등록
-        rectifyToAttendance(done.getId());
+        rectifyToAttendance(done);
     }
+
     private Attendance throwIfAttendanceNotExist(Long attendanceId) {
         Optional<Attendance> attendanceOptional = attendanceRepository.findOne(AS.searchWithAttendanceId(attendanceId));
         if (!attendanceOptional.isPresent()) {
@@ -221,148 +225,112 @@ public class AttendanceService {
 
 
         //1,2차 승인시 출,퇴근 정보 등록
-        rectifyToAttendance(done.getId());
+        rectifyToAttendance(done);
     }
 
     //출,퇴근 정정요청목록 조회
     @Transactional
-    public ResponseCMDL readRectifyAttendanceList() {
-        try {
-            String memberId = getMemberId();
+    public List<Object> readRectifyAttendanceList() {
+        String memberId = EntityUtil.getInstance().getMemberId();
 
-            List<RectifyAttendance> rectifyAttendanceList = rectifyAttendanceRepository.findAll(RAS.delFalse().and(RAS.mid(memberId)));
-            return new ResponseCMDL("RRAL001", util.RectifyAttendanceListToDTO(rectifyAttendanceList));
-        } catch (Exception e) {
-            //실패 - Exception 발생
-            return new ResponseCMDL("RRAL002", e.getMessage());
-        }
+        List<RectifyAttendance> rectifyAttendanceList = rectifyAttendanceRepository.findAll(RAS.searchWithMemberId(memberId));
+        return dtoUtil.entityToDto(rectifyAttendanceList);
     }
 
     //출,퇴근 정정요청상세 조회
     @Transactional
-    public ResponseCMD readRectifyAttendance(Long rid) {
-        try {
-            RectifyAttendance rectifyAttendance = rectifyAttendanceRepository.getOne(rid);
-            return new ResponseCMD("RRA001", new RectifyAttendanceDetailData(rectifyAttendance));
-        } catch (Exception e) {
-            //실패 - Exception 발생
-            return new ResponseCMD("RRA002", e.getMessage());
-        }
+    public RectifyAttendanceDetailData readRectifyAttendance(Long rid) {
+        RectifyAttendance rectifyAttendance = rectifyAttendanceRepository.getOne(rid);
+        return new RectifyAttendanceDetailData(rectifyAttendance);
     }
 
     //출,퇴근 정정요청 삭제
     @Transactional
-    public ResponseCM deleteRectifyAttendance(Long rid) {
-        try {
-            RectifyAttendance rectifyAttendance = rectifyAttendanceRepository.getOne(rid);
-
-            rectifyAttendance.setDeleted(true);
-            rectifyAttendanceRepository.save(rectifyAttendance);
-            return new ResponseCM("DRA001");
-        } catch (Exception e) {
-            //실패 - Exception 발생
-            return new ResponseCM("DRA002", e.getMessage());
-        }
+    public void deleteRectifyAttendance(Long rid) {
+        RectifyAttendance rectifyAttendance = rectifyAttendanceRepository.getOne(rid);
+        rectifyAttendance.setDeleted(true);
+        rectifyAttendanceRepository.save(rectifyAttendance);
     }
 
     //승인해야할 출,퇴근 정정요청목록 조회
     @Transactional
-    public ResponseCMDL readRectifyAttendanceListForApprove() {
-        try {
-            String memberId = getMemberId();
-            List<RectifyAttendance> rectifyAttendanceList = new ArrayList<>();
-            if (commonUtil.checkLevel() == 2) {
-                Member member = memberRepository.findAllByMemberIdAndDeletedIsFalse(memberId);
-                Long departmentId = member.getDepartment().getId();
-                rectifyAttendanceList = rectifyAttendanceRepository.findAll(RAS.delFalse().and(RAS.did(departmentId).and(RAS.approve1Is(false))));
-            } else if (3 <= commonUtil.checkLevel()) {
-                rectifyAttendanceList = rectifyAttendanceRepository.findAll(RAS.delFalse());
-            }
-            return new ResponseCMDL("RRAL001", util.RectifyAttendanceListToDTO(rectifyAttendanceList));
-        } catch (Exception e) {
-            //실패 - Exception 발생
-            return new ResponseCMDL("RRAL002", e.getMessage());
+    public List<Object> readRectifyAttendanceListForApprove() {
+        List<RectifyAttendance> rectifyAttendanceList = new ArrayList<>();
+
+        if (authorityUtil.checkLevel() == 1) {
+            throw new PermissionDeniedException();
         }
+        if (authorityUtil.checkLevel() == 2) {
+            Long departmentId = EntityUtil.getInstance().getDepartmentId(memberRepository);
+            rectifyAttendanceList = rectifyAttendanceRepository.findAll(RAS.searchWithDepartmentIdAndApprove1IsFalse(departmentId));
+        } else if (3 <= authorityUtil.checkLevel()) {
+            rectifyAttendanceList = rectifyAttendanceRepository.findAll(RAS.delFalse());
+        }
+
+        return dtoUtil.entityToDto(rectifyAttendanceList);
     }
 
     //출,퇴근 정정 승인 레벨 2, 레벨 3만 접근 가능.
     @Transactional
-    public ResponseCM approveRectifyAttendance(Long rid) {
-        try {
-            RectifyAttendance rectifyAttendance = rectifyAttendanceRepository.getOne(rid);
-            if (rectifyAttendance.isDeleted()) return new ResponseCM("ARA004");
-            if (!rectifyApproved(rectifyAttendance)) return new ResponseCM("ARA003");
+    public void approveRectifyAttendance(Long rid) {
+        RectifyAttendance rectifyAttendance = rectifyAttendanceRepository.getOne(rid);
+        //TODO: 삭제되었을경우 예외처리
+        //TODO: rectifyApproved(rectifyAttendance) 이용해서 승인처리하고 변경점 없을시 예외처리
+        rectifyApproved(rectifyAttendance);
 
-            RectifyAttendance done = rectifyAttendanceRepository.save(rectifyAttendance);
-            rectifyToAttendance(done.getId());
-            return new ResponseCM("ARA001");
-        } catch (Exception e) {
-            return new ResponseCM("ARA002", e.getMessage());
-        }
+        RectifyAttendance done = rectifyAttendanceRepository.save(rectifyAttendance);
+        rectifyToAttendance(done);
     }
 
     //출,퇴근 요약정보 조회
     @Transactional
-    public ResponseCMD readAttendanceSummary() {
-        try {
+    public AttendanceSummaryDTO readAttendanceSummary() {
+        LocalDate today = LocalDate.now();
+        LocalDateTime st = LocalDateTime.of(today, LocalTime.MIN);
+        LocalDateTime et = LocalDateTime.of(today, LocalTime.MAX);
 
-            LocalDate today = LocalDate.now();
-            LocalDateTime st = LocalDateTime.of(today, LocalTime.MIN);
-            LocalDateTime et = LocalDateTime.of(today, LocalTime.MAX);
+        if (authorityUtil.checkLevel() == 2) {
+            Department department = getDepartment();
+            Long departmentId = department.getId();
 
-            if (commonUtil.checkLevel() == 2) {
-                Department department = getDepartment();
-                Long departmentId = department.getId();
+            List<Attendance> onWorkList = attendanceRepository.findAll(AS.delFalse().and(AS.atteDate(today).and(AS.did(departmentId))));
+            List<Attendance> offWorkList = attendanceRepository.findAll(AS.delFalse().and(AS.atteDate(today).and(AS.offWorked()).and(AS.did(departmentId))));
+            List<Vacation> vacationList = vacationRepository.findAll(VS.delFalse().and(VS.did(departmentId)).and(VS.vacationDateBetween(st, et)).and(VS.approve1Is(true)).and(VS.approve2Is(true)));
+            List<Attendance> lateWorkList = new ArrayList<>(onWorkList);
+            List<Member> yetWorkList = department.getMemberList();
 
-                List<Attendance> onWorkList = attendanceRepository.findAll(AS.delFalse().and(AS.atteDate(today).and(AS.did(departmentId))));
-                List<Attendance> offWorkList = attendanceRepository.findAll(AS.delFalse().and(AS.atteDate(today).and(AS.offWorked()).and(AS.did(departmentId))));
-                List<Vacation> vacationList = vacationRepository.findAll(VS.delFalse().and(VS.did(departmentId)).and(VS.vacationDateBetween(st, et)).and(VS.approve1Is(true)).and(VS.approve2Is(true)));
-                List<Attendance> lateWorkList = new ArrayList<>(onWorkList);
-                List<Member> yetWorkList = department.getMemberList();
+            return makeAttendanceSummary(onWorkList, offWorkList, vacationList, lateWorkList, yetWorkList);
 
-                return new ResponseCMD("RAS001", makeAttendanceSummary(onWorkList, offWorkList, vacationList, lateWorkList, yetWorkList));
+        } else if (3 <= authorityUtil.checkLevel()) {
+            List<Attendance> onWorkList = attendanceRepository.findAll(AS.delFalse().and(AS.atteDate(today)));
+            List<Attendance> offWorkList = attendanceRepository.findAll(AS.delFalse().and(AS.atteDate(today).and(AS.offWorked())));
+            List<Vacation> vacationList = vacationRepository.findAll(VS.delFalse().and(VS.vacationDateBetween(st, et)).and(VS.approve1Is(true)).and(VS.approve2Is(true)));
+            List<Attendance> lateWorkList = new ArrayList<>(onWorkList);
+            List<Member> yetWorkList = memberRepository.findAll();
 
-            } else if (3 <= commonUtil.checkLevel()) {
-                List<Attendance> onWorkList = attendanceRepository.findAll(AS.delFalse().and(AS.atteDate(today)));
-                List<Attendance> offWorkList = attendanceRepository.findAll(AS.delFalse().and(AS.atteDate(today).and(AS.offWorked())));
-                List<Vacation> vacationList = vacationRepository.findAll(VS.delFalse().and(VS.vacationDateBetween(st, et)).and(VS.approve1Is(true)).and(VS.approve2Is(true)));
-                List<Attendance> lateWorkList = new ArrayList<>(onWorkList);
-                List<Member> yetWorkList = memberRepository.findAll();
+            return makeAttendanceSummary(onWorkList, offWorkList, vacationList, lateWorkList, yetWorkList);
 
-                return new ResponseCMD("RAS001", makeAttendanceSummary(onWorkList, offWorkList, vacationList, lateWorkList, yetWorkList));
-
-            } else {
-                return new ResponseCMD("RAS003");
-            }
-        } catch (Exception e) {
-            return new ResponseCMD("RAS002", e.getMessage());
+        } else {
+            throw new PermissionDeniedException();
         }
     }
 
     //개인 출,퇴근 당일정보 조회
     @Transactional
-    public ResponseCMD readAttendanceToday() {
-        try {
-            String memberId = getMemberId();
-            LocalDate today = LocalDate.now();
-            Optional<Attendance> attendance = attendanceRepository.findOne(AS.delFalse().and(AS.atteDate(today).and(AS.mid(memberId))));
-            return attendance.map(value -> new ResponseCMD("RA001", new AttendanceDto(value))).orElseGet(() -> new ResponseCMD("RA003"));
-        } catch (Exception e) {
-            return new ResponseCMD("RA002", e.getMessage());
-        }
+    public AttendanceDto readAttendanceToday() {
+        String memberId = EntityUtil.getInstance().getMemberId();
+        LocalDate today = LocalDate.now();
+        Optional<Attendance> attendance = attendanceRepository.findOne(AS.delFalse().and(AS.atteDate(today).and(AS.mid(memberId))));
+        return attendance.map(AttendanceDto::new).orElseThrow(EntityNotFoundException::new);
+
     }
 
     //uuid 중복되는 출, 퇴근기록 조회
     @Transactional
-    public ResponseCMDL readDuplicateAttendanceList(LocalDate date) {
-        try {
-            List<Attendance> attendanceList = attendanceRepository.findAll(AS.delFalse().and(AS.atteDate(date)));
-            //List<String> uuidList = attendanceList.stream().map(Attendance::getUuid).collect(Collectors.toList());
-            return new ResponseCMDL("RAUL001", util.AttendanceUuidListToDTO(attendanceList));
-        } catch (Exception e) {
-            //실패 - Exception 발생
-            return new ResponseCMDL("RAUL002", e.getMessage());
-        }
+    public List<Object> readDuplicateAttendanceList(LocalDate date) {
+        List<Attendance> attendanceList = attendanceRepository.findAll(AS.delFalse().and(AS.atteDate(date)));
+        //List<String> uuidList = attendanceList.stream().map(Attendance::getUuid).collect(Collectors.toList());
+        return dtoUtil.AttendanceUuidListToDTO(attendanceList);
     }
 
 
@@ -448,11 +416,10 @@ public class AttendanceService {
     }
 
     //정정 요청이 들어온뒤 1, 2차 승인이 완료된 경우 출퇴근 정정요청 삭제 후 해당정보로 출퇴근정보 생성
-    private void rectifyToAttendance(Long id) {
-        RectifyAttendance rectifyAttendance = rectifyAttendanceRepository.getOne(id);
+    private void rectifyToAttendance(RectifyAttendance rectifyAttendance) {
 
         if (rectifyAttendance.isApproval1() && rectifyAttendance.isApproval2() && !rectifyAttendance.isDeleted()) {
-            Attendance attendance = util.RectifyToAttendance(rectifyAttendance);
+            Attendance attendance = dtoUtil.RectifyToAttendance(rectifyAttendance);
             attendance.setAuthor(rectifyAttendance.getAuthor());
             Attendance a = attendanceRepository.save(attendance);
 
@@ -470,7 +437,7 @@ public class AttendanceService {
     private boolean rectifyApproved(RectifyAttendance rectifyAttendance) {
         String leaderId = getMemberId();
         //LVL2(부서장) 인 경우 승인하려는 맴버가 부서원인지 확인 후 승인 진행
-        if (commonUtil.checkLevel() == 2) {
+        if (authorityUtil.checkLevel() == 2) {
             Department department_m = rectifyAttendance.getAuthor().getDepartment();
             Department department_l = departmentRepository.findByLeader_MemberIdAndDeletedFalse(leaderId);
             if (department_m.equals(department_l)) {
@@ -479,7 +446,7 @@ public class AttendanceService {
             }
         }
         //LVL3(부장)이상인 경우 모두 승인
-        else if (3 <= commonUtil.checkLevel()) {
+        else if (3 <= authorityUtil.checkLevel()) {
             setApprovalAndApprover(rectifyAttendance, 2);
             return true;
         }

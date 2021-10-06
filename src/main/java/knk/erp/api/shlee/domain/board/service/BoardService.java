@@ -8,7 +8,7 @@ import knk.erp.api.shlee.domain.board.dto.boardlist.*;
 import knk.erp.api.shlee.domain.board.entity.Board;
 import knk.erp.api.shlee.domain.board.entity.BoardRepository;
 import knk.erp.api.shlee.domain.board.util.BoardUtil;
-import knk.erp.api.shlee.common.util.CommonUtil;
+import knk.erp.api.shlee.common.util.AuthorityUtil;
 import knk.erp.api.shlee.domain.file.entity.File;
 import knk.erp.api.shlee.domain.file.repository.FileRepository;
 import lombok.RequiredArgsConstructor;
@@ -27,7 +27,7 @@ public class BoardService {
     private final MemberRepository memberRepository;
     private final BoardRepository boardRepository;
     private final BoardUtil boardUtil;
-    private final CommonUtil commonUtil;
+    private final AuthorityUtil authorityUtil;
     private final FileRepository fileRepository;
 
     // 게시글 생성
@@ -37,7 +37,7 @@ public class BoardService {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             Member writer = memberRepository.findAllByMemberIdAndDeletedIsFalse(authentication.getName());
             if(boardDTO.getBoardType().equals("공지사항")){
-                if(commonUtil.authorityToInteger(writer) <= 2 && !writer.getAuthority().equals(Authority.ROLE_MANAGE)){
+                if(authorityUtil.authorityToInteger(writer) <= 2 && !writer.getAuthority().equals(Authority.ROLE_MANAGE)){
                     return new Create_BoardDTO_RES("CB003", "권한 부족");
                 }
             }

@@ -2,7 +2,7 @@ package knk.erp.api.shlee.domain.account.service;
 
 import knk.erp.api.shlee.domain.account.dto.department.*;
 import knk.erp.api.shlee.domain.account.entity.*;
-import knk.erp.api.shlee.common.util.CommonUtil;
+import knk.erp.api.shlee.common.util.AuthorityUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -20,7 +20,7 @@ public class DepartmentService {
     //2021-06-07 15:07 이상훈 추가
     private final MemberRepository memberRepository;
     //2021-06-08 09:10 이상훈 추가
-    private final CommonUtil commonUtil;
+    private final AuthorityUtil authorityUtil;
 
     // 부서 목록에 새로운 부서 추가
     @Transactional
@@ -249,7 +249,7 @@ public class DepartmentService {
         try {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-            if (3 <= commonUtil.checkLevel()) {
+            if (3 <= authorityUtil.checkLevel()) {
                 return new RES_DepNameAndMemCount("RDAM001", new DepartmentNameAndMemberCountDTO("구이앤금우통신",
                         memberRepository.countAllByMemberNameIsNot("관리자").intValue()));
             }

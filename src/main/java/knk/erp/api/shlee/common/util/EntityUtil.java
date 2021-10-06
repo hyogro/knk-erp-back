@@ -35,4 +35,8 @@ public class EntityUtil {
         return authentication.getName();
     }
 
+    public Long getDepartmentId(MemberRepository memberRepository){
+        return this.getMember(memberRepository).getDepartment().getId();
+    }
+
 }

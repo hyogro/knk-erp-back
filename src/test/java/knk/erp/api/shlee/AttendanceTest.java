@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import knk.erp.api.shlee.common.util.EntityUtil;
 import knk.erp.api.shlee.domain.account.dto.department.DepartmentDTO_REQ;
 import knk.erp.api.shlee.domain.account.dto.member.MemberDTO_REQ;
+import knk.erp.api.shlee.domain.account.entity.Authority;
 import knk.erp.api.shlee.domain.account.entity.Member;
 import knk.erp.api.shlee.domain.account.entity.MemberRepository;
 import knk.erp.api.shlee.domain.account.service.AccountService;
@@ -83,7 +84,7 @@ class AttendanceTest {
 
     @Test
     @Order(12)
-    public void 맴버_생성() {
+    public void 일반_맴버_생성() {
         MemberDTO_REQ memberDTOReq = new MemberDTO_REQ();
         memberDTOReq.setPosition("포지션");
         memberDTOReq.setMemberId("test_id");
@@ -92,7 +93,20 @@ class AttendanceTest {
         memberDTOReq.setMemberName("테스터");
         memberDTOReq.setJoiningDate(LocalDate.now());
         accountService.signup(memberDTOReq);
+    }
 
+    @Test
+    @Order(12)
+    public void 관리자_맴버_생성() {
+        MemberDTO_REQ memberDTOReq = new MemberDTO_REQ();
+        memberDTOReq.setPosition("포지션");
+        memberDTOReq.setMemberId("test_admin_id");
+        memberDTOReq.setPassword("test_admin_pw");
+        memberDTOReq.setPhone("010-1234-1234");
+        memberDTOReq.setMemberName("테스터");
+        memberDTOReq.setAuthority(Authority.ROLE_LVL3);
+        memberDTOReq.setJoiningDate(LocalDate.now());
+        accountService.signup(memberDTOReq);
     }
 
 
@@ -356,6 +370,90 @@ class AttendanceTest {
         assertThat(code).isEqualTo("A5504");
     }
 
+    @Test
+    @Order(50)
+    @WithUserDetails("test_id")
+    public void 정정요청_목록_조회성공() throws Exception {
+        MvcResult result = attendanceMvc.perform(
+                MockMvcRequestBuilders.get("/attendance/rectify"))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andReturn();
+
+        String code = this.getCode(result);
+        assertThat(code).isEqualTo("A5505");
+
+        JSONObject response = getResponse(result);
+        assertThat(response.getJSONArray("data").length()).isEqualTo(2);
+
+    }
+
+    @Test
+    @Order(51)
+    @WithUserDetails("test_id")
+    public void 정정요청_상세조회_실패_없는아이디() throws Exception {
+        MvcResult result = attendanceMvc.perform(
+                MockMvcRequestBuilders.get("/attendance/rectify/"+99))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andReturn();
+
+        String code = this.getCode(result);
+        assertThat(code).isEqualTo("E9100");
+    }
+
+    @Test
+    @Order(51)
+    @WithUserDetails("test_id")
+    public void 정정요청_상세조회_성공() throws Exception {
+        MvcResult result = attendanceMvc.perform(
+                MockMvcRequestBuilders.get("/attendance/rectify/"+5))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andReturn();
+
+        String code = this.getCode(result);
+        assertThat(code).isEqualTo("A5505");
+    }
+
+    @Test
+    @Order(60)
+    @WithUserDetails("test_id")
+    public void 정정요청_삭제_성공() throws Exception {
+        MvcResult result = attendanceMvc.perform(
+                MockMvcRequestBuilders.delete("/attendance/rectify/"+5))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andReturn();
+
+        String code = this.getCode(result);
+        assertThat(code).isEqualTo("A5506");
+    }
+
+    @Test
+    @Order(70)
+    @WithUserDetails("test_id")
+    public void 승인대기정정요청_목록조회_실패_권한실패() throws Exception {
+        MvcResult result = attendanceMvc.perform(
+                MockMvcRequestBuilders.get("/attendance/rectify/approve"))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andReturn();
+
+        String code = this.getCode(result);
+        assertThat(code).isEqualTo("E9900");
+    }
+
+    @Test
+    @Order(71)
+    @WithUserDetails("test_admin_id")
+    public void 승인대기정정요청_목록조회_성공() throws Exception {
+        MvcResult result = attendanceMvc.perform(
+                MockMvcRequestBuilders.get("/attendance/rectify/approve"))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andReturn();
+
+        String code = this.getCode(result);
+        assertThat(code).isEqualTo("A5505");
+
+        JSONObject response = getResponse(result);
+        assertThat(response.getJSONArray("data").length()).isEqualTo(1);
+    }
 
 
     //응답코드 가져오기
