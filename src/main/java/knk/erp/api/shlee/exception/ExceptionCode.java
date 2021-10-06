@@ -26,7 +26,9 @@ public enum ExceptionCode {
 
     //Account
     NOT_FOUND_USER(400, "E1000", "Not Found User"),
-    ALREADY_EXIST_USER(409, "E1100", "Already Exist User"),
+    ALREADY_EXIST_ID(409, "E1100", "이미 존재하는 ID 입니다"),
+    ACCOUNT_NOT_EXIST_INPUT_DATA(400, "E1101", "필수 입력정보를 입력하지 않았습니다."),
+    ACCOUNT_NOT_RANGE_INPUT_DATA(400, "E1102", "입력한 정보가 길이 제한 범위를 벗어납니다."),
 
     //Schedule - Attendance E55**
     ATTENDANCE_EXIST(400, "E5501", "근태 정보가 존재합니다."),

@@ -12,6 +12,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/account")
@@ -20,7 +22,7 @@ public class AccountController {
 
     // 회원가입
     @PostMapping("/signup")
-    public ResponseEntity<ResponseData> signup(@RequestBody MemberDTO_REQ memberDTOReq){
+    public ResponseEntity<ResponseData> signup(@RequestBody @Valid MemberDTO_REQ memberDTOReq){
         accountService.signup(memberDTOReq);
 
         ResponseCM responseCM = ResponseCM

@@ -1,8 +1,8 @@
 package knk.erp.api.shlee.exception.component;
 
 import knk.erp.api.shlee.exception.ExceptionPayload;
-import knk.erp.api.shlee.exception.exceptions.*;
-import knk.erp.api.shlee.exception.exceptions.Schedule.*;
+import knk.erp.api.shlee.domain.schedule.service.exceptions.*;
+import knk.erp.api.shlee.domain.schedule.service.exceptions.Schedule.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

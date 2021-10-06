@@ -6,6 +6,7 @@ import lombok.*;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
+import javax.validation.constraints.NotEmpty;
 import java.time.LocalDate;
 
 @Getter
@@ -15,7 +16,9 @@ import java.time.LocalDate;
 @NoArgsConstructor
 public class MemberDTO_REQ {
     private Long id;
+    @NotEmpty
     private String memberId;
+    @NotEmpty
     private String password;
     private String phone;
     private String memberName;

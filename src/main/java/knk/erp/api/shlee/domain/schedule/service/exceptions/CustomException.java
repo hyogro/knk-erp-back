@@ -1,4 +1,4 @@
-package knk.erp.api.shlee.exception.exceptions;
+package knk.erp.api.shlee.domain.schedule.service.exceptions;
 
 import knk.erp.api.shlee.exception.ExceptionCode;
 import lombok.Getter;
