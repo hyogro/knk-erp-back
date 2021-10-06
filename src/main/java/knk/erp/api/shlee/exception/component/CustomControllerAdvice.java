@@ -1,18 +1,42 @@
 package knk.erp.api.shlee.exception.component;
 
 import knk.erp.api.shlee.exception.ExceptionPayload;
-import knk.erp.api.shlee.domain.schedule.service.exceptions.*;
-import knk.erp.api.shlee.domain.schedule.service.exceptions.Schedule.*;
+import knk.erp.api.shlee.exception.exceptions.*;
+import knk.erp.api.shlee.exception.exceptions.Schedule.*;
+import knk.erp.api.shlee.exception.exceptions.common.DataNotExistException;
+import knk.erp.api.shlee.exception.exceptions.common.PermissionDeniedException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+import javax.persistence.EntityNotFoundException;
+
 @Slf4j
 @ControllerAdvice
 public class CustomControllerAdvice {
 
+    /**
+     * 공통
+     * */
+    //EntityNotFoundException 예외처리
+    @ExceptionHandler(value = {EntityNotFoundException.class})
+    public ResponseEntity<ExceptionPayload> handleEntityNotFoundException(EntityNotFoundException e) {
+        DataNotExistException exception = new DataNotExistException();
+        final ExceptionPayload payload = this.generateExceptionPayload(exception);
+        return new ResponseEntity<>(payload, HttpStatus.BAD_REQUEST);
+    }
+    //권한 없음
+    @ExceptionHandler(value = {PermissionDeniedException.class})
+    public ResponseEntity<ExceptionPayload> handlePermissionDeniedException(PermissionDeniedException e) {
+        final ExceptionPayload payload = this.generateExceptionPayload(e);
+        return new ResponseEntity<>(payload, HttpStatus.BAD_REQUEST);
+    }
+
+    /**
+     * 근태정보
+     * */
     //근태 정보 이미 존재함.
     @ExceptionHandler(value = {AttendanceExistException.class})
     public ResponseEntity<ExceptionPayload> handleAttendanceExistException(AttendanceExistException e) {

@@ -7,7 +7,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 @Component
-public class CommonUtil {
+public class AuthorityUtil {
 
     //레벨 3 이상인지 여부 체크
     public int checkLevel() {
@@ -22,4 +22,5 @@ public class CommonUtil {
         return authority.equals(Authority.ROLE_LVL2) || authority.equals(Authority.ROLE_MATERIALS) ? 2 : authority.equals(Authority.ROLE_LVL3) ? 3 :
                 authority.equals(Authority.ROLE_LVL4) ? 4 : authority.equals(Authority.ROLE_ADMIN) ? 5 : 1;
     }
+
 }

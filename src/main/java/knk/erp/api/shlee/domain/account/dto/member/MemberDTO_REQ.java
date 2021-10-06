@@ -27,15 +27,19 @@ public class MemberDTO_REQ {
     private String address;
     private String email;
     private String position;
+    private Authority authority;
 
     public Member toMember(BCryptPasswordEncoder passwordEncoder){
+        //이상훈 테스트 위해 추가
+        if(this.authority == null) this.authority = Authority.ROLE_LVL1;
+
         return Member.builder()
                 .memberId(memberId)
                 .password(passwordEncoder.encode(password))
                 .phone(phone)
                 .memberName(memberName)
                 .vacation(0)
-                .authority(Authority.ROLE_LVL1)
+                .authority(authority)
                 .joiningDate(joiningDate)
                 .address(address)
                 .email(email)

@@ -6,10 +6,10 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum ExceptionCode {
-    //Unknown
+    //Common
     UNKNOWN_ERROR(500, "E9000", "UNKNOWN ERROR"),
-
-    PERMISSION_DENIED(403, "E9900", "Permission Denied"),
+    DATA_NOT_EXIST(400, "E9100", "can't found data"),
+    PERMISSION_DENIED(400, "E9900", "Permission Denied"),
 
 
     //Auth

@@ -3,7 +3,7 @@ package knk.erp.api.shlee.domain.schedule.service;
 import knk.erp.api.shlee.domain.account.entity.Department;
 import knk.erp.api.shlee.domain.account.entity.Member;
 import knk.erp.api.shlee.domain.account.entity.MemberRepository;
-import knk.erp.api.shlee.common.util.CommonUtil;
+import knk.erp.api.shlee.common.util.AuthorityUtil;
 import knk.erp.api.shlee.domain.schedule.dto.Vacation.*;
 import knk.erp.api.shlee.domain.schedule.entity.AddVacation;
 import knk.erp.api.shlee.domain.schedule.entity.Vacation;
@@ -32,7 +32,7 @@ import java.util.List;
 public class VacationService {
     private final VacationRepository vacationRepository;
     private final AddVacationRepository addVacationRepository;
-    private final CommonUtil commonUtil;
+    private final AuthorityUtil authorityUtil;
     private final VacationUtil util;
     private final MemberRepository memberRepository;
 
@@ -219,7 +219,7 @@ public class VacationService {
             LocalDateTime sd = LocalDateTime.of(startDate, LocalTime.MIN);
             LocalDateTime ed = LocalDateTime.of(endDate, LocalTime.MAX);
 
-            if (commonUtil.checkLevel() == 2) {
+            if (authorityUtil.checkLevel() == 2) {
                 Member member = getMember();
                 assert member != null;
                 Long did = member.getDepartment().getId();
@@ -228,7 +228,7 @@ public class VacationService {
                         .or(VS.delFalse().and(VS.rejectIs(true)).and(VS.did(did)).and(VS.approve1Is(false)).and(VS.vacationDateBetween(sd, ed)))
                         , Sort.by("createDate").descending());
 
-            } else if (3 <= commonUtil.checkLevel()) {
+            } else if (3 <= authorityUtil.checkLevel()) {
                 vacationList = vacationRepository.findAll(
                         VS.delFalse().and(VS.rejectIs(false)).and(VS.approve2Is(true)).and(VS.vacationDateBetween(sd, ed))
                         .or(VS.delFalse().and(VS.rejectIs(true)).and(VS.approve2Is(false)).and(VS.vacationDateBetween(sd, ed)))
@@ -245,14 +245,14 @@ public class VacationService {
         try {
             List<Vacation> vacationList = new ArrayList<>();
 
-            if (commonUtil.checkLevel() == 2) {
+            if (authorityUtil.checkLevel() == 2) {
                 Member member = getMember();
                 assert member != null;
                 Long did = member.getDepartment().getId();
                 vacationList = vacationRepository.findAll(VS.delFalse().and(VS.rejectIs(false)).and(VS.did(did)).and(VS.approve1Is(false))
                         , Sort.by("createDate").descending());
 
-            } else if (3 <= commonUtil.checkLevel()) {
+            } else if (3 <= authorityUtil.checkLevel()) {
                 vacationList = vacationRepository.findAll(VS.delFalse().and(VS.rejectIs(false)).and(VS.approve2Is(false))
                         , Sort.by("createDate").descending());
             }
@@ -267,7 +267,7 @@ public class VacationService {
         try {
             Vacation vacation = vacationRepository.getOne(vid);
 
-            if (commonUtil.checkLevel() == 2) {
+            if (authorityUtil.checkLevel() == 2) {
                 Member member = getMember();
                 assert member != null;
                 Long departmentId = member.getDepartment().getId();
@@ -288,7 +288,7 @@ public class VacationService {
     public ResponseCM rejectVacation(Long vid, REQ_rejectVacation reject) {
         try {
 
-            if (2 <= commonUtil.checkLevel()) {
+            if (2 <= authorityUtil.checkLevel()) {
                 Member member = getMember();
                 assert member != null;
 
@@ -298,7 +298,7 @@ public class VacationService {
 
                 if (vacation.isApproval1() && vacation.isApproval2()) return new ResponseCM("RV004");
 
-                if (commonUtil.checkLevel() == 2) {
+                if (authorityUtil.checkLevel() == 2) {
                     Long departmentId = member.getDepartment().getId();
                     if (!vacation.getAuthor().getDepartment().getId().equals(departmentId))
                         return new ResponseCM("RV003");
@@ -316,11 +316,11 @@ public class VacationService {
 
     //권한 체크 및 승인여부 변경
     private boolean approveCheck(Vacation vacation) {
-        if (commonUtil.checkLevel() == 2) {
+        if (authorityUtil.checkLevel() == 2) {
             vacation.setApproval1(true);
             vacation.setApprover1(getMember());
             return true;
-        } else if (3 <= commonUtil.checkLevel()) {
+        } else if (3 <= authorityUtil.checkLevel()) {
             if (!vacation.isApproval1()) {
                 vacation.setApproval1(true);
                 vacation.setApprover1(getMember());
