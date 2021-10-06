@@ -8,8 +8,6 @@ import knk.erp.api.shlee.domain.account.util.AccountUtil;
 import knk.erp.api.shlee.domain.account.util.SecurityUtil;
 import knk.erp.api.shlee.common.dto.TokenDto;
 import knk.erp.api.shlee.common.jwt.TokenProvider;
-import knk.erp.api.shlee.exception.exceptions.Account.NotExistsInputDataException;
-import knk.erp.api.shlee.exception.exceptions.Account.NotRangeInputDataException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -36,9 +34,6 @@ public class AccountService {
     /* 회원 가입 */
     @Transactional
     public void signup(MemberDTO_REQ memberDTOReq){
-        throwIfNotExistInputData(memberDTOReq);
-        throwIfNotRangeInputData(memberDTOReq);
-
         Member member = memberDTOReq.toMember(passwordEncoder);
         Department department;
 
@@ -49,29 +44,6 @@ public class AccountService {
         memberRepository.save(member);
         department.getMemberList().add(member);
         departmentRepository.save(department);
-    }
-
-    // 필수 입력값 입력 X
-    private void throwIfNotExistInputData(MemberDTO_REQ memberDTOReq){
-        boolean existData = true;
-
-        if(memberDTOReq.getMemberId() == null || memberDTOReq.getMemberId().equals("")) { existData = false; }
-        else if(memberDTOReq.getPassword() == null || memberDTOReq.getPassword().equals("")) { existData = false; }
-        else if(memberDTOReq.getMemberName() == null || memberDTOReq.getMemberName().equals("")) { existData = false; }
-        else if(memberDTOReq.getPhone() == null || memberDTOReq.getPhone().equals("")) { existData = false; }
-        else if(memberDTOReq.getJoiningDate() == null) { existData = false; }
-
-        if(!existData) { throw new NotExistsInputDataException(); }
-    }
-
-    // 입력한 데이터가 길이 제한을 벗어남
-    private void throwIfNotRangeInputData(MemberDTO_REQ memberDTOReq){
-        boolean rangeOut = false;
-
-        if(memberDTOReq.getMemberId().length() < 6 || memberDTOReq.getMemberId().length() > 16) { rangeOut = true; }
-        else if(memberDTOReq.getPassword().length() < 8 || memberDTOReq.getPassword().length() > 16) { rangeOut = true; }
-
-        if(rangeOut) { throw new NotRangeInputDataException(); }
     }
 
     /* Id 중복체크 */
