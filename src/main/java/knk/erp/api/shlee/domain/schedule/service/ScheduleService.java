@@ -1,5 +1,6 @@
 package knk.erp.api.shlee.domain.schedule.service;
 
+import knk.erp.api.shlee.common.util.EntityUtil;
 import knk.erp.api.shlee.domain.account.entity.Member;
 import knk.erp.api.shlee.domain.account.entity.MemberRepository;
 import knk.erp.api.shlee.domain.schedule.dto.Schedule.*;
@@ -29,14 +30,14 @@ public class ScheduleService {
 
     public void createSchedule(ScheduleDTO scheduleDTO) {
         Schedule schedule = scheduleDTO.toEntity();
-        schedule.setAuthor(getMember());
+        schedule.setAuthor(EntityUtil.getInstance().getMember(memberRepository));
 
         scheduleRepository.save(schedule);
     }
 
     public List<Object> readScheduleList(String viewOption, LocalDateTime startDate, LocalDateTime endDate) {
-        String memberId = getMemberId();
-        Long departmentId = Objects.requireNonNull(getMember()).getDepartment().getId();
+        String memberId = EntityUtil.getInstance().getMemberId();
+        Long departmentId = Objects.requireNonNull(EntityUtil.getInstance().getMember(memberRepository)).getDepartment().getId();
 
         List<Schedule> scheduleList = (viewOption.isEmpty())
                 ? scheduleRepository.findAll(SS.mid(memberId).and(SS.delFalse()).and(SS.startDateAfter(startDate)).and(SS.endDateBefore(endDate)))
@@ -79,22 +80,6 @@ public class ScheduleService {
     private boolean birthDateBetweenCheck(LocalDate startDate, LocalDate endDate, LocalDate birthDate) {
         LocalDate nowBirthDate = LocalDate.of(startDate.getYear(), birthDate.getMonthValue(), birthDate.getDayOfMonth());
         return startDate.equals(nowBirthDate) || endDate.equals(nowBirthDate) || (nowBirthDate.isAfter(startDate) && nowBirthDate.isBefore(endDate));
-    }
-
-    //권한 정보 얻어 맴버 아이디 가져오기
-    private String getMemberId() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        return authentication.getName();
-    }
-
-    private Member getMember() {
-        try {
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            String memberId = authentication.getName();
-            return memberRepository.findAllByMemberIdAndDeletedIsFalse(memberId);
-        } catch (Exception e) {
-            return null;
-        }
     }
 
     //일정, 맴버아이디로 작성자권한 조회
