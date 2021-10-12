@@ -27,84 +27,56 @@ public class ScheduleService {
     private final MemberRepository memberRepository;
     private final ScheduleUtil util;
 
-    public ResponseCM createSchedule(ScheduleDTO scheduleDTO) {
-        try {
-            Schedule schedule = scheduleDTO.toEntity();
-            schedule.setAuthor(getMember());
+    public void createSchedule(ScheduleDTO scheduleDTO) {
+        Schedule schedule = scheduleDTO.toEntity();
+        schedule.setAuthor(getMember());
 
-            scheduleRepository.save(schedule);
-            return new ResponseCM("CS001");
-        } catch (Exception e) {
-            return new ResponseCM("CS002", e.getMessage());
-        }
+        scheduleRepository.save(schedule);
     }
 
-    public ResponseCMDL readScheduleList(String viewOption, LocalDateTime startDate, LocalDateTime endDate) {
-        try {
-            String memberId = getMemberId();
-            Long departmentId = Objects.requireNonNull(getMember()).getDepartment().getId();
+    public List<Object> readScheduleList(String viewOption, LocalDateTime startDate, LocalDateTime endDate) {
+        String memberId = getMemberId();
+        Long departmentId = Objects.requireNonNull(getMember()).getDepartment().getId();
 
-            List<Schedule> scheduleList = (viewOption.isEmpty())
-                    ? scheduleRepository.findAll(SS.mid(memberId).and(SS.delFalse()).and(SS.startDateAfter(startDate)).and(SS.endDateBefore(endDate)))
-                    : scheduleRepository.findAll(SS.delFalse().and(SS.viewOption(viewOption, memberId, departmentId)).and(SS.startDateAfter(startDate)).and(SS.endDateBefore(endDate)));
-            return new ResponseCMDL("RSL001", util.ScheduleListToDTO(scheduleList));
-        } catch (Exception e) {
-            return new ResponseCMDL("RSL002", e.getMessage());
-        }
+        List<Schedule> scheduleList = (viewOption.isEmpty())
+                ? scheduleRepository.findAll(SS.mid(memberId).and(SS.delFalse()).and(SS.startDateAfter(startDate)).and(SS.endDateBefore(endDate)))
+                : scheduleRepository.findAll(SS.delFalse().and(SS.viewOption(viewOption, memberId, departmentId)).and(SS.startDateAfter(startDate)).and(SS.endDateBefore(endDate)));
+
+        return util.ScheduleListToDTO(scheduleList);
     }
 
-    public ResponseCMD readScheduleDetail(Long sid) {
-        try {
-            Schedule schedule = scheduleRepository.getOne(sid);
-            return new ResponseCMD("RSD001", new ScheduleDetailData(schedule));
-        } catch (Exception e) {
-            return new ResponseCMD("RSD002", e.getMessage());
-        }
+    public ScheduleDetailData readScheduleDetail(Long sid) {
+        Schedule schedule = scheduleRepository.getOne(sid);
+        return new ScheduleDetailData(schedule);
     }
 
-    public ResponseCM updateSchedule(Long sid, ScheduleDTO scheduleDTO) {
-        try {
-            String mid = getMemberId();
-            Schedule schedule = scheduleRepository.getOne(sid);
 
-            if (!checkAuth(schedule, mid)) return new ResponseCM("US003");
+    public void updateSchedule(Long sid, ScheduleDTO scheduleDTO) {
+        //TODO: 본인의 일정이 아닌경우 예외처리 하기
+        Schedule schedule = scheduleRepository.getOne(sid);
 
-            util.DTOTOSchedule(schedule, scheduleDTO);
-            scheduleRepository.save(schedule);
-            return new ResponseCM("US001");
-        } catch (Exception e) {
-            return new ResponseCM("US002", e.getMessage());
-        }
+        util.DTOTOSchedule(schedule, scheduleDTO);
+        scheduleRepository.save(schedule);
     }
 
-    public ResponseCM deleteSchedule(Long sid) {
-        try {
-            String mid = getMemberId();
-            Schedule schedule = scheduleRepository.getOne(sid);
+    public void deleteSchedule(Long sid) {
+        //TODO: 본인의 일정이 아닌경우 예외처리 하기
+        Schedule schedule = scheduleRepository.getOne(sid);
 
-            if (!checkAuth(schedule, mid)) return new ResponseCM("DS003");
-
-            schedule.setDeleted(true);
-            scheduleRepository.save(schedule);
-            return new ResponseCM("DS001");
-
-        } catch (Exception e) {
-            return new ResponseCM("DS002", e.getMessage());
-        }
+        schedule.setDeleted(true);
+        scheduleRepository.save(schedule);
     }
 
-    public ResponseCMDL readAnniversaryList(LocalDate startDate, LocalDate endDate) {
-        try {
+    public List<Object> readAnniversaryList(LocalDate startDate, LocalDate endDate) {
             List<Member> memberList = memberRepository.findAllByBirthDateIsNotNullAndDeletedFalse();
+
+            //TODO: specification 쿼리로 대체
             memberList.removeIf(i -> !birthDateBetweenCheck(startDate, endDate, i.getBirthDate()));
-            return new ResponseCMDL("RSL001", util.AnniversaryListToDTO(startDate.getYear(), memberList));
-        } catch (Exception e) {
-            return new ResponseCMDL("RSL002", e.getMessage());
-        }
+            return util.AnniversaryListToDTO(startDate.getYear(), memberList);
     }
 
     //월, 일만 비교하기
-    private boolean birthDateBetweenCheck(LocalDate startDate, LocalDate endDate, LocalDate birthDate){
+    private boolean birthDateBetweenCheck(LocalDate startDate, LocalDate endDate, LocalDate birthDate) {
         LocalDate nowBirthDate = LocalDate.of(startDate.getYear(), birthDate.getMonthValue(), birthDate.getDayOfMonth());
         return startDate.equals(nowBirthDate) || endDate.equals(nowBirthDate) || (nowBirthDate.isAfter(startDate) && nowBirthDate.isBefore(endDate));
     }
@@ -126,7 +98,7 @@ public class ScheduleService {
     }
 
     //일정, 맴버아이디로 작성자권한 조회
-    private boolean checkAuth(Schedule schedule, String mid){
+    private boolean checkAuth(Schedule schedule, String mid) {
         return schedule.getAuthor().getMemberId().equals(mid);
     }
 
