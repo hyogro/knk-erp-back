@@ -2,12 +2,14 @@ package knk.erp.api.shlee.exception.component;
 
 import knk.erp.api.shlee.exception.ExceptionPayload;
 import knk.erp.api.shlee.exception.exceptions.*;
+import knk.erp.api.shlee.exception.exceptions.common.NotExistsInputDataException;
 import knk.erp.api.shlee.exception.exceptions.schedule.*;
 import knk.erp.api.shlee.exception.exceptions.common.DataNotExistException;
 import knk.erp.api.shlee.exception.exceptions.common.PermissionDeniedException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
@@ -31,6 +33,14 @@ public class CustomControllerAdvice {
     @ExceptionHandler(value = {PermissionDeniedException.class})
     public ResponseEntity<ExceptionPayload> handlePermissionDeniedException(PermissionDeniedException e) {
         final ExceptionPayload payload = this.generateExceptionPayload(e);
+        return new ResponseEntity<>(payload, HttpStatus.BAD_REQUEST);
+    }
+
+    //필수 입력값을 입력하지않음
+    @ExceptionHandler(value = {MethodArgumentNotValidException.class})
+    public ResponseEntity<ExceptionPayload> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
+        NotExistsInputDataException exception = new NotExistsInputDataException();
+        final ExceptionPayload payload = this.generateExceptionPayload(exception);
         return new ResponseEntity<>(payload, HttpStatus.BAD_REQUEST);
     }
 

@@ -7,6 +7,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Size;
 import java.time.LocalDate;
 
 @Getter
@@ -16,12 +17,22 @@ import java.time.LocalDate;
 @NoArgsConstructor
 public class MemberDTO_REQ {
     private Long id;
+
     @NotEmpty
+    @Size(min = 6, max = 16)
     private String memberId;
+
     @NotEmpty
+    @Size(min = 8, max = 16)
     private String password;
+
+    @NotEmpty
     private String phone;
+
+    @NotEmpty
+    @Size(min = 2, max = 5)
     private String memberName;
+
     private Long departmentId;
     private LocalDate joiningDate;
     private String address;
