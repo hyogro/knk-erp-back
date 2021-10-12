@@ -46,6 +46,16 @@ public enum ResponseCode {
     READ_ATTENDANCE_TODAY_SUCCESS("A5509"),
     READ_ATTENDANCE_DUPLICATE_SUCCESS("A5510"),
 
+    /**
+     * Schedule - Schedule A56**
+     **/
+    CREATE_SCHEDULE_SUCCESS("A5601"),
+    READ_SCHEDULE_SUCCESS("A5602"),
+    UPDATE_SCHEDULE_SUCCESS("A5603"),
+    DELETE_SCHEDULE_SUCCESS("A5604"),
+    READ_ANNIVERSARY_SUCCESS("A5605")
+
+
 
     ;
     private final String code;
