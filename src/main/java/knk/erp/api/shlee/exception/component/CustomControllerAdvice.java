@@ -2,7 +2,7 @@ package knk.erp.api.shlee.exception.component;
 
 import knk.erp.api.shlee.exception.ExceptionPayload;
 import knk.erp.api.shlee.exception.exceptions.*;
-import knk.erp.api.shlee.exception.exceptions.common.NotExistsInputDataException;
+import knk.erp.api.shlee.exception.exceptions.common.ErrorInputDataException;
 import knk.erp.api.shlee.exception.exceptions.schedule.*;
 import knk.erp.api.shlee.exception.exceptions.common.DataNotExistException;
 import knk.erp.api.shlee.exception.exceptions.common.PermissionDeniedException;
@@ -39,7 +39,7 @@ public class CustomControllerAdvice {
     //필수 입력값을 입력하지않음
     @ExceptionHandler(value = {MethodArgumentNotValidException.class})
     public ResponseEntity<ExceptionPayload> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
-        NotExistsInputDataException exception = new NotExistsInputDataException();
+        ErrorInputDataException exception = new ErrorInputDataException();
         final ExceptionPayload payload = this.generateExceptionPayload(exception);
         return new ResponseEntity<>(payload, HttpStatus.BAD_REQUEST);
     }

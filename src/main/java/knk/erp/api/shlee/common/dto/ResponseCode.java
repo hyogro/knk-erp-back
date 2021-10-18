@@ -16,6 +16,7 @@ public enum ResponseCode {
     UPDATE_USER_AUTHORITY_SUCCESS("A1220"),
     DELETE_USER_SUCCESS("A1300"),
     RECOVER_USER_SUCCESS("A1300"),
+    CHECK_OVERLAP_ID_SUCCESS("A1400"),
 
     /**
      * Auth A2***

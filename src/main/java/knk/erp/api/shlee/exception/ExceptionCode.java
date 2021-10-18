@@ -26,7 +26,7 @@ public enum ExceptionCode {
 
     //Account
     NOT_FOUND_USER(400, "E1000", "Not Found User"),
-    ALREADY_EXIST_ID(409, "E1100", "이미 존재하는 ID 입니다"),
+    ALREADY_EXIST_ID(400, "E1100", "이미 존재하는 ID 입니다"),
 
     //Schedule - Attendance E55**
     ATTENDANCE_EXIST(400, "E5501", "근태 정보가 존재합니다."),
