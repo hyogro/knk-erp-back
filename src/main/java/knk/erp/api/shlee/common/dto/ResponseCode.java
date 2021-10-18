@@ -54,9 +54,6 @@ public enum ResponseCode {
     UPDATE_SCHEDULE_SUCCESS("A5603"),
     DELETE_SCHEDULE_SUCCESS("A5604"),
     READ_ANNIVERSARY_SUCCESS("A5605")
-
-
-
     ;
     private final String code;
 }
