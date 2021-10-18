@@ -22,7 +22,7 @@ public class VacationController {
     }
 
     /**
-     * 추가휴가 생성
+     * 추가휴가 생성1
      **/
     @PostMapping("/add")
     public ResponseEntity<ResponseCM> createAddVacation(@RequestBody AddVacationDTO addVacationDTO){
