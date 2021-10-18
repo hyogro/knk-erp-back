@@ -57,7 +57,6 @@ public enum ResponseCode {
     READ_ANNIVERSARY_SUCCESS("A5605")
 
 
-
     ;
     private final String code;
 }
