@@ -1,6 +1,7 @@
 package knk.erp.api.shlee.domain.account.controller;
 
 import knk.erp.api.shlee.common.dto.ResponseCM;
+import knk.erp.api.shlee.common.dto.ResponseCMD;
 import knk.erp.api.shlee.common.dto.ResponseCode;
 import knk.erp.api.shlee.common.dto.ResponseData;
 import knk.erp.api.shlee.domain.account.dto.account.*;
@@ -13,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -41,8 +43,16 @@ public class AccountController {
 
     // 회원 목록 읽어오기
     @GetMapping("")
-    public ResponseEntity<Read_AccountDTO_RES> readMember(){
-        return ResponseEntity.ok(accountService.readMember());
+    public ResponseEntity<ResponseData> readMember(){
+        List<Read_AccountDTO> accountDTOList = accountService.readMember();
+
+        ResponseCMD responseCMD = ResponseCMD
+                .builder()
+                .responseCode(ResponseCode.READ_USER_SUCCESS)
+                .data(accountDTOList)
+                .build();
+
+        return new ResponseEntity<>(responseCMD, HttpStatus.OK);
     }
 
     // 회원 정보 상세보기

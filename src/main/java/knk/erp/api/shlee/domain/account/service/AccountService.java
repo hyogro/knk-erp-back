@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -76,20 +77,9 @@ public class AccountService {
 
     // 회원 목록 읽어오기
     @Transactional
-    public Read_AccountDTO_RES readMember(){
-        try{
-            List<Member> memberList = memberRepository.findAllByDeletedIsFalse();
-            List<Read_AccountDTO> info = new ArrayList<>();
-
-            for(Member m : memberList){
-                info.add(new Read_AccountDTO(m.getMemberId(), m.getMemberName(), m.getDepartment().getDepartmentName(), m.getPhone(),
-                        m.getJoiningDate(), m.getPosition()));
-            }
-
-            return new Read_AccountDTO_RES("RA001", info);
-        }catch(Exception e){
-            return new Read_AccountDTO_RES("RA002", e.getMessage());
-        }
+    public List<Read_AccountDTO> readMember(){
+        List<Member> memberList = memberRepository.findAllByDeletedIsFalse();
+        return memberList.stream().map(Read_AccountDTO::new).collect(Collectors.toList());
     }
 
     // 회원 정보 상세 보기
