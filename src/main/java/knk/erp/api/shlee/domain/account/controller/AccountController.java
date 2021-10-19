@@ -57,8 +57,16 @@ public class AccountController {
 
     // 회원 정보 상세보기
     @GetMapping("/{memberId}")
-    public ResponseEntity<ReadDetail_AccountDTO_RES> readMemberDetail(@PathVariable String memberId){
-        return ResponseEntity.ok(accountService.readMemberDetail(memberId));
+    public ResponseEntity<ResponseData> readMemberDetail(@PathVariable String memberId){
+        ReadDetail_AccountDTO readDetailAccountDTO = accountService.readMemberDetail(memberId);
+
+        ResponseCMD responseCMD = ResponseCMD
+                .builder()
+                .responseCode(ResponseCode.READ_DETAIL_USER_SUCCESS)
+                .data(readDetailAccountDTO)
+                .build();
+
+        return new ResponseEntity<>(responseCMD, HttpStatus.OK);
     }
 
     //회원 정보 수정

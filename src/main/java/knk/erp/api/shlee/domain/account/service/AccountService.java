@@ -84,16 +84,9 @@ public class AccountService {
 
     // 회원 정보 상세 보기
     @Transactional
-    public ReadDetail_AccountDTO_RES readMemberDetail(String memberId){
-        try{
-            Member target = memberRepository.findByMemberIdAndDeletedIsFalse(memberId);
-            return new ReadDetail_AccountDTO_RES("RDA001", new ReadDetail_AccountDTO(target.getMemberId(), target.getMemberName(),null,
-                    target.getAuthority().toString(), target.getPhone(), target.getVacation(), target.getDepartment().getId(),
-                    target.getDepartment().getDepartmentName(), target.getAddress(), target.getEmail(), target.getJoiningDate(), target.getImages(),
-                    target.getBirthDate(), target.isBirthDateSolar(), target.getPosition()));
-        }catch(Exception e){
-            return new ReadDetail_AccountDTO_RES("RDA002", e.getMessage());
-        }
+    public ReadDetail_AccountDTO readMemberDetail(String memberId){
+        Member target = memberRepository.findByMemberIdAndDeletedIsFalse(memberId);
+        return new ReadDetail_AccountDTO(target);
     }
 
     // 회원 정보 수정
