@@ -1,4 +1,4 @@
-package knk.erp.api.shlee.exception.exceptions.schedule;
+package knk.erp.api.shlee.exception.exceptions.attendance;
 
 import knk.erp.api.shlee.exception.ExceptionCode;
 import knk.erp.api.shlee.exception.exceptions.CustomException;
