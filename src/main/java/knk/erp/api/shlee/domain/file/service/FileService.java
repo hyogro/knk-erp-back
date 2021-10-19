@@ -11,6 +11,7 @@ import knk.erp.api.shlee.domain.schedule.repository.VacationRepository;
 import knk.erp.api.shlee.domain.schedule.responseEntity.ResponseCM;
 import knk.erp.api.shlee.domain.schedule.specification.AS;
 import knk.erp.api.shlee.domain.schedule.specification.VS;
+import knk.erp.api.shlee.exception.exceptions.file.FileIOException;
 import lombok.RequiredArgsConstructor;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
@@ -73,16 +74,15 @@ public class FileService {
         return fileRepository.save(saveFile);
     }
 
-    public ResponseCM saveFile(String location, MultipartFile multipartFile) {
+    public String saveFile(String location, MultipartFile multipartFile) {
+        String fileName = saveEntity(location, multipartFile.getOriginalFilename()).getFileName();
+
         try {
-            String fileName = saveEntity(location, multipartFile.getOriginalFilename()).getFileName();
-
             resolveFile(multipartFile.getInputStream(), location, fileName);
-
-            return new ResponseCM("FS001", fileName);
-        } catch (Exception e) {
-            return new ResponseCM("FS002", e.getMessage());
+        }catch (IOException e){
+            throw new FileIOException();
         }
+        return fileName;
     }
 
     private LinkedHashMap<String, List<LocalDate>> makeAttendanceWorkbookSheetTitle(LocalDate startDate, LocalDate endDate) {
@@ -260,13 +260,11 @@ public class FileService {
             // 날짜 세팅
             for (LocalDate date : sheetMap.get(key)) {
                 cell = row.createCell(idx);
-                if(date.getDayOfWeek().getValue() == 6){
+                if (date.getDayOfWeek().getValue() == 6) {
                     cell.setCellStyle(dataSat);
-                }
-                else if(date.getDayOfWeek().getValue() == 7){
+                } else if (date.getDayOfWeek().getValue() == 7) {
                     cell.setCellStyle(dataSun);
-                }
-                else {
+                } else {
                     cell.setCellStyle(titleStyle);
                 }
                 cell.setCellValue(date.toString());
@@ -299,17 +297,15 @@ public class FileService {
 
                         try {
                             int offTime = Integer.parseInt(att.split("~")[1].split(":")[0]);
-                            if(21 <= offTime) cell.setCellStyle(dataYStyle);
-                        }
-                        catch (Exception ignored){
+                            if (21 <= offTime) cell.setCellStyle(dataYStyle);
+                        } catch (Exception ignored) {
                         }
 
                     } else {
                         if (vac != null) {
                             cell.setCellStyle(dataGStyle);
                             col += "□(" + vac + ")";   //출근기록 없으면서 휴가기록 있는것
-                        }
-                        else {
+                        } else {
                             cell.setCellStyle(dataRStyle); //결근
                             col += "Ⅹ";
                         }

@@ -35,6 +35,9 @@ public enum ExceptionCode {
     RECTIFY_ATTENDANCE_NOT_EXIST(400, "E5504", "근태 정정요청 정보가 존재하지 않습니다."),
     ATTENDANCE_OFF_WORK_EXIST(400, "E5505", "퇴근정보가 존재합니다."),
 
+    //File E60**
+    FILE_UPLOAD_ERROR(400, "E6001", "파일 업로드에 실패했습니다."),
+
     ;
 
     private final int status;

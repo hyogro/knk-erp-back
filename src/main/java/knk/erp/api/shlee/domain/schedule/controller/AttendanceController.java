@@ -200,7 +200,7 @@ public class AttendanceController {
     /**
      * 출,퇴근 기록 요약정보 조회
      **/
-    @GetMapping("summary")
+    @GetMapping("/summary")
     public ResponseEntity<ResponseData> readAttendanceSummary() {
         AttendanceSummaryDTO data = attendanceService.readAttendanceSummary();
 
@@ -216,7 +216,7 @@ public class AttendanceController {
     /**
      * 개인 출,퇴근 당일정보 조회
      **/
-    @GetMapping("today")
+    @GetMapping("/today")
     public ResponseEntity<ResponseData> readAttendanceToday() {
         AttendanceDto data = attendanceService.readAttendanceToday();
 

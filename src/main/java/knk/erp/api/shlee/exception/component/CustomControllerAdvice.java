@@ -6,6 +6,7 @@ import knk.erp.api.shlee.exception.exceptions.common.ErrorInputDataException;
 import knk.erp.api.shlee.exception.exceptions.attendance.*;
 import knk.erp.api.shlee.exception.exceptions.common.DataNotExistException;
 import knk.erp.api.shlee.exception.exceptions.common.PermissionDeniedException;
+import knk.erp.api.shlee.exception.exceptions.file.FileIOException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import javax.persistence.EntityNotFoundException;
+import java.io.IOException;
 
 @Slf4j
 @ControllerAdvice
@@ -81,6 +83,18 @@ public class CustomControllerAdvice {
         final ExceptionPayload payload = this.generateExceptionPayload(e);
         return new ResponseEntity<>(payload, HttpStatus.BAD_REQUEST);
     }
+
+    /**
+     * 파일
+     * */
+
+    //근태 정정요청 정보 존재하지 않음
+    @ExceptionHandler(value = {FileIOException.class})
+    public ResponseEntity<ExceptionPayload> handleFileIOException(FileIOException e) {
+        final ExceptionPayload payload = this.generateExceptionPayload(e);
+        return new ResponseEntity<>(payload, HttpStatus.BAD_REQUEST);
+    }
+
 
 
     //payload 생성 메서드
