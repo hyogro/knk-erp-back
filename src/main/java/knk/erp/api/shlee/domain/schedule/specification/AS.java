@@ -85,6 +85,8 @@ public class AS {//AttendanceSpecification
 
 
 
+
+
     public static Specification<Attendance> id(Long id){//deleteFalse
         return (root, query, builder) -> builder.equal(root.get("id"), id);
     }
@@ -112,6 +114,14 @@ public class AS {//AttendanceSpecification
 
             return builder.equal(sm.get("department").get("id"), did);
 
+        };
+    }
+    public static Specification<Attendance> memberDF(){//memberId
+        return (root, query, builder) -> {
+
+            Join<Schedule, Member> sm = root.join("author");
+
+            return builder.isFalse(sm.get("deleted"));
         };
     }
 

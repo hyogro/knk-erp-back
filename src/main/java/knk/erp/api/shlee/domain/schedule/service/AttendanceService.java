@@ -299,9 +299,9 @@ public class AttendanceService {
             return makeAttendanceSummary(onWorkList, offWorkList, vacationList, lateWorkList, yetWorkList);
 
         } else if (3 <= authorityUtil.checkLevel()) {
-            List<Attendance> onWorkList = attendanceRepository.findAll(AS.delFalse().and(AS.atteDate(today)));
-            List<Attendance> offWorkList = attendanceRepository.findAll(AS.delFalse().and(AS.atteDate(today).and(AS.offWorked())));
-            List<Vacation> vacationList = vacationRepository.findAll(VS.delFalse().and(VS.vacationDateBetween(st, et)).and(VS.approve1Is(true)).and(VS.approve2Is(true)));
+            List<Attendance> onWorkList = attendanceRepository.findAll(AS.delFalse().and(AS.atteDate(today).and(AS.memberDF())));
+            List<Attendance> offWorkList = attendanceRepository.findAll(AS.delFalse().and(AS.atteDate(today).and(AS.offWorked()).and(AS.memberDF())));
+            List<Vacation> vacationList = vacationRepository.findAll(VS.delFalse().and(VS.vacationDateBetween(st, et)).and(VS.approve1Is(true)).and(VS.approve2Is(true)).and(VS.memberDF()));
             List<Attendance> lateWorkList = new ArrayList<>(onWorkList);
             List<Member> yetWorkList = memberRepository.findAll();
 

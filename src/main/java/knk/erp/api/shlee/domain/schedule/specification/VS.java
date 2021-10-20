@@ -2,6 +2,7 @@ package knk.erp.api.shlee.domain.schedule.specification;
 
 
 import knk.erp.api.shlee.domain.account.entity.Member;
+import knk.erp.api.shlee.domain.schedule.entity.Attendance;
 import knk.erp.api.shlee.domain.schedule.entity.Schedule;
 import knk.erp.api.shlee.domain.schedule.entity.Vacation;
 import org.springframework.data.jpa.domain.Specification;
@@ -61,6 +62,14 @@ public class VS {//VacationSpecification
             predicates.add(builder.lessThanOrEqualTo(root.get("startDate"), ed));
 
             return builder.and(predicates.toArray(new Predicate[0]));
+        };
+    }
+    public static Specification<Vacation> memberDF(){//memberId
+        return (root, query, builder) -> {
+
+            Join<Schedule, Member> sm = root.join("author");
+
+            return builder.isFalse(sm.get("deleted"));
         };
     }
 }
