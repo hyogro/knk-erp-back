@@ -312,9 +312,6 @@ public class AttendanceService {
             List<Attendance> lateWorkList = new ArrayList<>(onWorkList);
             List<Member> yetWorkList = department.getMemberList();
 
-            Member m3 = memberRepository.findAllByMemberIdAndDeletedIsFalse("knk007");
-            log.error("?????????3 {}", m3.getDepartment() == null);
-
             return makeAttendanceSummary(onWorkList, offWorkList, vacationList, lateWorkList, yetWorkList);
 
         } else if (3 <= authorityUtil.checkLevel()) {
@@ -397,17 +394,26 @@ public class AttendanceService {
 
         yetWorkList.removeIf(member -> checkVacation(member, vacationList)); // 휴가자 삭제 = 미출근 인원
 
+        Member m3 = memberRepository.findAllByMemberIdAndDeletedIsFalse("knk007");
+        log.error("?????????3 {}", m3.getDepartment() == null);
+
         onWork = attendanceListToMDList(onWorkList);
         offWork = attendanceListToMDList(offWorkList);
         lateWork = attendanceListToMDList(lateWorkList);
         vacation = vacationListToMDList(vacationList);
         yetWork = memberListToMDList(yetWorkList);
 
+        Member m4 = memberRepository.findAllByMemberIdAndDeletedIsFalse("knk007");
+        log.error("?????????4 {}", m3.getDepartment() == null);
+
         onWork.removeIf(i -> i.getMemberName().equals("관리자"));
         offWork.removeIf(i -> i.getMemberName().equals("관리자"));
         lateWork.removeIf(i -> i.getMemberName().equals("관리자"));
         vacation.removeIf(i -> i.getMemberName().equals("관리자"));
         yetWork.removeIf(i -> i.getMemberName().equals("관리자"));
+
+        Member m5 = memberRepository.findAllByMemberIdAndDeletedIsFalse("knk007");
+        log.error("?????????5 {}", m3.getDepartment() == null);
 
         return new AttendanceSummaryDTO(onWork, offWork, yetWork, lateWork, vacation);
     }
