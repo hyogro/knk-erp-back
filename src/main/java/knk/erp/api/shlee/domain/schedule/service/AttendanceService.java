@@ -23,6 +23,7 @@ import knk.erp.api.shlee.exception.exceptions.attendance.AttendanceOffWorkExistE
 import knk.erp.api.shlee.exception.exceptions.attendance.RectifyAttendanceExistException;
 import knk.erp.api.shlee.exception.exceptions.common.PermissionDeniedException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -40,6 +41,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class AttendanceService {
     private final AttendanceRepository attendanceRepository;
     private final RectifyAttendanceRepository rectifyAttendanceRepository;
@@ -207,7 +209,6 @@ public class AttendanceService {
         //요청일에 정정요청 이미 존재하면 예외처리
         String memberId = EntityUtil.getInstance().getMemberId();
         LocalDate attendanceDate = attendance.getAttendanceDate();
-        System.out.println(attendanceDate);
         throwIfRectifyAttendanceExist(attendanceDate, memberId);
 
         //성공 - 생성 후 응답
@@ -386,9 +387,10 @@ public class AttendanceService {
         lateWorkList.removeIf(a -> checkVacationLate(a, vacationList));// 휴가자 삭제 = 지각 인원
 
         //yetWorkList.removeIf(member -> checkAttendance(member, onWorkList)); //출근자 삭제 = 미출근 인원
+        log.error("onWorkList: {}", onWorkList);
         for(Member member : yetWorkList){
             checkAttendance(member, onWorkList);
-            System.out.println(member.getMemberId());
+            log.error("yetWorkList: {}", member.getMemberId());
         }
         yetWorkList.removeIf(member -> checkVacation(member, vacationList)); // 휴가자 삭제 = 미출근 인원
 
