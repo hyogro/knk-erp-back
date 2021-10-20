@@ -8,6 +8,7 @@ import knk.erp.api.shlee.domain.account.util.AccountUtil;
 import knk.erp.api.shlee.domain.account.util.SecurityUtil;
 import knk.erp.api.shlee.common.dto.TokenDto;
 import knk.erp.api.shlee.common.jwt.TokenProvider;
+import knk.erp.api.shlee.exception.exceptions.Account.AccountOverlabIdException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -34,6 +35,8 @@ public class AccountService {
     /* 회원 가입 */
     @Transactional
     public void signup(MemberDTO_REQ memberDTOReq){
+        ThrowIfOverlabId(memberDTOReq);
+
         Member member = memberDTOReq.toMember(passwordEncoder);
         Department department;
 
@@ -44,6 +47,12 @@ public class AccountService {
         memberRepository.save(member);
         department.getMemberList().add(member);
         departmentRepository.save(department);
+    }
+
+    public void ThrowIfOverlabId(MemberDTO_REQ memberDTOReq){
+        if(memberRepository.existsByMemberId(memberDTOReq.getMemberId())){
+            throw new AccountOverlabIdException();
+        }
     }
 
     /* Id 중복체크 */
