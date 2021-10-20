@@ -303,7 +303,7 @@ public class AttendanceService {
             List<Attendance> offWorkList = attendanceRepository.findAll(AS.delFalse().and(AS.atteDate(today).and(AS.offWorked()).and(AS.memberDF())));
             List<Vacation> vacationList = vacationRepository.findAll(VS.delFalse().and(VS.vacationDateBetween(st, et)).and(VS.approve1Is(true)).and(VS.approve2Is(true)).and(VS.memberDF()));
             List<Attendance> lateWorkList = new ArrayList<>(onWorkList);
-            List<Member> yetWorkList = memberRepository.findAll();
+            List<Member> yetWorkList = memberRepository.findAllByDeletedIsFalse();
 
             return makeAttendanceSummary(onWorkList, offWorkList, vacationList, lateWorkList, yetWorkList);
 
