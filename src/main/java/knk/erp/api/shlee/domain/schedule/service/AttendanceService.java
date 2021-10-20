@@ -386,13 +386,11 @@ public class AttendanceService {
         lateWorkList.removeIf(a -> checkVacationLate(a, vacationList));// 휴가자 삭제 = 지각 인원
 
         //yetWorkList.removeIf(member -> checkAttendance(member, onWorkList)); //출근자 삭제 = 미출근 인원
-//        for(Member member : yetWorkList){
-//            checkAttendance(member, onWorkList);
-//        }
+        for(Member member : yetWorkList){
+            checkAttendance(member, onWorkList);
+            System.out.println(member.getMemberId());
+        }
         yetWorkList.removeIf(member -> checkVacation(member, vacationList)); // 휴가자 삭제 = 미출근 인원
-//        for(Member member : yetWorkList){
-//            checkVacation(member, vacationList);
-//        }
 
         onWork = attendanceListToMDList(onWorkList);
         offWork = attendanceListToMDList(offWorkList);
