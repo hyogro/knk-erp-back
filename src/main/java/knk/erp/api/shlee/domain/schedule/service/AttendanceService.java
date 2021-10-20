@@ -281,7 +281,6 @@ public class AttendanceService {
     }
 
     //출,퇴근 요약정보 조회
-    @Transactional
     public AttendanceSummaryDTO readAttendanceSummary() {
         LocalDate today = LocalDate.now();
         LocalDateTime st = LocalDateTime.of(today, LocalTime.MIN);
@@ -316,8 +315,8 @@ public class AttendanceService {
             log.error("?????????0 {}", m0.getDepartment() == null);
             AttendanceSummaryDTO attendanceSummaryDTO = makeAttendanceSummary(onWorkList, offWorkList, vacationList, lateWorkList, yetWorkList);
 
-            Member m7 = memberRepository.findAllByMemberIdAndDeletedIsFalse("knk007");
-            log.error("?????????7 {}", m7.getDepartment() == null);
+            Member m6 = memberRepository.findAllByMemberIdAndDeletedIsFalse("knk007");
+            log.error("?????????6 {}", m6.getDepartment() == null);
 
             return attendanceSummaryDTO;
 
