@@ -404,7 +404,7 @@ public class AttendanceService {
         yetWork = memberListToMDList(yetWorkList);
 
         Member m4 = memberRepository.findAllByMemberIdAndDeletedIsFalse("knk007");
-        log.error("?????????4 {}", m3.getDepartment() == null);
+        log.error("?????????4 {}", m4.getDepartment() == null);
 
         onWork.removeIf(i -> i.getMemberName().equals("관리자"));
         offWork.removeIf(i -> i.getMemberName().equals("관리자"));
@@ -413,7 +413,7 @@ public class AttendanceService {
         yetWork.removeIf(i -> i.getMemberName().equals("관리자"));
 
         Member m5 = memberRepository.findAllByMemberIdAndDeletedIsFalse("knk007");
-        log.error("?????????5 {}", m3.getDepartment() == null);
+        log.error("?????????5 {}", m5.getDepartment() == null);
 
         return new AttendanceSummaryDTO(onWork, offWork, yetWork, lateWork, vacation);
     }
