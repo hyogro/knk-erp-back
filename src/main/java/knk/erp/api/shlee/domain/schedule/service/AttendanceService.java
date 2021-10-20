@@ -349,7 +349,7 @@ public class AttendanceService {
     //맴버의 출근 여부 확인
     private boolean checkAttendance(Member member, List<Attendance> onWorkList) {
         for (Attendance attendance : onWorkList) {
-            if (attendance.getAuthor().equals(member)) return true;
+            if (attendance.getAuthor().getMemberId().equals(member.getMemberId())) return true;
         }
         return false;
     }
