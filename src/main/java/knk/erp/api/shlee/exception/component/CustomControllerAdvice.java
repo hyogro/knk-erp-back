@@ -2,7 +2,6 @@ package knk.erp.api.shlee.exception.component;
 
 import knk.erp.api.shlee.exception.ExceptionPayload;
 import knk.erp.api.shlee.exception.exceptions.*;
-import knk.erp.api.shlee.exception.exceptions.Account.AlreadyExistIdException;
 import knk.erp.api.shlee.exception.exceptions.common.ErrorInputDataException;
 import knk.erp.api.shlee.exception.exceptions.attendance.*;
 import knk.erp.api.shlee.exception.exceptions.common.DataNotExistException;
@@ -16,7 +15,6 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import javax.persistence.EntityNotFoundException;
-import java.io.IOException;
 
 @Slf4j
 @ControllerAdvice
@@ -99,13 +97,6 @@ public class CustomControllerAdvice {
     /**
      * Account
      * */
-
-    //ID 중보복체크
-    @ExceptionHandler(value = {AlreadyExistIdException.class})
-    public ResponseEntity<ExceptionPayload> handleAlreadyExistIdException(AlreadyExistIdException e) {
-        final ExceptionPayload payload = this.generateExceptionPayload(e);
-        return new ResponseEntity<>(payload, HttpStatus.BAD_REQUEST);
-    }
 
 
     //payload 생성 메서드

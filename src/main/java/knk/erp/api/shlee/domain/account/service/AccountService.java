@@ -8,7 +8,6 @@ import knk.erp.api.shlee.domain.account.util.AccountUtil;
 import knk.erp.api.shlee.domain.account.util.SecurityUtil;
 import knk.erp.api.shlee.common.dto.TokenDto;
 import knk.erp.api.shlee.common.jwt.TokenProvider;
-import knk.erp.api.shlee.exception.exceptions.Account.AlreadyExistIdException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -18,7 +17,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -50,10 +48,8 @@ public class AccountService {
 
     /* Id 중복체크 */
     @Transactional
-    public void checkId(Check_existMemberIdDTO checkExistMemberIdDTO){
-        if(memberRepository.existsByMemberId(checkExistMemberIdDTO.getMemberId())) {
-            throw new AlreadyExistIdException();
-        }
+    public boolean checkId(Check_existMemberIdDTO checkExistMemberIdDTO){
+        return memberRepository.existsByMemberId(checkExistMemberIdDTO.getMemberId());
     }
 
     // 로그인 및 Token 발급
