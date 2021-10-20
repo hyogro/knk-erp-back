@@ -386,12 +386,12 @@ public class AttendanceService {
         lateWorkList.removeIf(a -> a.getOnWork().isBefore(nine));// 9시 이전 출근자 삭제 = 지각 인원
         lateWorkList.removeIf(a -> checkVacationLate(a, vacationList));// 휴가자 삭제 = 지각 인원
 
-        //yetWorkList.removeIf(member -> checkAttendance(member, onWorkList)); //출근자 삭제 = 미출근 인원
-        log.error("onWorkList: {}", onWorkList);
-        for(Member member : yetWorkList){
-            checkAttendance(member, onWorkList);
-            log.error("yetWorkList: {}", member.getMemberId());
-        }
+        Member m = memberRepository.findAllByMemberIdAndDeletedIsFalse("knk007");
+        log.error("?? {}", m.getDepartment() == null);
+        yetWorkList.removeIf(member -> checkAttendance(member, onWorkList)); //출근자 삭제 = 미출근 인원
+        Member m2 = memberRepository.findAllByMemberIdAndDeletedIsFalse("knk007");
+        log.error("?? {}", m2.getDepartment() == null);
+
         yetWorkList.removeIf(member -> checkVacation(member, vacationList)); // 휴가자 삭제 = 미출근 인원
 
         onWork = attendanceListToMDList(onWorkList);
