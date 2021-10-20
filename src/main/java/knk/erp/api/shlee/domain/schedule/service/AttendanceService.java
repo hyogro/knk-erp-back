@@ -311,12 +311,7 @@ public class AttendanceService {
             List<Attendance> lateWorkList = new ArrayList<>(onWorkList);
             List<Member> yetWorkList = department.getMemberList();
 
-            Member m0 = memberRepository.findAllByMemberIdAndDeletedIsFalse("knk007");
-            log.error("?????????0 {}", m0.getDepartment() == null);
             AttendanceSummaryDTO attendanceSummaryDTO = makeAttendanceSummary(onWorkList, offWorkList, vacationList, lateWorkList, yetWorkList);
-
-            Member m6 = memberRepository.findAllByMemberIdAndDeletedIsFalse("knk007");
-            log.error("?????????6 {}", m6.getDepartment() == null);
 
             return attendanceSummaryDTO;
 
@@ -392,16 +387,8 @@ public class AttendanceService {
         lateWorkList.removeIf(a -> a.getOnWork().isBefore(nine));// 9시 이전 출근자 삭제 = 지각 인원
         lateWorkList.removeIf(a -> checkVacationLate(a, vacationList));// 휴가자 삭제 = 지각 인원
 
-        Member m = memberRepository.findAllByMemberIdAndDeletedIsFalse("knk007");
-        log.error("?????????1 {}", m.getDepartment() == null);
         yetWorkList.removeIf(member -> checkAttendance(member, onWorkList)); //출근자 삭제 = 미출근 인원
-        Member m2 = memberRepository.findAllByMemberIdAndDeletedIsFalse("knk007");
-        log.error("?????????2 {}", m2.getDepartment() == null);
-
         yetWorkList.removeIf(member -> checkVacation(member, vacationList)); // 휴가자 삭제 = 미출근 인원
-
-        Member m3 = memberRepository.findAllByMemberIdAndDeletedIsFalse("knk007");
-        log.error("?????????3 {}", m3.getDepartment() == null);
 
         onWork = attendanceListToMDList(onWorkList);
         offWork = attendanceListToMDList(offWorkList);
@@ -409,18 +396,11 @@ public class AttendanceService {
         vacation = vacationListToMDList(vacationList);
         yetWork = memberListToMDList(yetWorkList);
 
-        Member m4 = memberRepository.findAllByMemberIdAndDeletedIsFalse("knk007");
-        log.error("?????????4 {}", m4.getDepartment() == null);
-
         onWork.removeIf(i -> i.getMemberName().equals("관리자"));
         offWork.removeIf(i -> i.getMemberName().equals("관리자"));
         lateWork.removeIf(i -> i.getMemberName().equals("관리자"));
         vacation.removeIf(i -> i.getMemberName().equals("관리자"));
         yetWork.removeIf(i -> i.getMemberName().equals("관리자"));
-
-        Member m5 = memberRepository.findAllByMemberIdAndDeletedIsFalse("knk007");
-        log.error("?????????5 {}", m5.getDepartment() == null);
-
         return new AttendanceSummaryDTO(onWork, offWork, yetWork, lateWork, vacation);
     }
 
