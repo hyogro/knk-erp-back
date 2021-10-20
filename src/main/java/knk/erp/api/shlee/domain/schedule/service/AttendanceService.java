@@ -311,7 +311,7 @@ public class AttendanceService {
             List<Attendance> lateWorkList = new ArrayList<>(onWorkList);
             List<Member> yetWorkList = department.getMemberList();
 
-            return makeAttendanceSummary(onWorkList, offWorkList, vacationList, lateWorkList, yetWorkList);
+            return null;//makeAttendanceSummary(onWorkList, offWorkList, vacationList, lateWorkList, yetWorkList);
 
         } else if (3 <= authorityUtil.checkLevel()) {
             List<Attendance> onWorkList = attendanceRepository.findAll(AS.delFalse().and(AS.atteDate(today).and(AS.memberDF())));
