@@ -2,6 +2,7 @@ package knk.erp.api.shlee.exception.component;
 
 import knk.erp.api.shlee.exception.ExceptionPayload;
 import knk.erp.api.shlee.exception.exceptions.*;
+import knk.erp.api.shlee.exception.exceptions.Account.AccountOverlabIdException;
 import knk.erp.api.shlee.exception.exceptions.common.ErrorInputDataException;
 import knk.erp.api.shlee.exception.exceptions.attendance.*;
 import knk.erp.api.shlee.exception.exceptions.common.DataNotExistException;
@@ -15,7 +16,6 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import javax.persistence.EntityNotFoundException;
-import java.io.IOException;
 
 @Slf4j
 @ControllerAdvice
@@ -95,7 +95,16 @@ public class CustomControllerAdvice {
         return new ResponseEntity<>(payload, HttpStatus.BAD_REQUEST);
     }
 
+    /**
+     * Account
+     * */
 
+    //회원가입 시 중복 ID 예외처리
+    @ExceptionHandler(value = {AccountOverlabIdException.class})
+    public ResponseEntity<ExceptionPayload> handleAccountOverlabIdException(AccountOverlabIdException e){
+        final ExceptionPayload payload = this.generateExceptionPayload(e);
+        return new ResponseEntity<>(payload, HttpStatus.BAD_REQUEST);
+    }
 
     //payload 생성 메서드
     private ExceptionPayload generateExceptionPayload(CustomException e){

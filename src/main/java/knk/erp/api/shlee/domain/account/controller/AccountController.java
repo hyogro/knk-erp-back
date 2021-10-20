@@ -85,13 +85,14 @@ public class AccountController {
     // 중복 ID 체크
     @PostMapping("/checkId")
     public ResponseEntity<ResponseData> checkId(@RequestBody Check_existMemberIdDTO checkExistMemberIdDTO){
-        accountService.checkId(checkExistMemberIdDTO);
+        boolean check = accountService.checkId(checkExistMemberIdDTO);
 
-        ResponseCM responseCM = ResponseCM
+        ResponseCMD responseCMD = ResponseCMD
                 .builder()
                 .responseCode(ResponseCode.CHECK_OVERLAP_ID_SUCCESS)
+                .data(check)
                 .build();
 
-        return new ResponseEntity<>(responseCM, HttpStatus.OK);
+        return new ResponseEntity<>(responseCMD, HttpStatus.OK);
     }
 }
