@@ -34,6 +34,7 @@ public class AS {//AttendanceSpecification
 
         //작성자
         predicate.add(withMemberId(memberId, root, builder));
+        predicate.add(withMemberDF(memberId, root, builder));
 
         return predicate;
     }
@@ -59,6 +60,7 @@ public class AS {//AttendanceSpecification
 
         //작성자
         predicate.add(withMemberId(memberId, root, builder));
+        predicate.add(withMemberDF(memberId, root, builder));
 
         return predicate;
     }
@@ -132,6 +134,11 @@ public class AS {//AttendanceSpecification
     private static Predicate withMemberId(String memberId, Root<Attendance> root, CriteriaBuilder builder){
         Join<Schedule, Member> sm = root.join("author");
         return builder.equal(sm.get("memberId"), memberId);
+    }
+
+    private static Predicate withMemberDF(String memberId, Root<Attendance> root, CriteriaBuilder builder){
+        Join<Schedule, Member> sm = root.join("author");
+        return builder.isFalse(sm.get("deleted"));
     }
 
 }
