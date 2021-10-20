@@ -312,7 +312,14 @@ public class AttendanceService {
             List<Attendance> lateWorkList = new ArrayList<>(onWorkList);
             List<Member> yetWorkList = department.getMemberList();
 
-            return makeAttendanceSummary(onWorkList, offWorkList, vacationList, lateWorkList, yetWorkList);
+            Member m0 = memberRepository.findAllByMemberIdAndDeletedIsFalse("knk007");
+            log.error("?????????0 {}", m0.getDepartment() == null);
+            AttendanceSummaryDTO attendanceSummaryDTO = makeAttendanceSummary(onWorkList, offWorkList, vacationList, lateWorkList, yetWorkList);
+
+            Member m7 = memberRepository.findAllByMemberIdAndDeletedIsFalse("knk007");
+            log.error("?????????7 {}", m7.getDepartment() == null);
+
+            return attendanceSummaryDTO;
 
         } else if (3 <= authorityUtil.checkLevel()) {
             List<Attendance> onWorkList = attendanceRepository.findAll(AS.delFalse().and(AS.atteDate(today).and(AS.memberDF())));
