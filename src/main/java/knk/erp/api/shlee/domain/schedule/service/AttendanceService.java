@@ -385,20 +385,20 @@ public class AttendanceService {
         lateWorkList.removeIf(a -> a.getOnWork().isBefore(nine));// 9시 이전 출근자 삭제 = 지각 인원
         lateWorkList.removeIf(a -> checkVacationLate(a, vacationList));// 휴가자 삭제 = 지각 인원
 
-        yetWorkList.removeIf(member -> checkAttendance(member, onWorkList)); //출근자 삭제 = 미출근 인원
+        //yetWorkList.removeIf(member -> checkAttendance(member, onWorkList)); //출근자 삭제 = 미출근 인원
         //yetWorkList.removeIf(member -> checkVacation(member, vacationList)); // 휴가자 삭제 = 미출근 인원
 
-        onWork = null;//attendanceListToMDList(onWorkList);
-        offWork = null;//attendanceListToMDList(offWorkList);
-        lateWork = null;//attendanceListToMDList(lateWorkList);
-        vacation = null;//vacationListToMDList(vacationList);
-        yetWork = null;//memberListToMDList(yetWorkList);
+        onWork = attendanceListToMDList(onWorkList);
+        offWork = attendanceListToMDList(offWorkList);
+        lateWork = attendanceListToMDList(lateWorkList);
+        vacation = vacationListToMDList(vacationList);
+        yetWork = memberListToMDList(yetWorkList);
 
-//        onWork.removeIf(i -> i.getMemberName().equals("관리자"));
-//        offWork.removeIf(i -> i.getMemberName().equals("관리자"));
-//        lateWork.removeIf(i -> i.getMemberName().equals("관리자"));
-//        vacation.removeIf(i -> i.getMemberName().equals("관리자"));
-//        yetWork.removeIf(i -> i.getMemberName().equals("관리자"));
+        onWork.removeIf(i -> i.getMemberName().equals("관리자"));
+        offWork.removeIf(i -> i.getMemberName().equals("관리자"));
+        lateWork.removeIf(i -> i.getMemberName().equals("관리자"));
+        vacation.removeIf(i -> i.getMemberName().equals("관리자"));
+        yetWork.removeIf(i -> i.getMemberName().equals("관리자"));
 
         return new AttendanceSummaryDTO(onWork, offWork, yetWork, lateWork, vacation);
     }
