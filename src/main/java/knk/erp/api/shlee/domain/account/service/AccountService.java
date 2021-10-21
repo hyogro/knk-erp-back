@@ -8,8 +8,8 @@ import knk.erp.api.shlee.domain.account.util.AccountUtil;
 import knk.erp.api.shlee.domain.account.util.SecurityUtil;
 import knk.erp.api.shlee.common.dto.TokenDto;
 import knk.erp.api.shlee.common.jwt.TokenProvider;
-import knk.erp.api.shlee.exception.exceptions.Account.AccountOverlabIdException;
-import knk.erp.api.shlee.exception.exceptions.Account.AccountUpdateTargetIsLeaderException;
+import knk.erp.api.shlee.exception.exceptions.Account.AccountOverlapIdException;
+import knk.erp.api.shlee.exception.exceptions.Account.AccountTargetIsLeaderException;
 import knk.erp.api.shlee.exception.exceptions.Department.DepartmentNotFoundException;
 import knk.erp.api.shlee.exception.exceptions.common.PermissionDeniedException;
 import lombok.RequiredArgsConstructor;
@@ -55,7 +55,7 @@ public class AccountService {
     // 회원가입 api 호출 시 이미 존재하는 ID 예외처리
     public void ThrowIfOverlabId(MemberDTO_REQ memberDTOReq){
         if(memberRepository.existsByMemberId(memberDTOReq.getMemberId())){
-            throw new AccountOverlabIdException();
+            throw new AccountOverlapIdException();
         }
     }
 
@@ -105,11 +105,11 @@ public class AccountService {
         String level = authentication.getAuthorities().toString();
         Member target= memberRepository.findAllByMemberIdAndDeletedIsFalse(memberId);
 
-        throwIfLowLevel(updateAccountDTOReq, level, target);
+        throwIfLowAuthority(updateAccountDTOReq, level, target);
 
         if (updateAccountDTOReq.getDep_id() != null ) {
-            throwIfNotFoundDepartment(updateAccountDTOReq);
-            throwIfTargetIsLeader(target, updateAccountDTOReq);
+            throwIfNotFoundDepartment(updateAccountDTOReq.getDep_id());
+            throwIfTargetIsLeader(target, updateAccountDTOReq.getDep_id());
         }
 
         Department department = departmentRepository.findByIdAndDeletedFalse(updateAccountDTOReq.getDep_id());
@@ -118,54 +118,48 @@ public class AccountService {
         memberRepository.save(target);
     }
 
-    // 권한 부족 예외 처리
-    public void throwIfLowLevel(Update_AccountDTO_REQ updateAccountDTOReq, String level, Member target){
+    // 권한 부족(업데이트 권한 입력값 비교, 타겟과 비교) 예외 처리
+    public void throwIfLowAuthority(Update_AccountDTO_REQ updateAccountDTOReq, String level, Member target){
         if(securityUtil.checkAuthority(updateAccountDTOReq, level, target)) {
             throw new PermissionDeniedException();
         }
     }
 
     // 부서 수정 시 대상 부서가 없을 경우 예외 처리
-    public void throwIfNotFoundDepartment(Update_AccountDTO_REQ updateAccountDTOReq){
-        if(!departmentRepository.existsByIdAndDeletedFalse(updateAccountDTOReq.getDep_id())){
+    public void throwIfNotFoundDepartment(Long depId){
+        if(!departmentRepository.existsByIdAndDeletedFalse(depId)){
             throw new DepartmentNotFoundException();
         }
     }
 
-    // 부서 수정 시 대상이 부서의 리더일 경우 예외 처리
-    public void throwIfTargetIsLeader(Member target, Update_AccountDTO_REQ updateAccountDTOReq){
-        if(departmentRepository.findByIdAndDeletedFalse(updateAccountDTOReq.getDep_id()).getLeader() == target){
-            throw new AccountUpdateTargetIsLeaderException();
+    // 수정 및 삭제 대상이 부서의 리더일 경우 예외 처리
+    public void throwIfTargetIsLeader(Member target, Long depId){
+        if(departmentRepository.findByIdAndDeletedFalse(depId).getLeader() == target){
+            throw new AccountTargetIsLeaderException();
         }
     }
 
     // 회원 정보 삭제
     @Transactional
-    public Delete_AccountDTO_RES deleteMember(String memberId){
-        try{
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            String level = authentication.getAuthorities().toString();
-            Member target = memberRepository.findAllByMemberIdAndDeletedIsFalse(memberId);
+    public void deleteMember(String memberId){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String level = authentication.getAuthorities().toString();
+        Member target = memberRepository.findAllByMemberIdAndDeletedIsFalse(memberId);
 
-            if(securityUtil.checkTargetAuthority(level, target)){
-                if(target.getDepartment().getLeader() != null){
-                    if(target.getDepartment().getLeader() == target){
-                        Department department = departmentRepository.getOne(target.getDepartment().getId());
-                        department.setLeader(null);
-                        departmentRepository.save(department);
-                    }
-                }
+        throwIfLowLevel(level, target);
+        if(target.getDepartment() != null){
+            throwIfTargetIsLeader(target, target.getDepartment().getId());
+        }
 
-                target.setDepartment(null);
-                target.setDeleted(true);
-                memberRepository.save(target);
+        target.setDepartment(null);
+        target.setDeleted(true);
+        memberRepository.save(target);
+    }
 
-                return new Delete_AccountDTO_RES("DA001");
-            }
-
-            else return new Delete_AccountDTO_RES("DA003", "해당 회원을 삭제할 권한이 없습니다.");
-        }catch(Exception e){
-            return new Delete_AccountDTO_RES("DA002", e.getMessage());
+    // 권한 부족(타겟과 비교) 예외 처리
+    public void throwIfLowLevel(String myLevel, Member target){
+        if(!securityUtil.checkTargetAuthority(myLevel, target)) {
+            throw new PermissionDeniedException();
         }
     }
 }

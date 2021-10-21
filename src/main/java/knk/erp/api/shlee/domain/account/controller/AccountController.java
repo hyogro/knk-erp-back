@@ -85,8 +85,15 @@ public class AccountController {
 
     // 회원 정보 삭제
     @DeleteMapping("/{memberId}")
-    public ResponseEntity<Delete_AccountDTO_RES> deleteMember(@PathVariable String memberId){
-        return ResponseEntity.ok(accountService.deleteMember(memberId));
+    public ResponseEntity<ResponseData> deleteMember(@PathVariable String memberId){
+        accountService.deleteMember(memberId);
+
+        ResponseCM responseCM = ResponseCM
+                .builder()
+                .responseCode(ResponseCode.DELETE_USER_SUCCESS)
+                .build();
+
+        return new ResponseEntity<>(responseCM, HttpStatus.OK);
     }
 
     // 중복 ID 체크
