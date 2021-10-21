@@ -144,7 +144,12 @@ public class VacationService {
 
     //모든 휴가목록 조회
     public List<Object> readAllVacationList(LocalDateTime sd, LocalDateTime ed) {
-        List<Vacation> vacationList = vacationRepository.findAll(VS.delFalse().and(VS.approve1Is(true).and(VS.approve2Is(true).and(VS.vacationDateBetween(sd, ed)))));
+        List<Vacation> vacationList = vacationRepository.findAll(VS.delFalse()
+                .and(VS.approve1Is(true))
+                .and(VS.approve2Is(true))
+                .and(VS.vacationDateBetween(sd, ed))
+                .and(VS.memberDF())
+        );
         return util.VacationListToDTO(vacationList);
     }
 
