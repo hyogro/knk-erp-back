@@ -71,9 +71,16 @@ public class AccountController {
 
     //회원 정보 수정
     @PutMapping("/{memberId}")
-    public ResponseEntity<Update_AccountDTO_RES> updateMember(@PathVariable String memberId,
-                                                              @RequestBody Update_AccountDTO_REQ updateAccountDTOReq){
-        return ResponseEntity.ok(accountService.updateMember(memberId, updateAccountDTOReq));
+    public ResponseEntity<ResponseData> updateMember(@PathVariable String memberId,
+                                                              @RequestBody @Valid Update_AccountDTO_REQ updateAccountDTOReq){
+        accountService.updateMember(memberId, updateAccountDTOReq);
+
+        ResponseCM responseCM = ResponseCM
+                .builder()
+                .responseCode(ResponseCode.UPDATE_USER_INFO_SUCCESS)
+                .build();
+
+        return new ResponseEntity<>(responseCM, HttpStatus.OK);
     }
 
     // 회원 정보 삭제

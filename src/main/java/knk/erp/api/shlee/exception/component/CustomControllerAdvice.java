@@ -3,6 +3,8 @@ package knk.erp.api.shlee.exception.component;
 import knk.erp.api.shlee.exception.ExceptionPayload;
 import knk.erp.api.shlee.exception.exceptions.*;
 import knk.erp.api.shlee.exception.exceptions.Account.AccountOverlabIdException;
+import knk.erp.api.shlee.exception.exceptions.Account.AccountUpdateTargetIsLeaderException;
+import knk.erp.api.shlee.exception.exceptions.Department.DepartmentNotFoundException;
 import knk.erp.api.shlee.exception.exceptions.common.ErrorInputDataException;
 import knk.erp.api.shlee.exception.exceptions.attendance.*;
 import knk.erp.api.shlee.exception.exceptions.common.DataNotExistException;
@@ -105,6 +107,27 @@ public class CustomControllerAdvice {
         final ExceptionPayload payload = this.generateExceptionPayload(e);
         return new ResponseEntity<>(payload, HttpStatus.BAD_REQUEST);
     }
+
+    //유저 부서 수정 시 대상이 부서의 리더일 경우 예외처리
+    @ExceptionHandler(value = {AccountUpdateTargetIsLeaderException.class})
+    public ResponseEntity<ExceptionPayload> handleAccountUpdateTargetISLeaderException(AccountUpdateTargetIsLeaderException e){
+        final ExceptionPayload payload = this.generateExceptionPayload(e);
+        return new ResponseEntity<>(payload, HttpStatus.BAD_REQUEST);
+    }
+
+    /**
+     * Department
+     * */
+
+    //존재하지않는 부서 찾기 시 예외처리
+    @ExceptionHandler(value = {DepartmentNotFoundException.class})
+    public ResponseEntity<ExceptionPayload> handleDepartmentNotFoundException(DepartmentNotFoundException e){
+        final ExceptionPayload payload = this.generateExceptionPayload(e);
+        return new ResponseEntity<>(payload, HttpStatus.BAD_REQUEST);
+    }
+
+
+
 
     //payload 생성 메서드
     private ExceptionPayload generateExceptionPayload(CustomException e){

@@ -2,6 +2,7 @@ package knk.erp.api.shlee.domain.account.dto.member;
 
 import lombok.*;
 
+import javax.validation.constraints.Size;
 import java.time.LocalDate;
 
 @Getter
@@ -10,6 +11,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Update_AccountDTO_REQ {
+    @Size(min = 8, max = 16)
     private String password;
     private String authority;
     private String phone;

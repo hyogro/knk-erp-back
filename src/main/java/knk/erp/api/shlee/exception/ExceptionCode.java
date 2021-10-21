@@ -27,6 +27,10 @@ public enum ExceptionCode {
     //Account
     NOT_FOUND_USER(400, "E1000", "Not Found User"),
     ALREADY_EXIST_ID(400, "E1100", "이미 존재하는 ID 입니다"),
+    TARGET_IS_LEADER(400, "E1201", "대상이 부서의 리더입니다."),
+
+    //Department
+    NOT_FOUND_DEPARTMENT(400, "E2000", "삭제되었거나 존재하지않는 부서입니다."),
 
     //Schedule - Attendance E55**
     ATTENDANCE_EXIST(400, "E5501", "근태 정보가 존재합니다."),

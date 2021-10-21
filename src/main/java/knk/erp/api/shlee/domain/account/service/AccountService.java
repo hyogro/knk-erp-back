@@ -9,6 +9,9 @@ import knk.erp.api.shlee.domain.account.util.SecurityUtil;
 import knk.erp.api.shlee.common.dto.TokenDto;
 import knk.erp.api.shlee.common.jwt.TokenProvider;
 import knk.erp.api.shlee.exception.exceptions.Account.AccountOverlabIdException;
+import knk.erp.api.shlee.exception.exceptions.Account.AccountUpdateTargetIsLeaderException;
+import knk.erp.api.shlee.exception.exceptions.Department.DepartmentNotFoundException;
+import knk.erp.api.shlee.exception.exceptions.common.PermissionDeniedException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -49,6 +52,7 @@ public class AccountService {
         departmentRepository.save(department);
     }
 
+    // 회원가입 api 호출 시 이미 존재하는 ID 예외처리
     public void ThrowIfOverlabId(MemberDTO_REQ memberDTOReq){
         if(memberRepository.existsByMemberId(memberDTOReq.getMemberId())){
             throw new AccountOverlabIdException();
@@ -61,7 +65,7 @@ public class AccountService {
         return memberRepository.existsByMemberId(checkExistMemberIdDTO.getMemberId());
     }
 
-    // 로그인 및 Token 발급
+    /* 로그인 및 Token 발급 */
     @Transactional
     public Login_TokenDTO_RES login(MemberDTO_REQ MemberDTOReq){
 
@@ -80,48 +84,58 @@ public class AccountService {
         }
     }
 
-    // 회원 목록 읽어오기
+    /* 회원 목록 읽어오기 */
     @Transactional
     public List<Read_AccountDTO> readMember(){
         List<Member> memberList = memberRepository.findAllByDeletedIsFalse();
         return memberList.stream().map(Read_AccountDTO::new).collect(Collectors.toList());
     }
 
-    // 회원 정보 상세 보기
+    /* 회원 정보 상세 보기 */
     @Transactional
     public ReadDetail_AccountDTO readMemberDetail(String memberId){
         Member target = memberRepository.findByMemberIdAndDeletedIsFalse(memberId);
         return new ReadDetail_AccountDTO(target);
     }
 
-    // 회원 정보 수정
+    /* 회원 정보 수정 */
     @Transactional
-    public Update_AccountDTO_RES updateMember(String memberId, Update_AccountDTO_REQ updateAccountDTOReq){
-        try{
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            String level = authentication.getAuthorities().toString();
-            Member target= memberRepository.findAllByMemberIdAndDeletedIsFalse(memberId);
+    public void updateMember(String memberId, Update_AccountDTO_REQ updateAccountDTOReq){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String level = authentication.getAuthorities().toString();
+        Member target= memberRepository.findAllByMemberIdAndDeletedIsFalse(memberId);
 
-            if(securityUtil.checkAuthority(updateAccountDTOReq, level, target)){
-                Department department = null;
+        throwIfLowLevel(updateAccountDTOReq, level, target);
 
-                if(departmentRepository.existsByIdAndDeletedFalse(updateAccountDTOReq.getDep_id())){
-                    if(departmentRepository.getOne(target.getDepartment().getId()).getLeader() == target
-                            && !updateAccountDTOReq.getDep_id().equals(target.getDepartment().getId())){
-                        return new Update_AccountDTO_RES("UA004", "수정할 대상이 부서의 리더입니다.");
-                    }
-                    department = departmentRepository.findByIdAndDeletedFalse(updateAccountDTOReq.getDep_id());
-                }
+        if (updateAccountDTOReq.getDep_id() != null ) {
+            throwIfNotFoundDepartment(updateAccountDTOReq);
+            throwIfTargetIsLeader(target, updateAccountDTOReq);
+        }
 
-                accountUtil.updateSetMember(target, department, updateAccountDTOReq, passwordEncoder);
-                memberRepository.save(target);
+        Department department = departmentRepository.findByIdAndDeletedFalse(updateAccountDTOReq.getDep_id());
 
-                return new Update_AccountDTO_RES("UA001");
-            }
+        accountUtil.updateSetMember(target, department, updateAccountDTOReq, passwordEncoder);
+        memberRepository.save(target);
+    }
 
-            else return new Update_AccountDTO_RES("UA003", "해당 정보를 수정할 권한이 없습니다.");
-        }catch(Exception e){
-            return new Update_AccountDTO_RES("UA002", e.getMessage());
+    // 권한 부족 예외 처리
+    public void throwIfLowLevel(Update_AccountDTO_REQ updateAccountDTOReq, String level, Member target){
+        if(securityUtil.checkAuthority(updateAccountDTOReq, level, target)) {
+            throw new PermissionDeniedException();
+        }
+    }
+
+    // 부서 수정 시 대상 부서가 없을 경우 예외 처리
+    public void throwIfNotFoundDepartment(Update_AccountDTO_REQ updateAccountDTOReq){
+        if(!departmentRepository.existsByIdAndDeletedFalse(updateAccountDTOReq.getDep_id())){
+            throw new DepartmentNotFoundException();
+        }
+    }
+
+    // 부서 수정 시 대상이 부서의 리더일 경우 예외 처리
+    public void throwIfTargetIsLeader(Member target, Update_AccountDTO_REQ updateAccountDTOReq){
+        if(departmentRepository.findByIdAndDeletedFalse(updateAccountDTOReq.getDep_id()).getLeader() == target){
+            throw new AccountUpdateTargetIsLeaderException();
         }
     }
 
