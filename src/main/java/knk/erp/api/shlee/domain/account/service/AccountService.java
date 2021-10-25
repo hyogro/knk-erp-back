@@ -38,7 +38,7 @@ public class AccountService {
     /* 회원 가입 */
     @Transactional
     public void signup(MemberDTO_REQ memberDTOReq){
-        ThrowIfOverlabId(memberDTOReq);
+        ThrowIfOverlapId(memberDTOReq);
 
         Member member = memberDTOReq.toMember(passwordEncoder);
         Department department;
@@ -53,7 +53,7 @@ public class AccountService {
     }
 
     // 회원가입 api 호출 시 이미 존재하는 ID 예외처리
-    public void ThrowIfOverlabId(MemberDTO_REQ memberDTOReq){
+    public void ThrowIfOverlapId(MemberDTO_REQ memberDTOReq){
         if(memberRepository.existsByMemberId(memberDTOReq.getMemberId())){
             throw new AccountOverlapIdException();
         }
