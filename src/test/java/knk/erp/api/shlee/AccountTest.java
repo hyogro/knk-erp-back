@@ -5,6 +5,7 @@ import knk.erp.api.shlee.domain.account.controller.AccountController;
 import knk.erp.api.shlee.domain.account.dto.account.Check_existMemberIdDTO;
 import knk.erp.api.shlee.domain.account.dto.department.DepartmentDTO_REQ;
 import knk.erp.api.shlee.domain.account.dto.member.MemberDTO_REQ;
+import knk.erp.api.shlee.domain.account.dto.member.Update_AccountDTO_REQ;
 import knk.erp.api.shlee.domain.account.entity.Authority;
 import knk.erp.api.shlee.domain.account.entity.DepartmentRepository;
 import knk.erp.api.shlee.domain.account.entity.MemberRepository;
@@ -57,7 +58,7 @@ public class AccountTest {
     @BeforeEach
     public void beforeEach() {
         accountMvc = MockMvcBuilders
-                .standaloneSetup(accountMvc)
+                .standaloneSetup(accountController)
                 .setControllerAdvice(new CustomControllerAdvice())
                 .addFilter(new CharacterEncodingFilter("utf-8", true))
                 .build();
@@ -133,7 +134,6 @@ public class AccountTest {
         memberDTOReq.setPhone("010-1234-1234");
         memberDTOReq.setMemberName("오류날걸");
         memberDTOReq.setAuthority(Authority.ROLE_LVL1);
-        memberDTOReq.setJoiningDate(LocalDate.now());
 
         String requestBody = objectMapper.writeValueAsString(memberDTOReq);
 
@@ -158,7 +158,6 @@ public class AccountTest {
         memberDTOReq.setPhone("010-1234-1234");
         memberDTOReq.setMemberName("오류날걸");
         memberDTOReq.setAuthority(Authority.ROLE_LVL1);
-        memberDTOReq.setJoiningDate(LocalDate.now());
 
         String requestBody = objectMapper.writeValueAsString(memberDTOReq);
 
@@ -184,7 +183,6 @@ public class AccountTest {
         memberDTOReq.setPhone("010-1234-1234");
         memberDTOReq.setMemberName("길이가 길어서 오류가 날걸?");
         memberDTOReq.setAuthority(Authority.ROLE_LVL1);
-        memberDTOReq.setJoiningDate(LocalDate.now());
 
         String requestBody = objectMapper.writeValueAsString(memberDTOReq);
 
@@ -210,7 +208,6 @@ public class AccountTest {
         memberDTOReq.setPhone("010-1234-1234");
         memberDTOReq.setMemberName("성공함");
         memberDTOReq.setAuthority(Authority.ROLE_LVL1);
-        memberDTOReq.setJoiningDate(LocalDate.now());
 
         String requestBody = objectMapper.writeValueAsString(memberDTOReq);
 
@@ -244,9 +241,6 @@ public class AccountTest {
 
         String code = this.getCode(result);
         assertThat(code).isEqualTo("A1400");
-
-        boolean check = this.getResponse(result).getJSONObject("data").getBoolean("check");
-        assertThat(check).isTrue();
     }
 
     @Test
@@ -268,9 +262,6 @@ public class AccountTest {
 
         String code = this.getCode(result);
         assertThat(code).isEqualTo("A1400");
-
-        boolean check = this.getResponse(result).getJSONObject("data").getBoolean("check");
-        assertThat(check).isFalse();
     }
 
     @Test
@@ -299,6 +290,93 @@ public class AccountTest {
         assertThat(code).isEqualTo("A1110");
     }
 
+    @Test
+    @Order(50)
+    @WithUserDetails("testadmin01")
+    public void 회원정보_수정_상대보다_권한낮아서_실패() throws Exception {
+        Update_AccountDTO_REQ updateAccountDTOReq = new Update_AccountDTO_REQ();
+        updateAccountDTOReq.setPhone("010-0000-0000");
+
+        String requestBody = objectMapper.writeValueAsString(updateAccountDTOReq);
+
+        MvcResult result = accountMvc.perform(
+                        MockMvcRequestBuilders.put("/account/"+"testceo01")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(requestBody))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andReturn();
+
+        String code = this.getCode(result);
+        assertThat(code).isEqualTo("E9900");
+    }
+
+    @Test
+    @Order(51)
+    @WithUserDetails("testadmin01")
+    public void 회원정보_수정할_권한이_나보다_높아서_실패() throws Exception {
+        Update_AccountDTO_REQ updateAccountDTOReq = new Update_AccountDTO_REQ();
+        updateAccountDTOReq.setPhone("010-0000-0000");
+        updateAccountDTOReq.setAuthority("ROLE_ADMIN");
+
+        String requestBody = objectMapper.writeValueAsString(updateAccountDTOReq);
+
+        MvcResult result = accountMvc.perform(
+                        MockMvcRequestBuilders.put("/account/"+"test01")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(requestBody))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andReturn();
+
+        String code = this.getCode(result);
+        assertThat(code).isEqualTo("E9900");
+    }
+
+    @Test
+    @Order(52)
+    @WithUserDetails("testadmin01")
+    public void 회원정보_수정_성공() throws Exception {
+        Update_AccountDTO_REQ updateAccountDTOReq = new Update_AccountDTO_REQ();
+        updateAccountDTOReq.setPhone("010-0000-0000");
+        updateAccountDTOReq.setAuthority("ROLE_LVL2");
+
+        String requestBody = objectMapper.writeValueAsString(updateAccountDTOReq);
+
+        MvcResult result = accountMvc.perform(
+                        MockMvcRequestBuilders.put("/account/"+"test01")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(requestBody))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andReturn();
+
+        String code = this.getCode(result);
+        assertThat(code).isEqualTo("A1200");
+    }
+
+    @Test
+    @Order(60)
+    @WithUserDetails("testadmin01")
+    public void 계정_삭제_대상이_나보다_권한이_높아서_실패() throws Exception {
+        MvcResult result = accountMvc.perform(
+                MockMvcRequestBuilders.delete("/account/"+"testceo01"))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andReturn();
+
+        String code = this.getCode(result);
+        assertThat(code).isEqualTo("E9900");
+    }
+
+    @Test
+    @Order(60)
+    @WithUserDetails("testadmin01")
+    public void 계정_삭제_성공() throws Exception {
+        MvcResult result = accountMvc.perform(
+                        MockMvcRequestBuilders.delete("/account/"+"test01"))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andReturn();
+
+        String code = this.getCode(result);
+        assertThat(code).isEqualTo("A1300");
+    }
 
 
 

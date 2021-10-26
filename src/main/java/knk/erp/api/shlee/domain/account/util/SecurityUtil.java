@@ -1,6 +1,7 @@
 package knk.erp.api.shlee.domain.account.util;
 
 import knk.erp.api.shlee.domain.account.dto.member.Update_AccountDTO_REQ;
+import knk.erp.api.shlee.domain.account.entity.Authority;
 import knk.erp.api.shlee.domain.account.entity.Member;
 import org.springframework.stereotype.Component;
 
@@ -39,9 +40,9 @@ public class SecurityUtil {
         else if(level.equals("[ROLE_MATERIALS")) my_level = 2;
         else my_level = Integer.parseInt(level.replace("[ROLE_LVL","").replace("]",""));
 
-        if(target.getAuthority().toString().equals("ROLE_ADMIN")) target_level = 5;
-        else if(target.getAuthority().toString().equals("ROLE_MANAGE")) target_level = 1;
-        else if(target.getAuthority().toString().equals("ROLE_MATERIALS")) target_level = 2;
+        if(target.getAuthority().equals(Authority.ROLE_ADMIN)) target_level = 5;
+        else if(target.getAuthority().equals(Authority.ROLE_MANAGE)) target_level = 1;
+        else if(target.getAuthority().equals(Authority.ROLE_MATERIALS)) target_level = 2;
         else target_level = Integer.parseInt(target.getAuthority().toString().replace("ROLE_LVL",""));
 
         return my_level >= target_level;

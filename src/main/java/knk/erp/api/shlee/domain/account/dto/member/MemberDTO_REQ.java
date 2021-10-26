@@ -34,10 +34,7 @@ public class MemberDTO_REQ {
     private String memberName;
 
     private Long departmentId;
-
-    @NotEmpty
     private LocalDate joiningDate;
-
     private String address;
     private String email;
 

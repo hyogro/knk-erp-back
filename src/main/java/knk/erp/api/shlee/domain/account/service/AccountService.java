@@ -120,7 +120,7 @@ public class AccountService {
 
     // 권한 부족(업데이트 권한 입력값 비교, 타겟과 비교) 예외 처리
     public void throwIfLowAuthority(Update_AccountDTO_REQ updateAccountDTOReq, String level, Member target){
-        if(securityUtil.checkAuthority(updateAccountDTOReq, level, target)) {
+        if(!securityUtil.checkAuthority(updateAccountDTOReq, level, target)) {
             throw new PermissionDeniedException();
         }
     }
@@ -147,6 +147,7 @@ public class AccountService {
         Member target = memberRepository.findAllByMemberIdAndDeletedIsFalse(memberId);
 
         throwIfLowLevel(level, target);
+
         if(target.getDepartment() != null){
             throwIfTargetIsLeader(target, target.getDepartment().getId());
         }

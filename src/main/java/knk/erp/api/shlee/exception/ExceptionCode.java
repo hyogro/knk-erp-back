@@ -10,7 +10,7 @@ public enum ExceptionCode {
     UNKNOWN_ERROR(500, "E9000", "UNKNOWN ERROR"),
     DATA_NOT_EXIST(400, "E9100", "can't found data"),
     INPUT_DATA_ERROR(400, "E9800", "필수 입력정보를 입력하지 않았거나 입력한 정보가 길이 제한 범위를 벗어납니다."),
-    PERMISSION_DENIED(400, "E9900", "Permission Denied"),
+    PERMISSION_DENIED(403, "E9900", "Permission Denied"),
 
     //Auth
     ACCESS_DENIED(403, "E3000", "Access Denied"),
@@ -27,7 +27,7 @@ public enum ExceptionCode {
     //Account
     NOT_FOUND_USER(400, "E1000", "Not Found User"),
     ALREADY_EXIST_ID(400, "E1100", "이미 존재하는 ID 입니다"),
-    TARGET_IS_LEADER(400, "E1201", "대상이 부서의 리더입니다."),
+    TARGET_IS_LEADER(400, "E1200", "대상이 부서의 리더입니다."),
 
     //Department
     NOT_FOUND_DEPARTMENT(400, "E2000", "삭제되었거나 존재하지않는 부서입니다."),
