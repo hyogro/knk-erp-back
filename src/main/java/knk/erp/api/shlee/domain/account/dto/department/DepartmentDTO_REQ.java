@@ -7,6 +7,7 @@ import lombok.*;
 @Setter
 @ToString
 @AllArgsConstructor
+@NoArgsConstructor
 public class DepartmentDTO_REQ {
     private String departmentName;
     private boolean dummy;

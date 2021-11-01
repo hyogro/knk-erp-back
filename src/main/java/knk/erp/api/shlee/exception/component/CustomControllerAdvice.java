@@ -2,9 +2,13 @@ package knk.erp.api.shlee.exception.component;
 
 import knk.erp.api.shlee.exception.ExceptionPayload;
 import knk.erp.api.shlee.exception.exceptions.*;
+import knk.erp.api.shlee.exception.exceptions.Account.AccountNotFoundMemberException;
 import knk.erp.api.shlee.exception.exceptions.Account.AccountOverlapIdException;
 import knk.erp.api.shlee.exception.exceptions.Account.AccountTargetIsLeaderException;
+import knk.erp.api.shlee.exception.exceptions.Department.DepartmentExistsBelongMemberException;
+import knk.erp.api.shlee.exception.exceptions.Department.DepartmentNotBelongMemberException;
 import knk.erp.api.shlee.exception.exceptions.Department.DepartmentNotFoundException;
+import knk.erp.api.shlee.exception.exceptions.Department.DepartmentOverlapException;
 import knk.erp.api.shlee.exception.exceptions.common.ErrorInputDataException;
 import knk.erp.api.shlee.exception.exceptions.attendance.*;
 import knk.erp.api.shlee.exception.exceptions.common.DataNotExistException;
@@ -99,7 +103,14 @@ public class CustomControllerAdvice {
 
     /**
      * Account
-     * */
+     **/
+
+    //삭제되었거나 없는 멤버 예외처리
+    @ExceptionHandler(value = {AccountNotFoundMemberException.class})
+    public ResponseEntity<ExceptionPayload> handleAccountNotFoundMemberException(AccountNotFoundMemberException e){
+        final ExceptionPayload payload = this.generateExceptionPayload(e);
+        return new ResponseEntity<>(payload, HttpStatus.BAD_REQUEST);
+    }
 
     //회원가입 시 중복 ID 예외처리
     @ExceptionHandler(value = {AccountOverlapIdException.class})
@@ -117,11 +128,32 @@ public class CustomControllerAdvice {
 
     /**
      * Department
-     * */
+     **/
 
     //존재하지않는 부서 찾기 시 예외처리
     @ExceptionHandler(value = {DepartmentNotFoundException.class})
     public ResponseEntity<ExceptionPayload> handleDepartmentNotFoundException(DepartmentNotFoundException e){
+        final ExceptionPayload payload = this.generateExceptionPayload(e);
+        return new ResponseEntity<>(payload, HttpStatus.BAD_REQUEST);
+    }
+
+    //중복된 부서 이름 예외처리
+    @ExceptionHandler(value = {DepartmentOverlapException.class})
+    public ResponseEntity<ExceptionPayload> handleDepartmentOverlapException(DepartmentOverlapException e){
+        final ExceptionPayload payload = this.generateExceptionPayload(e);
+        return new ResponseEntity<>(payload, HttpStatus.BAD_REQUEST);
+    }
+
+    //부서에 존재하지않는 멤버 예외처리
+    @ExceptionHandler(value = {DepartmentNotBelongMemberException.class})
+    public ResponseEntity<ExceptionPayload> handleDepartmentNotBelongMemberException(DepartmentNotBelongMemberException e){
+        final ExceptionPayload payload = this.generateExceptionPayload(e);
+        return new ResponseEntity<>(payload, HttpStatus.BAD_REQUEST);
+    }
+
+    //부서 삭제 시, 부서에 속해있는 멤버가 존재할 경우 예외처리
+    @ExceptionHandler(value = {DepartmentExistsBelongMemberException.class})
+    public ResponseEntity<ExceptionPayload> handleDepartmentExistsBelongMemberException(DepartmentExistsBelongMemberException e){
         final ExceptionPayload payload = this.generateExceptionPayload(e);
         return new ResponseEntity<>(payload, HttpStatus.BAD_REQUEST);
     }

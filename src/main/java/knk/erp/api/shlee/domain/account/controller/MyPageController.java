@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.*;
 public class MyPageController {
     private final MyPageService myPageService;
 
-    // 회원 본인 정보 불러오기
+    /* 회원 본인 정보 불러오기 */
     @GetMapping("")
     public ResponseEntity<ResponseData> getMyInfo(){
         Read_MemberDTO readMemberDTO = myPageService.getMyInfo();
@@ -34,7 +34,7 @@ public class MyPageController {
 
     }
 
-    // 회원 본인 정보 수정
+    /* 회원 본인 정보 수정 */
     @PutMapping("")
     public ResponseEntity<ResponseData> updateSelf(@RequestBody Update_SelfDTO updateSelfDTO){
         myPageService.updateSelf(updateSelfDTO);
@@ -47,7 +47,7 @@ public class MyPageController {
         return new ResponseEntity<>(responseCM, HttpStatus.OK);
     }
 
-    // 본인 포상휴가 분단위
+    /* 본인 포상휴가 분단위 */
     @GetMapping("/getMyVacation")
     public ResponseEntity<ResponseData> getMyVacation(){
         int vacation = myPageService.getMyVacation();

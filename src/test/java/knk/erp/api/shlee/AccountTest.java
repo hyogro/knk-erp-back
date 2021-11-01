@@ -40,20 +40,14 @@ public class AccountTest {
     private MockMvc accountMvc;
     @Autowired
     private ObjectMapper objectMapper;
-    @Autowired
-    private BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Autowired
     private AccountController accountController;
     @Autowired
     private AccountService accountService;
-    @Autowired
-    private MemberRepository memberRepository;
 
     @Autowired
     private DepartmentService departmentService;
-    @Autowired
-    private DepartmentRepository departmentRepository;
 
     @BeforeEach
     public void beforeEach() {

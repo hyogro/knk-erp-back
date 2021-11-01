@@ -8,6 +8,7 @@ import knk.erp.api.shlee.domain.account.util.AccountUtil;
 import knk.erp.api.shlee.domain.account.util.SecurityUtil;
 import knk.erp.api.shlee.common.dto.TokenDto;
 import knk.erp.api.shlee.common.jwt.TokenProvider;
+import knk.erp.api.shlee.exception.exceptions.Account.AccountNotFoundMemberException;
 import knk.erp.api.shlee.exception.exceptions.Account.AccountOverlapIdException;
 import knk.erp.api.shlee.exception.exceptions.Account.AccountTargetIsLeaderException;
 import knk.erp.api.shlee.exception.exceptions.Department.DepartmentNotFoundException;
@@ -38,7 +39,7 @@ public class AccountService {
     /* 회원 가입 */
     @Transactional
     public void signup(MemberDTO_REQ memberDTOReq){
-        ThrowIfOverlapId(memberDTOReq);
+        throwIfOverlapId(memberDTOReq);
 
         Member member = memberDTOReq.toMember(passwordEncoder);
         Department department;
@@ -53,7 +54,7 @@ public class AccountService {
     }
 
     // 회원가입 api 호출 시 이미 존재하는 ID 예외처리
-    public void ThrowIfOverlapId(MemberDTO_REQ memberDTOReq){
+    public void throwIfOverlapId(MemberDTO_REQ memberDTOReq){
         if(memberRepository.existsByMemberId(memberDTOReq.getMemberId())){
             throw new AccountOverlapIdException();
         }
@@ -94,13 +95,24 @@ public class AccountService {
     /* 회원 정보 상세 보기 */
     @Transactional
     public ReadDetail_AccountDTO readMemberDetail(String memberId){
+        throwIfNotFoundMember(memberId);
+
         Member target = memberRepository.findByMemberIdAndDeletedIsFalse(memberId);
         return new ReadDetail_AccountDTO(target);
+    }
+
+    // 삭제되었거나 존재하지않는 member 예외 처리
+    public void throwIfNotFoundMember(String memberId){
+        if(!memberRepository.existsByMemberIdAndDeletedFalse(memberId)){
+            throw new AccountNotFoundMemberException();
+        }
     }
 
     /* 회원 정보 수정 */
     @Transactional
     public void updateMember(String memberId, Update_AccountDTO_REQ updateAccountDTOReq){
+        throwIfNotFoundMember(memberId);
+
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String level = authentication.getAuthorities().toString();
         Member target= memberRepository.findAllByMemberIdAndDeletedIsFalse(memberId);
@@ -139,9 +151,11 @@ public class AccountService {
         }
     }
 
-    // 회원 정보 삭제
+    /* 회원 정보 삭제 */
     @Transactional
     public void deleteMember(String memberId){
+        throwIfNotFoundMember(memberId);
+
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String level = authentication.getAuthorities().toString();
         Member target = memberRepository.findAllByMemberIdAndDeletedIsFalse(memberId);
