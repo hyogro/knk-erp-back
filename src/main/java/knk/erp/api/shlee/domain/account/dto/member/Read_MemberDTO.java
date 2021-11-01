@@ -1,5 +1,6 @@
 package knk.erp.api.shlee.domain.account.dto.member;
 
+import knk.erp.api.shlee.domain.account.entity.Member;
 import lombok.*;
 
 import java.time.LocalDate;
@@ -24,4 +25,21 @@ public class Read_MemberDTO {
     private LocalDate birthDate;
     private boolean birthDateSolar;
     private String position;
+
+    public Read_MemberDTO(Member member){
+        this.memberId = member.getMemberId();
+        this.password = null;
+        this.phone = member.getPhone();
+        this.memberName = member.getMemberName();
+        this.vacation = member.getVacation();
+        this.departmentName = member.getDepartment().getDepartmentName();
+        this.authority = member.getAuthority().toString();
+        this.address = member.getAddress();
+        this.email = member.getEmail();
+        this.joiningDate = member.getJoiningDate();
+        this.images = member.getImages();
+        this.birthDate = member.getBirthDate();
+        this.birthDateSolar = member.isBirthDateSolar();
+        this.position = member.getPosition();
+    }
 }

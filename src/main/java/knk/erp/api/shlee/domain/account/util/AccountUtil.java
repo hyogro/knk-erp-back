@@ -1,6 +1,7 @@
 package knk.erp.api.shlee.domain.account.util;
 
 import knk.erp.api.shlee.domain.account.dto.member.Update_AccountDTO_REQ;
+import knk.erp.api.shlee.domain.account.dto.my.Update_SelfDTO;
 import knk.erp.api.shlee.domain.account.entity.Authority;
 import knk.erp.api.shlee.domain.account.entity.Department;
 import knk.erp.api.shlee.domain.account.entity.Member;
@@ -48,40 +49,34 @@ public class AccountUtil {
             member.setImages(updateAccountDTOReq.getImages());
         }
 
-        if(updateAccountDTOReq.getBirthDate() != null){
-            member.setBirthDate(updateAccountDTOReq.getBirthDate());
-        }
-
-        member.setBirthDateSolar(updateAccountDTOReq.isBirthDateSolar());
-
         if(updateAccountDTOReq.getPosition() != null){
             member.setPosition(updateAccountDTOReq.getPosition());
         }
     }
 
-    public void updateSelfMember(Member my, Update_AccountDTO_REQ updateAccountDTOReq, BCryptPasswordEncoder passwordEncoder){
-        if(updateAccountDTOReq.getPassword()!=null){
-            my.setPassword(passwordEncoder.encode(updateAccountDTOReq.getPassword()));
+    public void updateSelfMember(Member my, Update_SelfDTO updateSelfDTO, BCryptPasswordEncoder passwordEncoder){
+        if(updateSelfDTO.getPassword()!=null){
+            my.setPassword(passwordEncoder.encode(updateSelfDTO.getPassword()));
         }
-        if(updateAccountDTOReq.getPhone()!=null){
-           my.setPhone(updateAccountDTOReq.getPhone());
-        }
-
-        if(updateAccountDTOReq.getAddress() != null){
-            my.setAddress(updateAccountDTOReq.getAddress());
+        if(updateSelfDTO.getPhone()!=null){
+           my.setPhone(updateSelfDTO.getPhone());
         }
 
-        if(updateAccountDTOReq.getEmail() != null){
-            my.setEmail(updateAccountDTOReq.getEmail());
+        if(updateSelfDTO.getAddress() != null){
+            my.setAddress(updateSelfDTO.getAddress());
         }
 
-        my.setImages(updateAccountDTOReq.getImages());
-
-        if(updateAccountDTOReq.getBirthDate() != null){
-            my.setBirthDate(updateAccountDTOReq.getBirthDate());
+        if(updateSelfDTO.getEmail() != null){
+            my.setEmail(updateSelfDTO.getEmail());
         }
 
-        my.setBirthDateSolar(updateAccountDTOReq.isBirthDateSolar());
+        my.setImages(updateSelfDTO.getImages());
+
+        if(updateSelfDTO.getBirthDate() != null){
+            my.setBirthDate(updateSelfDTO.getBirthDate());
+        }
+
+        my.setBirthDateSolar(updateSelfDTO.isBirthDateSolar());
 
     }
 

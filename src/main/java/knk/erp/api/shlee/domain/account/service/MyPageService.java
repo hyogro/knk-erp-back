@@ -1,10 +1,7 @@
 package knk.erp.api.shlee.domain.account.service;
 
 import knk.erp.api.shlee.domain.account.dto.member.Read_MemberDTO;
-import knk.erp.api.shlee.domain.account.dto.member.Update_AccountDTO_REQ;
-import knk.erp.api.shlee.domain.account.dto.my.GetMyInfo_MyPageDTO_RES;
-import knk.erp.api.shlee.domain.account.dto.my.GetMyVacation_MyPageDTO_RES;
-import knk.erp.api.shlee.domain.account.dto.my.UpdateSelf_MyPageDTO_RES;
+import knk.erp.api.shlee.domain.account.dto.my.Update_SelfDTO;
 import knk.erp.api.shlee.domain.account.entity.Member;
 import knk.erp.api.shlee.domain.account.entity.MemberRepository;
 import knk.erp.api.shlee.domain.account.util.AccountUtil;
@@ -24,44 +21,27 @@ public class MyPageService {
 
     // 회원 본인 정보 불러오기
     @Transactional
-    public GetMyInfo_MyPageDTO_RES getMyInfo(){
-        try{
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            Member my = memberRepository.findAllByMemberIdAndDeletedIsFalse(authentication.getName());
-
-            return new GetMyInfo_MyPageDTO_RES("GMI001", new Read_MemberDTO(my.getMemberId(), null, my.getPhone(),
-                    my.getMemberName(), my.getVacation(), my.getDepartment().getDepartmentName(), my.getAuthority().toString(),
-                    my.getAddress(), my.getEmail(), my.getJoiningDate(), my.getImages(), my.getBirthDate(), my.isBirthDateSolar(),
-                    my.getPosition()));
-        }catch(Exception e){
-            return new GetMyInfo_MyPageDTO_RES("GMI002", e.getMessage());
-        }
+    public Read_MemberDTO getMyInfo(){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Member my = memberRepository.findAllByMemberIdAndDeletedIsFalse(authentication.getName());
+        return new Read_MemberDTO(my);
     }
 
     // 회원 본인 정보 수정
     @Transactional
-    public UpdateSelf_MyPageDTO_RES updateSelf(Update_AccountDTO_REQ updateAccountDTOReq){
-        try{
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            Member my = memberRepository.findAllByMemberIdAndDeletedIsFalse(authentication.getName());
-            accountUtil.updateSelfMember(my, updateAccountDTOReq, passwordEncoder);
-            memberRepository.save(my);
-
-            return new UpdateSelf_MyPageDTO_RES("USM001");
-        }catch (Exception e){
-            return new UpdateSelf_MyPageDTO_RES("USM002", e.getMessage());
-        }
+    public void updateSelf(Update_SelfDTO updateSelfDTO){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Member my = memberRepository.findAllByMemberIdAndDeletedIsFalse(authentication.getName());
+        accountUtil.updateSelfMember(my, updateSelfDTO, passwordEncoder);
+        memberRepository.save(my);
     }
 
     // 회원 본인 추가 연차일수 보기
     @Transactional
-    public GetMyVacation_MyPageDTO_RES getMyVacation(){
+    public int getMyVacation(){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Member me = memberRepository.findByMemberIdAndDeletedIsFalse(authentication.getName());
-        try{
-            return new GetMyVacation_MyPageDTO_RES("GMV001", me.getVacation());
-        }catch(Exception e){
-            return new GetMyVacation_MyPageDTO_RES("GMV002", e.getMessage());
-        }
+
+        return me.getVacation();
     }
 }

@@ -1,4 +1,4 @@
-package knk.erp.api.shlee.domain.account.dto.member;
+package knk.erp.api.shlee.domain.account.dto.my;
 
 import lombok.*;
 
@@ -10,16 +10,13 @@ import java.time.LocalDate;
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
-public class Update_AccountDTO_REQ {
+public class Update_SelfDTO {
     @Size(min = 8, max = 16)
     private String password;
-    private String authority;
     private String phone;
-    private String vacation;
-    private Long dep_id;
-    private LocalDate joiningDate;
-    private String address;
     private String email;
+    private String address;
+    private LocalDate birthDate;
+    private boolean birthDateSolar;
     private String images;
-    private String position;
 }
