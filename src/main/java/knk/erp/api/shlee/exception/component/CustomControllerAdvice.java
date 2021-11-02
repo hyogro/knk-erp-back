@@ -9,6 +9,10 @@ import knk.erp.api.shlee.exception.exceptions.Department.DepartmentExistsBelongM
 import knk.erp.api.shlee.exception.exceptions.Department.DepartmentNotBelongMemberException;
 import knk.erp.api.shlee.exception.exceptions.Department.DepartmentNotFoundException;
 import knk.erp.api.shlee.exception.exceptions.Department.DepartmentOverlapException;
+import knk.erp.api.shlee.exception.exceptions.Fixtures.FixturesFormCheckedException;
+import knk.erp.api.shlee.exception.exceptions.Fixtures.FixturesFormNotAuthorException;
+import knk.erp.api.shlee.exception.exceptions.Fixtures.FixturesFormNotFoundException;
+import knk.erp.api.shlee.exception.exceptions.Fixtures.FixturesNotFoundException;
 import knk.erp.api.shlee.exception.exceptions.common.ErrorInputDataException;
 import knk.erp.api.shlee.exception.exceptions.attendance.*;
 import knk.erp.api.shlee.exception.exceptions.common.DataNotExistException;
@@ -154,6 +158,38 @@ public class CustomControllerAdvice {
     //부서 삭제 시, 부서에 속해있는 멤버가 존재할 경우 예외처리
     @ExceptionHandler(value = {DepartmentExistsBelongMemberException.class})
     public ResponseEntity<ExceptionPayload> handleDepartmentExistsBelongMemberException(DepartmentExistsBelongMemberException e){
+        final ExceptionPayload payload = this.generateExceptionPayload(e);
+        return new ResponseEntity<>(payload, HttpStatus.BAD_REQUEST);
+    }
+
+    /**
+     * Fixtures
+     **/
+
+    //존재하지않거나 삭제된 비품요청서
+    @ExceptionHandler(value = {FixturesFormNotFoundException.class})
+    public ResponseEntity<ExceptionPayload> handleFixturesFormNotFoundException(FixturesFormNotFoundException e) {
+        final ExceptionPayload payload = this.generateExceptionPayload(e);
+        return new ResponseEntity<>(payload, HttpStatus.BAD_REQUEST);
+    }
+
+    //작성자가 아닌 사람이 비품요청서 수정, 삭제 시도 예외처리
+    @ExceptionHandler(value = {FixturesFormNotAuthorException.class})
+    public ResponseEntity<ExceptionPayload> handleFixturesFormNotAuthorException(FixturesFormNotAuthorException e) {
+        final ExceptionPayload payload = this.generateExceptionPayload(e);
+        return new ResponseEntity<>(payload, HttpStatus.BAD_REQUEST);
+    }
+
+    //이미 처리된 비품요청서 수정 시도, 삭제 예외처리
+    @ExceptionHandler(value = {FixturesFormCheckedException.class})
+    public ResponseEntity<ExceptionPayload> handleFixturesFormCheckedException(FixturesFormCheckedException e) {
+        final ExceptionPayload payload = this.generateExceptionPayload(e);
+        return new ResponseEntity<>(payload, HttpStatus.BAD_REQUEST);
+    }
+
+    //존재하지않거나 삭제된 비품요청항목
+    @ExceptionHandler(value = {FixturesNotFoundException.class})
+    public ResponseEntity<ExceptionPayload> handleFixturesNotFoundException(FixturesNotFoundException e) {
         final ExceptionPayload payload = this.generateExceptionPayload(e);
         return new ResponseEntity<>(payload, HttpStatus.BAD_REQUEST);
     }

@@ -12,9 +12,10 @@ public interface FixturesFormRepository extends JpaRepository<FixturesForm, Long
     List<FixturesForm> findAllByAuthorAndDeletedIsFalse(Member author);
     FixturesForm findByIdAndDeletedIsFalse(Long id);
     List<FixturesForm> findAllByDeletedIsFalse(Pageable pageable);
-    List<FixturesForm> findAllByDeletedIsFalse();
-    List<FixturesForm> findAllByCheckIsTrueAndDeletedIsFalse();
+    int countAllByDeletedIsFalse();
     List<FixturesForm> findAllByCheckIsTrueAndDeletedIsFalse(Pageable pageable);
-    List<FixturesForm> findAllByCheckIsFalseAndDeletedIsFalse();
+    int countAllByCheckIsFalseAndDeletedIsFalse();
     List<FixturesForm> findAllByCheckIsFalseAndDeletedIsFalse(Pageable pageable);
+    int countAllByCheckIsTrueAndDeletedIsFalse();
+    boolean existsByIdAndDeletedFalse(Long id);
 }
