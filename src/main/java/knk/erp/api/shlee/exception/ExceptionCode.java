@@ -10,7 +10,7 @@ public enum ExceptionCode {
     UNKNOWN_ERROR(500, "E9000", "UNKNOWN ERROR"),
     DATA_NOT_EXIST(400, "E9100", "can't found data"),
     INPUT_DATA_ERROR(400, "E9800", "필수 입력정보를 입력하지 않았거나 입력한 정보가 길이 제한 범위를 벗어납니다."),
-    PERMISSION_DENIED(403, "E9900", "Permission Denied"),
+    PERMISSION_DENIED(400, "E9900", "Permission Denied"),
 
     //Account E10**~12**
     NOT_FOUND_USER(400, "E1000", "Is Not Found User"),
