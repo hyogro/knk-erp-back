@@ -3,7 +3,6 @@ package knk.erp.api.shlee.domain.Materials.service;
 import knk.erp.api.shlee.domain.Materials.dto.MaterialsDTO;
 import knk.erp.api.shlee.domain.Materials.entity.Materials;
 import knk.erp.api.shlee.domain.Materials.repository.MaterialsRepository;
-import knk.erp.api.shlee.exception.exceptions.Materials.MaterialsNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -14,7 +13,7 @@ import java.util.List;
 public class MaterialsService {
     private final MaterialsRepository materialsRepository;
 
-    //장기자재현황 사진 파일 이름 리스트 저장
+    /* 장기자재현황 사진 파일 이름 리스트 저장 */
     public void createMaterials(MaterialsDTO materialsDTO) {
         Materials before = materialsRepository.findAllByDeletedFalse();
 
@@ -26,17 +25,7 @@ public class MaterialsService {
         materialsRepository.save(Materials.builder().materials(materialsDTO.getMaterials()).build());
     }
 
-    //장기자재현황 사진 파일 이름 리스트 Get
-    public List<String> readMaterials(){
-        throwIfNotFoundMaterials();
+    /* 장기자재현황 사진 파일 이름 리스트 Get */
+    public List<String> readMaterials() { return materialsRepository.findAllByDeletedFalse().getMaterials(); }
 
-        return materialsRepository.findAllByDeletedFalse().getMaterials();
-    }
-
-    //자재현황 파일이 존재하지않을 경우 예외처리
-    public void throwIfNotFoundMaterials(){
-        if(materialsRepository.findAllByDeletedFalse() == null) {
-            throw new MaterialsNotFoundException();
-        }
-    }
 }

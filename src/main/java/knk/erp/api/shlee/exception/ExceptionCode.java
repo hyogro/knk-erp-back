@@ -35,12 +35,6 @@ public enum ExceptionCode {
     VERIFY_NUMBER_NOT_MATCHING(403, "E3500", "Verify Number is Not Matching"),
     ENCRYPT_FAIL(403, "E3600", "Encrypt Fail"),
 
-    //Evaluation E400*
-    NOT_FOUND_EVALUATION(400, "E4000", "평가표 파일이 존재하지않습니다."),
-
-    //Materials E401*
-    NOT_FOUND_MATERIALS(400, "E4010", "자재현황 파일이 존재하지않습니다."),
-
     //Schedule - Attendance E55**
     ATTENDANCE_EXIST(400, "E5501", "근태 정보가 존재합니다."),
     ATTENDANCE_NOT_EXIST(400, "E5502", "근태 정보가 존재하지 않습니다."),

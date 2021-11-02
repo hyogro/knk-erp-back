@@ -66,6 +66,11 @@ public enum ResponseCode {
     READ_MATERIALS_SUCCESS("A4011"),
 
     /**
+     * Fixtures A41**
+     **/
+    CREATE_FIXTURES_FORM_SUCCESS("A4100"),
+
+    /**
      * Schedule - Attendance A55**
      **/
     ON_WORK_SUCCESS("A5501"),

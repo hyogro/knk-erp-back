@@ -87,19 +87,6 @@ public class MaterialsTest {
     @Test
     @Order(20)
     @WithUserDetails("testadmin01")
-    public void 자재현황_파일_가져오기_실패_데이터_없음() throws Exception {
-        MvcResult result = materialsMvc.perform(
-                        MockMvcRequestBuilders.get("/materials"))
-                .andExpect(MockMvcResultMatchers.status().isBadRequest())
-                .andReturn();
-
-        String code = this.getCode(result);
-        assertThat(code).isEqualTo("E4010");
-    }
-
-    @Test
-    @Order(21)
-    @WithUserDetails("testadmin01")
     public void 자재현황_파일_업로드_성공() throws Exception {
         List<String> materials = new ArrayList<>();
         materials.add("자재");
@@ -120,7 +107,7 @@ public class MaterialsTest {
     }
 
     @Test
-    @Order(22)
+    @Order(21)
     @WithUserDetails("testadmin01")
     public void 자재현황_파일_가져오기_성공() throws Exception {
         MvcResult result = materialsMvc.perform(

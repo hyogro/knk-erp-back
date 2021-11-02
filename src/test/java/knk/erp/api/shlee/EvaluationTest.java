@@ -84,19 +84,6 @@ public class EvaluationTest {
     @Test
     @Order(20)
     @WithUserDetails("testadmin01")
-    public void 평가표_파일_가져오기_실패_데이터_없음() throws Exception {
-        MvcResult result = evaluationMvc.perform(
-                        MockMvcRequestBuilders.get("/evaluation"))
-                .andExpect(MockMvcResultMatchers.status().isBadRequest())
-                .andReturn();
-
-        String code = this.getCode(result);
-        assertThat(code).isEqualTo("E4000");
-    }
-
-    @Test
-    @Order(21)
-    @WithUserDetails("testadmin01")
     public void 평가표_파일_업로드_성공() throws Exception {
         EvaluationDTO evaluationDTO = new EvaluationDTO("평가표다");
 
@@ -114,7 +101,7 @@ public class EvaluationTest {
     }
 
     @Test
-    @Order(22)
+    @Order(21)
     @WithUserDetails("testadmin01")
     public void 평가표_파일_가져오기_성공() throws Exception {
         MvcResult result = evaluationMvc.perform(
