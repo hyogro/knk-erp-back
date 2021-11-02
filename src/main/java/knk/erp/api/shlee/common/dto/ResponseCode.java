@@ -59,6 +59,11 @@ public enum ResponseCode {
     CREATE_EVALUATION_SUCCESS("A4000"),
     READ_EVALUATION_SUCCESS("A4001"),
 
+    /**
+     * Materials A401*
+     **/
+    CREATE_MATERIALS_SUCCESS("A4010"),
+    READ_MATERIALS_SUCCESS("A4011"),
 
     /**
      * Schedule - Attendance A55**
@@ -82,7 +87,6 @@ public enum ResponseCode {
     UPDATE_SCHEDULE_SUCCESS("A5603"),
     DELETE_SCHEDULE_SUCCESS("A5604"),
     READ_ANNIVERSARY_SUCCESS("A5605"),
-
 
     /**
      * Schedule - Vacation A57**

@@ -32,7 +32,7 @@ public class EvaluationService {
         return evaluationRepository.findAllByDeletedIsFalse().getEvaluation();
     }
 
-    //자재 파일이 존재하지않을 경우 예외처리
+    //평가표 파일이 존재하지않을 경우 예외처리
     public void throwIfNotFoundEvaluation(){
         if(evaluationRepository.findAllByDeletedIsFalse() == null) {
             throw new EvaluationNotFoundException();

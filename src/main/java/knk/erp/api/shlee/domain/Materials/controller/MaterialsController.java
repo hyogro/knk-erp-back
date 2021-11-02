@@ -1,12 +1,17 @@
 package knk.erp.api.shlee.domain.Materials.controller;
 
-import knk.erp.api.shlee.domain.Materials.dto.Create_MaterialsDTO_RES;
+import knk.erp.api.shlee.common.dto.ResponseCM;
+import knk.erp.api.shlee.common.dto.ResponseCMD;
+import knk.erp.api.shlee.common.dto.ResponseCode;
+import knk.erp.api.shlee.common.dto.ResponseData;
 import knk.erp.api.shlee.domain.Materials.dto.MaterialsDTO;
-import knk.erp.api.shlee.domain.Materials.dto.Read_MaterialsDTO_RES;
 import knk.erp.api.shlee.domain.Materials.service.MaterialsService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -16,13 +21,28 @@ public class MaterialsController {
 
     //장기자재현황 사진 파일 이름 리스트 저장
     @PostMapping("")
-    public ResponseEntity<Create_MaterialsDTO_RES> createMaterials(@RequestBody MaterialsDTO materialsDTO){
-        return ResponseEntity.ok(materialsService.createMaterials(materialsDTO));
+    public ResponseEntity<ResponseData> createMaterials(@RequestBody MaterialsDTO materialsDTO){
+        materialsService.createMaterials(materialsDTO);
+
+        ResponseCM responseCM = ResponseCM
+                .builder()
+                .responseCode(ResponseCode.CREATE_MATERIALS_SUCCESS)
+                .build();
+
+        return new ResponseEntity<>(responseCM, HttpStatus.OK);
     }
 
     //장기자재현황 사진 파일 이름 리스트 Get
     @GetMapping("")
-    public ResponseEntity<Read_MaterialsDTO_RES> readMaterials(){
-        return ResponseEntity.ok(materialsService.readMaterials());
+    public ResponseEntity<ResponseData> readMaterials(){
+        List<String> materials = materialsService.readMaterials();
+
+        ResponseCMD responseCMD = ResponseCMD
+                .builder()
+                .responseCode(ResponseCode.READ_MATERIALS_SUCCESS)
+                .data(materials)
+                .build();
+
+        return new ResponseEntity<>(responseCMD, HttpStatus.OK);
     }
 }
