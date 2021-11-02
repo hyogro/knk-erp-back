@@ -53,6 +53,12 @@ public enum ResponseCode {
     VERIFY_EMAIL_SUCCESS("A2600"),
     VERIFY_EMAIL_FAIL("A2610"),
 
+    /**
+     * Evaluation A400*
+     **/
+    CREATE_EVALUATION_SUCCESS("A4000"),
+    READ_EVALUATION_SUCCESS("A4001"),
+
 
     /**
      * Schedule - Attendance A55**

@@ -9,6 +9,7 @@ import knk.erp.api.shlee.exception.exceptions.Department.DepartmentExistsBelongM
 import knk.erp.api.shlee.exception.exceptions.Department.DepartmentNotBelongMemberException;
 import knk.erp.api.shlee.exception.exceptions.Department.DepartmentNotFoundException;
 import knk.erp.api.shlee.exception.exceptions.Department.DepartmentOverlapException;
+import knk.erp.api.shlee.exception.exceptions.Evaluation.EvaluationNotFoundException;
 import knk.erp.api.shlee.exception.exceptions.common.ErrorInputDataException;
 import knk.erp.api.shlee.exception.exceptions.attendance.*;
 import knk.erp.api.shlee.exception.exceptions.common.DataNotExistException;
@@ -157,6 +158,18 @@ public class CustomControllerAdvice {
         final ExceptionPayload payload = this.generateExceptionPayload(e);
         return new ResponseEntity<>(payload, HttpStatus.BAD_REQUEST);
     }
+
+    /**
+     * Evaluation
+     **/
+
+    //평가표 파일 이름 데이터가 없을 때 예외처리
+    @ExceptionHandler(value = {EvaluationNotFoundException.class})
+    public ResponseEntity<ExceptionPayload> handleEvaluationNotFoundException(EvaluationNotFoundException e){
+        final ExceptionPayload payload = this.generateExceptionPayload(e);
+        return new ResponseEntity<>(payload, HttpStatus.BAD_REQUEST);
+    }
+
 
 
 

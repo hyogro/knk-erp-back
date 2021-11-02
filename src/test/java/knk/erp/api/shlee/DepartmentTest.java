@@ -143,7 +143,7 @@ public class DepartmentTest {
                 .andReturn();
 
         String code = this.getCode(result);
-        assertThat(code).isEqualTo("E2001");
+        assertThat(code).isEqualTo("E1601");
     }
 
     @Test
@@ -181,7 +181,7 @@ public class DepartmentTest {
                 .andReturn();
 
         String code = this.getCode(result);
-        assertThat(code).isEqualTo("E2000");
+        assertThat(code).isEqualTo("E1600");
     }
 
     @Test
@@ -200,7 +200,7 @@ public class DepartmentTest {
                 .andReturn();
 
         String code = this.getCode(result);
-        assertThat(code).isEqualTo("E2001");
+        assertThat(code).isEqualTo("E1601");
     }
 
     @Test
@@ -257,7 +257,7 @@ public class DepartmentTest {
                 .andReturn();
 
         String code = this.getCode(result);
-        assertThat(code).isEqualTo("E2002");
+        assertThat(code).isEqualTo("E1602");
     }
 
     @Test
@@ -340,7 +340,7 @@ public class DepartmentTest {
                 .andReturn();
 
         String code = this.getCode(result);
-        assertThat(code).isEqualTo("E2000");
+        assertThat(code).isEqualTo("E1600");
     }
 
     @Test
@@ -411,7 +411,7 @@ public class DepartmentTest {
                 .andReturn();
 
         String code = this.getCode(result);
-        assertThat(code).isEqualTo("E2003");
+        assertThat(code).isEqualTo("E1603");
     }
 
     @Test

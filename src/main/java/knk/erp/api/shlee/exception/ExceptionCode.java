@@ -12,6 +12,17 @@ public enum ExceptionCode {
     INPUT_DATA_ERROR(400, "E9800", "필수 입력정보를 입력하지 않았거나 입력한 정보가 길이 제한 범위를 벗어납니다."),
     PERMISSION_DENIED(403, "E9900", "Permission Denied"),
 
+    //Account E10**~12**
+    NOT_FOUND_USER(400, "E1000", "Is Not Found User"),
+    ALREADY_EXIST_ID(400, "E1100", "이미 존재하는 ID 입니다"),
+    TARGET_IS_LEADER(400, "E1200", "대상이 부서의 리더입니다."),
+
+    //Department E16**
+    NOT_FOUND_DEPARTMENT(400, "E1600", "삭제되었거나 존재하지않는 부서입니다."),
+    ALREADY_EXIST_DEPARTMENT(400, "E1601", "이미 존재하는 부서입니다."),
+    NOT_BELONG_MEMBER(400, "E1602", "해당 부서에 소속되지않은 멤버입니다."),
+    EXISTS_BELONG_MEMBER(400, "E1603", "해당 부서에 소속된 멤버가 존재합니다."),
+
     //Auth
     ACCESS_DENIED(403, "E3000", "Access Denied"),
     EXPIRED_TOKEN(403, "E3100", "Expired Token"),
@@ -24,16 +35,8 @@ public enum ExceptionCode {
     VERIFY_NUMBER_NOT_MATCHING(403, "E3500", "Verify Number is Not Matching"),
     ENCRYPT_FAIL(403, "E3600", "Encrypt Fail"),
 
-    //Account
-    NOT_FOUND_USER(400, "E1000", "Is Not Found User"),
-    ALREADY_EXIST_ID(400, "E1100", "이미 존재하는 ID 입니다"),
-    TARGET_IS_LEADER(400, "E1200", "대상이 부서의 리더입니다."),
-
-    //Department
-    NOT_FOUND_DEPARTMENT(400, "E2000", "삭제되었거나 존재하지않는 부서입니다."),
-    ALREADY_EXIST_DEPARTMENT(400, "E2001", "이미 존재하는 부서입니다."),
-    NOT_BELONG_MEMBER(400, "E2002", "해당 부서에 소속되지않은 멤버입니다."),
-    EXISTS_BELONG_MEMBER(400, "E2003", "해당 부서에 소속된 멤버가 존재합니다."),
+    //Evaluation E400*
+    NOT_FOUND_EVALUATION(400, "E4000", "평가표 파일이 존재하지않습니다."),
 
     //Schedule - Attendance E55**
     ATTENDANCE_EXIST(400, "E5501", "근태 정보가 존재합니다."),
