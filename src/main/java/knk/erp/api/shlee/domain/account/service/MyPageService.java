@@ -19,7 +19,7 @@ public class MyPageService {
     private final BCryptPasswordEncoder passwordEncoder;
     private final AccountUtil accountUtil;
 
-    // 회원 본인 정보 불러오기
+    /* 회원 본인 정보 불러오기 */
     @Transactional
     public Read_MemberDTO getMyInfo(){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -27,7 +27,7 @@ public class MyPageService {
         return new Read_MemberDTO(my);
     }
 
-    // 회원 본인 정보 수정
+    /* 회원 본인 정보 수정 */
     @Transactional
     public void updateSelf(Update_SelfDTO updateSelfDTO){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -36,7 +36,7 @@ public class MyPageService {
         memberRepository.save(my);
     }
 
-    // 회원 본인 추가 연차일수 보기
+    /* 회원 본인 추가 연차일수 보기 */
     @Transactional
     public int getMyVacation(){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
