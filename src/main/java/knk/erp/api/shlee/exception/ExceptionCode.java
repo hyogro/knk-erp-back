@@ -41,6 +41,10 @@ public enum ExceptionCode {
     NOT_FOUND_FIXTURES(400, "E4102", "삭제되었거나 존재하지않는 비품요청항목입니다."),
     CHECKED_FIXTURES_FORM(400, "E4110", "이미 처리된 비품요청서입니다."),
 
+    //Board E45**
+    NOT_FOUND_BOARD(400,"E4500","삭제되었거나 존재하지않는 게시글입니다."),
+    BOARD_NOT_AUTHOR(400,"E4501","게시글 작성자가 아닙니다."),
+
     //Schedule - Attendance E55**
     ATTENDANCE_EXIST(400, "E5501", "근태 정보가 존재합니다."),
     ATTENDANCE_NOT_EXIST(400, "E5502", "근태 정보가 존재하지 않습니다."),

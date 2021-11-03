@@ -9,7 +9,6 @@ public enum ResponseCode {
     /**
      * Account A1***
      **/
-
     SIGNUP_USER_SUCCESS("A1000"),
     READ_USER_SUCCESS("A1100"),
     READ_DETAIL_USER_SUCCESS("A1110"),
@@ -27,7 +26,6 @@ public enum ResponseCode {
     /**
      * Department A16**
      **/
-
     CREATE_DEPARTMENT_SUCCESS("A1600"),
     READ_DEPARTMENT_SUCCESS("A1610"),
     READ_DETAIL_DEPARTMENT_SUCCESS("A1611"),
@@ -78,6 +76,19 @@ public enum ResponseCode {
     PURCHASE_FIXTURES_SUCCESS("A4141"),
 
     /**
+     * Board A45**
+     **/
+    CREATE_BOARD_SUCCESS("A4500"),
+    READ_DETAIL_BOARD_SUCCESS("A4510"),
+    UPDATE_BOARD_SUCCESS("A4520"),
+    DELETE_BOARD_SUCCESS("A4530"),
+    READ_WORK_BOARD_LIST_SUCCESS("A4540"),
+    READ_FIELD_TEAM_BOARD_LIST_SUCCESS("A4541"),
+    READ_NOTICE_BOARD_LIST_SUCCESS("A4542"),
+    READ_LATEST_NOTICE_BOARD_LIST_SUCCESS("A4543"),
+    GET_MEMBER_ID_LIST_SUCCESS("A4550"),
+
+    /**
      * Schedule - Attendance A55**
      **/
     ON_WORK_SUCCESS("A5501"),
@@ -116,6 +127,7 @@ public enum ResponseCode {
      * File A60**
      **/
     UPLOAD_FILE_SUCCESS("A6001"),
+
 
 
 

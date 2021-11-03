@@ -240,7 +240,6 @@ public class FixturesTest {
     @Order(30)
     @WithUserDetails("testadmin01")
     public void 전체_비품_요청서_리스트_읽기() throws Exception {
-
         MvcResult result = fixturesMvc.perform(
                         MockMvcRequestBuilders.get("/fixtures/listAll")
                                 .param("searchType", "승인미처리"))

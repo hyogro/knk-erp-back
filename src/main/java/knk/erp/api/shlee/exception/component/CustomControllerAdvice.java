@@ -5,6 +5,8 @@ import knk.erp.api.shlee.exception.exceptions.*;
 import knk.erp.api.shlee.exception.exceptions.Account.AccountNotFoundMemberException;
 import knk.erp.api.shlee.exception.exceptions.Account.AccountOverlapIdException;
 import knk.erp.api.shlee.exception.exceptions.Account.AccountTargetIsLeaderException;
+import knk.erp.api.shlee.exception.exceptions.Board.BoardNotAuthorException;
+import knk.erp.api.shlee.exception.exceptions.Board.BoardNotFoundException;
 import knk.erp.api.shlee.exception.exceptions.Department.DepartmentExistsBelongMemberException;
 import knk.erp.api.shlee.exception.exceptions.Department.DepartmentNotBelongMemberException;
 import knk.erp.api.shlee.exception.exceptions.Department.DepartmentNotFoundException;
@@ -194,6 +196,23 @@ public class CustomControllerAdvice {
         return new ResponseEntity<>(payload, HttpStatus.BAD_REQUEST);
     }
 
+    /**
+     * Board
+     **/
+
+    //존재하지않거나 삭제된 게시글 접근
+    @ExceptionHandler(value = {BoardNotFoundException.class})
+    public ResponseEntity<ExceptionPayload> handleBoardNotFoundException(BoardNotFoundException e){
+        final ExceptionPayload payload = this.generateExceptionPayload(e);
+        return new ResponseEntity<>(payload, HttpStatus.BAD_REQUEST);
+    }
+
+    //게시글 작성자가 아님
+    @ExceptionHandler(value = {BoardNotAuthorException.class})
+    public ResponseEntity<ExceptionPayload> handleBoardNotAuthorException(BoardNotAuthorException e){
+        final ExceptionPayload payload = this.generateExceptionPayload(e);
+        return new ResponseEntity<>(payload, HttpStatus.BAD_REQUEST);
+    }
 
 
 

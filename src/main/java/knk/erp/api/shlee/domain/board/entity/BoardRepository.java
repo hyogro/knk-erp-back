@@ -15,4 +15,6 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
     List<Board> findAllByWriterMemberIdContainingAndBoardTypeAndDeletedFalse(String memberId, String boardType, Pageable pageable);
     List<Board> findAllByWriterMemberNameContainingAndBoardTypeAndDeletedFalse(String memberName, String boardType);
     List<Board> findAllByWriterMemberNameContainingAndBoardTypeAndDeletedFalse(String memberName, String boardType, Pageable pageable);
+
+    boolean existsByIdxAndDeletedIsFalse(Long idx);
 }

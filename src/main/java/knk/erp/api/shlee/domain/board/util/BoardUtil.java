@@ -83,11 +83,13 @@ public class BoardUtil {
                 boardList = boardRepository.findAllByBoardTypeAndDeletedFalse(boardType, pageable);
                 break;
         }
-        Page<Board> boardPage = new PageImpl<>(boardList, pageable, boardList.size());
+        return getBoardListDTOS(pageable, boardList);
+    }
 
-        Page<BoardListDTO> page = boardPage.map(board -> new BoardListDTO(board.getIdx(), board.getTitle(),
+    public Page<BoardListDTO> getBoardListDTOS(Pageable pageable, List<Board> latest) {
+        Page<Board> boardPage = new PageImpl<>(latest, pageable, latest.size());
+        return boardPage.map(board -> new BoardListDTO(board.getIdx(), board.getTitle(),
                 board.getWriterMemberName(), board.getCreateDate(), board.getBoardType(), board.getVisitors()));
-        return page;
     }
 
     public List<Board> findAllByReferenceMemberId(Authentication authentication, List<Board> boardList){
