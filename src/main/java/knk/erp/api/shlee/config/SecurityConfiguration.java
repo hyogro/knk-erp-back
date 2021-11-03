@@ -44,13 +44,14 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .formLogin().disable()
 
                 .authorizeRequests()
+                // 로그인 API 권한없이 접근 가능하도록 설정
+                .antMatchers("/account/login").permitAll()
+
 
                 // Account
                 .antMatchers(HttpMethod.POST, "/account/signUp", "/account/checkId").hasAnyRole("LVL3","LVL4","ADMIN")
                 .antMatchers(HttpMethod.GET, "/account/readMember").hasAnyRole("LVL3", "LVL4", "ADMIN", "MANAGE")
                 .antMatchers("/account/{memberId}").hasAnyRole("LVL3", "LVL4", "ADMIN")
-                // 로그인 API 권한없이 접근 가능하도록 설정
-                .antMatchers("/account/login").permitAll()
 
                 // Department
                 .antMatchers(HttpMethod.POST, "/department").hasAnyRole("LVL3", "LVL4", "ADMIN")

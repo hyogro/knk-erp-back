@@ -58,8 +58,4 @@ public class MemberDTO_REQ {
                 .position(position)
                 .build();
     }
-
-    public UsernamePasswordAuthenticationToken toAuthentication(){
-        return new UsernamePasswordAuthenticationToken(memberId, password);
-    }
 }

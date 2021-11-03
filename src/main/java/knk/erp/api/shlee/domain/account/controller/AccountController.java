@@ -37,8 +37,8 @@ public class AccountController {
 
     // 로그인
     @PostMapping("/login")
-    public ResponseEntity<Login_TokenDTO_RES> login(@RequestBody MemberDTO_REQ memberDTOReq){
-        return ResponseEntity.ok(accountService.login(memberDTOReq));
+    public ResponseEntity<Login_TokenDTO_RES> login(@RequestBody @Valid LoginDTO loginDTO){
+        return ResponseEntity.ok(accountService.login(loginDTO));
     }
 
     // 회원 목록 읽어오기

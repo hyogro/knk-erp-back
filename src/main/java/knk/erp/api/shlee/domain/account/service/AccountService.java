@@ -68,9 +68,9 @@ public class AccountService {
 
     /* 로그인 및 Token 발급 */
     @Transactional
-    public Login_TokenDTO_RES login(MemberDTO_REQ MemberDTOReq){
+    public Login_TokenDTO_RES login(LoginDTO loginDTO){
 
-        UsernamePasswordAuthenticationToken authenticationToken = MemberDTOReq.toAuthentication();
+        UsernamePasswordAuthenticationToken authenticationToken = loginDTO.toAuthentication();
 
         try{
             Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
