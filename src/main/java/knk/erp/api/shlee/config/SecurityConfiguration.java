@@ -43,37 +43,37 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 // form 기반의 로그인에 대해 비활성화
                 .formLogin().disable()
 
-                // 로그인 API 권한없이 접근 가능하도록 설정
                 .authorizeRequests()
+
+                // Account
+                .antMatchers(HttpMethod.POST, "/account/signUp", "/account/checkId").hasAnyRole("LVL3","LVL4","ADMIN")
+                .antMatchers(HttpMethod.GET, "/account/readMember").hasAnyRole("LVL3", "LVL4", "ADMIN", "MANAGE")
+                .antMatchers("/account/{memberId}").hasAnyRole("LVL3", "LVL4", "ADMIN")
+                // 로그인 API 권한없이 접근 가능하도록 설정
                 .antMatchers("/account/login").permitAll()
 
-                // 평가표
+                // Department
+                .antMatchers(HttpMethod.POST, "/department").hasAnyRole("LVL3", "LVL4", "ADMIN")
+                .antMatchers("/department/readDepartmentNameAndMemberCount", "/department/readOrganizationChart").authenticated()
+                .antMatchers(HttpMethod.GET,"/department", "/department/{dep_id}", "/department/readNotThisDepartmentMember/{dep_id}").hasAnyRole("LVL3", "LVL4", "ADMIN")
+                .antMatchers(HttpMethod.PUT, "/department/{dep_id}", "/department/updateLeader/{dep_id}",
+                        "/department/addMember/{dep_id}", "/department/deleteMember/{memberId}").hasAnyRole("LVL3", "LVL4", "ADMIN")
+                .antMatchers(HttpMethod.DELETE, "/department/{dep_id}").hasAnyRole("LVL3", "LVL4", "ADMIN")
+
+                // Board
+                .antMatchers(HttpMethod.GET, "/board/fieldTeamBoardList").hasAnyRole("LVL3", "LVL4", "ADMIN", "MANAGE")
+
+                // Evaluation
                 .antMatchers(HttpMethod.POST, "/evaluation").hasAnyRole("LVL3", "LVL4", "ADMIN")
                 .antMatchers(HttpMethod.GET,"/evaluation").authenticated()
 
-                // 장기자재현황
+                // Materials
                 .antMatchers(HttpMethod.POST, "/materials").hasAnyRole("MATERIALS")
                 .antMatchers(HttpMethod.GET,"/materials").authenticated()
 
-                // 비품 요청서 목록보기
+                // Fixtures
                 .antMatchers("/fixtures/listAll", "/fixtures/purchase/*").hasAnyRole("LVL3", "LVL4", "ADMIN", "MANAGE")
-
-                // 비품 요청서 승인
                 .antMatchers("/fixtures/confirm/*").hasAnyRole("LVL3", "LVL4", "ADMIN")
-
-                // 회원 정보 목록 읽어오기, 회원 정보 수정, 회원 삭제, 회원 생성, 회원 정보 상세보기는 관리자 이상만 가능하도록 설정
-                .antMatchers("/account/readMember", "/account/{memberId}", "/account/signup")
-                .permitAll()
-                //.hasAnyRole("LVL3", "LVL4", "ADMIN")
-
-                .antMatchers("/account").hasAnyRole("LVL3", "LVL4", "ADMIN", "MANAGE")
-
-                .antMatchers("/department/readDepartmentNameAndMemberCount", "/department/readOrganizationChart").authenticated()
-
-                // 부서 관리는 관리자 이상만 가능하게 설정
-                .antMatchers("/department/{dep_id}", "/department/updateLeader/{dep_id}",
-                        "/department/addMember/{dep_id}", "/department/deleteMember/{dep_id}")
-                .hasAnyRole("LVL3", "LVL4", "ADMIN")
 
                 // 나머지 API 는 권한 인증 필요
                 .anyRequest().authenticated()
