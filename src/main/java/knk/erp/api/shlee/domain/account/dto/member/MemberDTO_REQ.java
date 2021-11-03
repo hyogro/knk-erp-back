@@ -37,8 +37,6 @@ public class MemberDTO_REQ {
     private LocalDate joiningDate;
     private String address;
     private String email;
-
-    @NotEmpty
     private String position;
 
     private Authority authority;
