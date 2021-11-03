@@ -24,5 +24,6 @@ public class ReadDetail_DepartmentDTO {
             this.leaderId = department.getLeader().getMemberId();
             this.leaderName = department.getLeader().getMemberName();
         }
+        this.headCount = department.getMemberList().size();
     }
 }
