@@ -26,6 +26,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -123,7 +124,7 @@ public class AccountService {
 
         throwIfLowAuthority(updateAccountDTOReq, level, target);
 
-        if (updateAccountDTOReq.getDep_id() != null ) {
+        if (!Objects.equals(updateAccountDTOReq.getDep_id(), target.getDepartment().getId())) {
             throwIfNotFoundDepartment(updateAccountDTOReq.getDep_id());
             throwIfTargetIsLeader(target, updateAccountDTOReq.getDep_id());
         }
