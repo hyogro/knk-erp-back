@@ -1,16 +1,12 @@
 package knk.erp.api.shlee;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import knk.erp.api.shlee.domain.account.controller.AccountController;
 import knk.erp.api.shlee.domain.account.dto.account.Check_existMemberIdDTO;
-import knk.erp.api.shlee.domain.account.dto.account.LoginDTO;
 import knk.erp.api.shlee.domain.account.dto.department.DepartmentDTO_REQ;
 import knk.erp.api.shlee.domain.account.dto.member.MemberDTO_REQ;
 import knk.erp.api.shlee.domain.account.dto.member.Update_AccountDTO_REQ;
 import knk.erp.api.shlee.domain.account.entity.Authority;
-import knk.erp.api.shlee.domain.account.entity.DepartmentRepository;
-import knk.erp.api.shlee.domain.account.entity.MemberRepository;
 import knk.erp.api.shlee.domain.account.service.AccountService;
 import knk.erp.api.shlee.domain.account.service.DepartmentService;
 import knk.erp.api.shlee.exception.component.CustomControllerAdvice;
@@ -20,7 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;

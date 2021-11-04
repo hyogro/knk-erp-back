@@ -5,6 +5,7 @@ import knk.erp.api.shlee.exception.exceptions.*;
 import knk.erp.api.shlee.exception.exceptions.Account.AccountNotFoundMemberException;
 import knk.erp.api.shlee.exception.exceptions.Account.AccountOverlapIdException;
 import knk.erp.api.shlee.exception.exceptions.Account.AccountTargetIsLeaderException;
+import knk.erp.api.shlee.exception.exceptions.Account.AccountWrongPasswordException;
 import knk.erp.api.shlee.exception.exceptions.Board.BoardNotAuthorException;
 import knk.erp.api.shlee.exception.exceptions.Board.BoardNotFoundException;
 import knk.erp.api.shlee.exception.exceptions.Department.DepartmentExistsBelongMemberException;
@@ -23,6 +24,8 @@ import knk.erp.api.shlee.exception.exceptions.file.FileIOException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -130,6 +133,13 @@ public class CustomControllerAdvice {
     public ResponseEntity<ExceptionPayload> handleAccountTargetISLeaderException(AccountTargetIsLeaderException e){
         final ExceptionPayload payload = this.generateExceptionPayload(e);
         return new ResponseEntity<>(payload, HttpStatus.BAD_REQUEST);
+    }
+
+    //잘못된 비밀번호로 인한 토큰 생성 오류
+    @ExceptionHandler(value = {AccountWrongPasswordException.class})
+    public ResponseEntity<ExceptionPayload> handleAccountWrongPasswordException(AccountWrongPasswordException e){
+        final ExceptionPayload payload = this.generateExceptionPayload(e);
+        return new ResponseEntity<>(payload, HttpStatus.UNAUTHORIZED);
     }
 
     /**

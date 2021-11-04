@@ -29,6 +29,7 @@ public enum ExceptionCode {
     WRONG_TYPE_TOKEN(401, "E3110", "Wrong Type Token"),
     UNSUPPORTED_TOKEN(401, "E3120", "Unsupported Token"),
     WRONG_TOKEN(401, "E3130", "Illegal Argument Token"),
+    WRONG_PASSWORD(401,"E3140","비밀번호 오류로 인한 토큰 생성 불가"),
     EXPIRED_REFRESH_TOKEN(403, "E3200", "Expired Refresh Token"),
     NOT_MATCHING_REFRESH_TOKEN(403, "E3300", "Not Matching Refresh Token"),
     NOT_MATCHING_ID_PASSWORD(403, "E3400", "Not Matching UserId Password"),

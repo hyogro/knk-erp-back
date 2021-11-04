@@ -11,12 +11,15 @@ import knk.erp.api.shlee.common.jwt.TokenProvider;
 import knk.erp.api.shlee.exception.exceptions.Account.AccountNotFoundMemberException;
 import knk.erp.api.shlee.exception.exceptions.Account.AccountOverlapIdException;
 import knk.erp.api.shlee.exception.exceptions.Account.AccountTargetIsLeaderException;
+import knk.erp.api.shlee.exception.exceptions.Account.AccountWrongPasswordException;
 import knk.erp.api.shlee.exception.exceptions.Department.DepartmentNotFoundException;
 import knk.erp.api.shlee.exception.exceptions.common.PermissionDeniedException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -69,20 +72,21 @@ public class AccountService {
     /* 로그인 및 Token 발급 */
     @Transactional
     public Login_TokenDTO_RES login(LoginDTO loginDTO){
-
         UsernamePasswordAuthenticationToken authenticationToken = loginDTO.toAuthentication();
-
+        Authentication authentication;
+        System.out.println(1);
         try{
-            Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
-
-            TokenDto tokenDto = tokenProvider.generateTokenDto(authentication);
-
-            Member me = memberRepository.findByMemberIdAndDeletedIsFalse(authentication.getName());
-
-            return new Login_TokenDTO_RES("LI001", tokenDto, me.getMemberName());
-        }catch(Exception e){
-            return new Login_TokenDTO_RES("LI002", e.getMessage());
+            authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
+        } catch(AuthenticationException e){
+            System.out.println(2);
+            throw new AccountWrongPasswordException();
         }
+
+        TokenDto tokenDto = tokenProvider.generateTokenDto(authentication);
+
+        Member me = memberRepository.findByMemberIdAndDeletedIsFalse(authentication.getName());
+
+        return new Login_TokenDTO_RES(tokenDto, me.getMemberName());
     }
 
     /* 회원 목록 읽어오기 */

@@ -37,8 +37,16 @@ public class AccountController {
 
     // 로그인
     @PostMapping("/login")
-    public ResponseEntity<Login_TokenDTO_RES> login(@RequestBody @Valid LoginDTO loginDTO){
-        return ResponseEntity.ok(accountService.login(loginDTO));
+    public ResponseEntity<ResponseData> login(@RequestBody @Valid LoginDTO loginDTO){
+        Login_TokenDTO_RES loginTokenDTORes = accountService.login(loginDTO);
+
+        ResponseCMD responseCMD = ResponseCMD
+                .builder()
+                .responseCode(ResponseCode.LOGIN_USER_SUCCESS)
+                .data(loginTokenDTORes)
+                .build();
+
+        return new ResponseEntity<>(responseCMD, HttpStatus.OK);
     }
 
     // 회원 목록 읽어오기
