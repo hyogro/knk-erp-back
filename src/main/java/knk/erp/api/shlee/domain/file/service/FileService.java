@@ -346,7 +346,7 @@ public class FileService {
         LocalDateTime sd = LocalDateTime.of(startDate, LocalTime.MIN);
         LocalDateTime ed = LocalDateTime.of(endDate, LocalTime.MAX);
 
-        List<Vacation> vacationList = vacationRepository.findAll(VS.delFalse().and(VS.approve1Is(true)).and(VS.approve2Is(true)).and(VS.vacationDateBetween(sd, ed)));
+        List<Vacation> vacationList = vacationRepository.findAll(VS.delFalse().and(VS.approve1Is(true)).and(VS.approve2Is(true)).and(VS.vacationDateBetween(sd, ed)).and(VS.memberDF()));
 
 
         XSSFWorkbook wb = new XSSFWorkbook();
