@@ -87,12 +87,14 @@ public class VacationService {
         List<AddVacation> addVacationList = addVacationRepository.findAll(AVS.delFalse().and(AVS.mid(memberId)));
 
         for (AddVacation addVacation : addVacationList) {
-            addVacationVal += addVacation.getDate();
+            if(addVacation.getCreateDate().getYear() == today.getYear()){
+                addVacationVal += addVacation.getDate();
+            }
         }
 
         Period period = Period.between(joiningDate, today);
 
-        if (period.getYears() == 0) {//올해 입사자
+        if (period.getYears() == 0 && joiningDate.getYear() == today.getYear()) {//올해 입사자
             totalVacation = period.getMonths() * 60 * 8; //연차갯수 * 분 * 시간
         } else {//1년 이상 재직자
             totalVacation = (15 + ((period.getYears() - 1) / 2)) * 60 * 8; //연차갯수 * 분 * 시간
@@ -103,7 +105,16 @@ public class VacationService {
 
     //사용된 휴가 시간(분) 조회
     private int getUsedVacation(String memberId) {
-        List<Vacation> vacationList = vacationRepository.findAll(VS.delFalse().and(VS.mid(memberId)).and(VS.approve2Is(true)));
+        LocalDateTime today = LocalDateTime.now();
+        LocalDateTime yearStart = LocalDateTime.of(today.getYear(), 1, 1, 0, 0, 0);
+        LocalDateTime yearEnd = LocalDateTime.of(today.getYear()+1, 1, 1, 0, 0, 0);
+
+        List<Vacation> vacationList = vacationRepository.findAll(
+                VS.delFalse()
+                        .and(VS.mid(memberId))
+                        .and(VS.approve2Is(true))
+                        .and(VS.vacationDateBetween(yearStart, yearEnd)));
+
         int usedVacation = 0;
         for (Vacation vacation : vacationList) {
             LocalDateTime startDate = vacation.getStartDate();
