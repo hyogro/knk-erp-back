@@ -154,7 +154,7 @@ public class VacationService {
     //내 휴가목록 조회
     public List<Object> readVacationList() {
         String memberId = EntityUtil.getInstance().getMemberId();
-        List<Vacation> vacationList = vacationRepository.findAll(VS.delFalse().and(VS.mid(memberId)));
+        List<Vacation> vacationList = vacationRepository.findAll(VS.delFalse().and(VS.mid(memberId)), Sort.by(Sort.Direction.DESC));
         return util.VacationListToDTO(vacationList);
     }
 
