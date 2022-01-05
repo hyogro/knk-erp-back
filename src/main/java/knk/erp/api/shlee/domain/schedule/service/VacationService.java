@@ -98,10 +98,11 @@ public class VacationService {
             totalVacation = period.getMonths() * 60 * 8; //연차갯수 * 분 * 시간
         } else {//1년 이상 재직자
             int yearGap = today.getYear() - joiningDate.getYear();
-            yearGap = (yearGap % 2 == 1) ? yearGap - 1 : yearGap;
+
+            yearGap = (yearGap % 2 == 0) ? yearGap : yearGap + 1;
 
 
-            totalVacation = (15 + yearGap) * 60 * 8; //연차갯수 * 분 * 시간
+            totalVacation = (15 + (yearGap / 2)) * 60 * 8; //연차갯수 * 분 * 시간
         }
 
         return new VacationInfo(totalVacation, usedVacation, addVacationVal);
