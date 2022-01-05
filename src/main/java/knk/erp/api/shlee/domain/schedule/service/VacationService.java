@@ -87,7 +87,7 @@ public class VacationService {
         List<AddVacation> addVacationList = addVacationRepository.findAll(AVS.delFalse().and(AVS.mid(memberId)));
 
         for (AddVacation addVacation : addVacationList) {
-            if(addVacation.getCreateDate().getYear() == today.getYear()){
+            if (addVacation.getCreateDate().getYear() == today.getYear()) {
                 addVacationVal += addVacation.getDate();
             }
         }
@@ -97,7 +97,11 @@ public class VacationService {
         if (period.getYears() == 0 && joiningDate.getYear() == today.getYear()) {//올해 입사자
             totalVacation = period.getMonths() * 60 * 8; //연차갯수 * 분 * 시간
         } else {//1년 이상 재직자
-            totalVacation = (15 + ((period.getYears() - 1) / 2)) * 60 * 8; //연차갯수 * 분 * 시간
+            int yearGap = joiningDate.getYear() - today.getYear();
+            yearGap = (yearGap % 2 == 0) ? yearGap : yearGap + 1;
+
+
+            totalVacation = (15 + yearGap) * 60 * 8; //연차갯수 * 분 * 시간
         }
 
         return new VacationInfo(totalVacation, usedVacation, addVacationVal);
@@ -107,7 +111,7 @@ public class VacationService {
     private int getUsedVacation(String memberId) {
         LocalDateTime today = LocalDateTime.now();
         LocalDateTime yearStart = LocalDateTime.of(today.getYear(), 1, 1, 0, 0, 0);
-        LocalDateTime yearEnd = LocalDateTime.of(today.getYear()+1, 1, 1, 0, 0, 0);
+        LocalDateTime yearEnd = LocalDateTime.of(today.getYear() + 1, 1, 1, 0, 0, 0);
 
         List<Vacation> vacationList = vacationRepository.findAll(
                 VS.delFalse()
@@ -258,7 +262,7 @@ public class VacationService {
 
             if (authorityUtil.checkLevel() == 2) {
                 Long departmentId = member.getDepartment().getId();
-                if (!vacation.getAuthor().getDepartment().getId().equals(departmentId)){
+                if (!vacation.getAuthor().getDepartment().getId().equals(departmentId)) {
                     //TODO: 부서 다를경우 예외처리
                 }
             }
