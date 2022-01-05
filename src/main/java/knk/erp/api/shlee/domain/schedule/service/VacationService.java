@@ -97,7 +97,7 @@ public class VacationService {
         if (period.getYears() == 0 && joiningDate.getYear() == today.getYear()) {//올해 입사자
             totalVacation = period.getMonths() * 60 * 8; //연차갯수 * 분 * 시간
         } else {//1년 이상 재직자
-            int yearGap = joiningDate.getYear() - today.getYear();
+            int yearGap = today.getYear() - joiningDate.getYear();
             yearGap = (yearGap % 2 == 0) ? yearGap : yearGap + 1;
 
 
