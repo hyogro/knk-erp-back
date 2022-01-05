@@ -102,7 +102,7 @@ public class VacationService {
             yearGap = (yearGap % 2 == 0) ? yearGap : yearGap + 1;
 
 
-            totalVacation = (15 + (yearGap / 2)) * 60 * 8; //연차갯수 * 분 * 시간
+            totalVacation = (15 + (yearGap / 2) - 1) * 60 * 8; //연차갯수 * 분 * 시간
         }
 
         return new VacationInfo(totalVacation, usedVacation, addVacationVal);
