@@ -183,12 +183,8 @@ public class VacationService {
         Vacation vacation = vacationRepository.getOne(vid);
         //TODO: 1, 2차 승인된경우 예외처리
         //TODO: 본인휴가 아닌경우 예외처리
-        if(!vacation.getAuthor().getMemberId().equals(memberId)){
-            vacation.setDeleted(true);
-            vacationRepository.save(vacation);
-        }else {
-            throw new PermissionDeniedException();
-        }
+        vacation.setDeleted(true);
+        vacationRepository.save(vacation);
     }
 
     //승인, 거부할 휴가목록 조회
