@@ -17,6 +17,7 @@ import knk.erp.api.shlee.domain.schedule.responseEntity.vacation.*;
 import knk.erp.api.shlee.domain.schedule.specification.AVS;
 import knk.erp.api.shlee.domain.schedule.specification.VS;
 import knk.erp.api.shlee.domain.schedule.util.VacationUtil;
+import knk.erp.api.shlee.exception.exceptions.common.PermissionDeniedException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.core.Authentication;
@@ -182,9 +183,12 @@ public class VacationService {
         Vacation vacation = vacationRepository.getOne(vid);
         //TODO: 1, 2차 승인된경우 예외처리
         //TODO: 본인휴가 아닌경우 예외처리
-
-        vacation.setDeleted(true);
-        vacationRepository.save(vacation);
+        if(!vacation.getAuthor().getMemberId().equals(memberId)){
+            vacation.setDeleted(true);
+            vacationRepository.save(vacation);
+        }else {
+            throw new PermissionDeniedException();
+        }
     }
 
     //승인, 거부할 휴가목록 조회
@@ -223,7 +227,7 @@ public class VacationService {
                     , Sort.by("createDate").descending());
 
         } else if (3 <= authorityUtil.checkLevel()) {
-            vacationList = vacationRepository.findAll(VS.delFalse().and(VS.rejectIs(false)).and(VS.approve2Is(false))
+            vacationList = vacationRepository.findAll(VS.delFalse().and(VS.rejectIs(false)).and(VS.approve1Is(true)).and(VS.approve2Is(false))
                     , Sort.by("createDate").descending());
         }
         return util.VacationListToDTO(vacationList);

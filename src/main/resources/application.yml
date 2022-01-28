@@ -1,3 +1,43 @@
+server:
+  port: 8000
+  servlet:
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
+
 spring:
-  config:
-    import: file:/home/ubuntu/spring-config/erp/application.yml
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    password: ehlfk88123
+    url: jdbc:mysql://knkerp.cjy41n0zhkdg.ap-northeast-2.rds.amazonaws.com:3306/real
+    username: kjg9563
+  jpa:
+    database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
+    generate-ddl: false
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
+        globally_quoted_identifiers: true
+    show-sql: false
+  servlet:
+    multipart:
+      file-size-threshold: 1MB
+      location: /home/ubuntu/files
+      max-file-size: 100MB
+      max-request-size: 100MB
+
+logging:
+  file:
+    path: /home/ubuntu/spring-logs
+  level:
+    org:
+      hibernate: info
+  logback:
+    rollingpolicy:
+      clean-history-on-start: true
+
+jwt:
+  secret: c3ByaW5nLWJvb3Qtc2VjdXJpdHktand0LWVycC1zeXN0ZW0ta25rLXNwcmluZy1ib290LXNlY3VyaXR5LWp3dC1lcnAtc3lzdGVt
