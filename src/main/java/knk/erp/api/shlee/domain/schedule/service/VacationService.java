@@ -187,7 +187,7 @@ public class VacationService {
         vacationRepository.save(vacation);
     }
 
-    //승인, 거부할 휴가목록 조회
+    //승인, 거부했던 휴가목록 조회
     public List<Object> readVacationListForManage(LocalDate startDate, LocalDate endDate) {
         List<Vacation> vacationList = new ArrayList<>();
         LocalDateTime sd = LocalDateTime.of(startDate, LocalTime.MIN);
@@ -210,7 +210,6 @@ public class VacationService {
 
             vacationList = vacationRepository.findAll(
                     VS.delFalse().and(VS.memberDF()).and(VS.rejectIs(false)).and(VS.approve2Is(true)).and(VS.vacationDateBetween(sd, ed))
-                            .or(VS.rejectIs(false)).and(VS.did(did)).and(VS.approve1Is(false)).and(VS.vacationDateBetween(sd, ed))
                             .or(VS.delFalse().and(VS.rejectIs(true)).and(VS.approve2Is(false)).and(VS.vacationDateBetween(sd, ed)))
                     , Sort.by("createDate").descending());
         }
@@ -229,7 +228,13 @@ public class VacationService {
                     , Sort.by("createDate").descending());
 
         } else if (3 <= authorityUtil.checkLevel()) {
-            vacationList = vacationRepository.findAll(VS.delFalse().and(VS.rejectIs(false)).and(VS.approve1Is(true)).and(VS.approve2Is(false))
+            Member member = EntityUtil.getInstance().getMember(memberRepository);
+            assert member != null;
+            Long did = member.getDepartment().getId();
+
+            vacationList = vacationRepository.findAll(
+                    VS.delFalse().and(VS.rejectIs(false)).and(VS.approve1Is(true)).and(VS.approve2Is(false))
+                            .or(VS.delFalse()).and(VS.rejectIs(false)).and(VS.did(did)).and(VS.approve1Is(false))
                     , Sort.by("createDate").descending());
         }
         return util.VacationListToDTO(vacationList);
