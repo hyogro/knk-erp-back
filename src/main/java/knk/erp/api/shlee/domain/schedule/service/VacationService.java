@@ -197,14 +197,20 @@ public class VacationService {
             Member member = EntityUtil.getInstance().getMember(memberRepository);
             assert member != null;
             Long did = member.getDepartment().getId();
+
             vacationList = vacationRepository.findAll(
                     VS.delFalse().and(VS.memberDF()).and(VS.rejectIs(false)).and(VS.did(did)).and(VS.approve1Is(true)).and(VS.vacationDateBetween(sd, ed))
                             .or(VS.delFalse().and(VS.rejectIs(true)).and(VS.did(did)).and(VS.approve1Is(false)).and(VS.vacationDateBetween(sd, ed)))
                     , Sort.by("createDate").descending());
 
         } else if (3 <= authorityUtil.checkLevel()) {
+            Member member = EntityUtil.getInstance().getMember(memberRepository);
+            assert member != null;
+            Long did = member.getDepartment().getId();
+
             vacationList = vacationRepository.findAll(
                     VS.delFalse().and(VS.memberDF()).and(VS.rejectIs(false)).and(VS.approve2Is(true)).and(VS.vacationDateBetween(sd, ed))
+                            .or(VS.rejectIs(false)).and(VS.did(did)).and(VS.approve1Is(true)).and(VS.vacationDateBetween(sd, ed))
                             .or(VS.delFalse().and(VS.rejectIs(true)).and(VS.approve2Is(false)).and(VS.vacationDateBetween(sd, ed)))
                     , Sort.by("createDate").descending());
         }
