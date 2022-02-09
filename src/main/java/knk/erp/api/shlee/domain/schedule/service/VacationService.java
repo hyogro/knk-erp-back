@@ -220,22 +220,18 @@ public class VacationService {
     public List<Object> readVacationListForApprove() {
         List<Vacation> vacationList = new ArrayList<>();
 
-        if (authorityUtil.checkLevel() == 2) {
+        if (2 <= authorityUtil.checkLevel()) {
             Member member = EntityUtil.getInstance().getMember(memberRepository);
             assert member != null;
             Long did = member.getDepartment().getId();
-            vacationList = vacationRepository.findAll(VS.delFalse().and(VS.rejectIs(false)).and(VS.did(did)).and(VS.approve1Is(false))
-                    , Sort.by("createDate").descending());
+            vacationList.addAll(vacationRepository.findAll(VS.delFalse().and(VS.rejectIs(false)).and(VS.did(did)).and(VS.approve1Is(false))
+                    , Sort.by("createDate").descending()));
 
-        } else if (3 <= authorityUtil.checkLevel()) {
-            Member member = EntityUtil.getInstance().getMember(memberRepository);
-            assert member != null;
-            Long did = member.getDepartment().getId();
-
-            vacationList = vacationRepository.findAll(
+        }
+        if (3 <= authorityUtil.checkLevel()) {
+            vacationList.addAll(vacationRepository.findAll(
                     VS.delFalse().and(VS.rejectIs(false)).and(VS.approve1Is(true)).and(VS.approve2Is(false))
-                            .or(VS.delFalse()).and(VS.rejectIs(false)).and(VS.did(did)).and(VS.approve1Is(false))
-                    , Sort.by("createDate").descending());
+                    , Sort.by("createDate").descending()));
         }
         return util.VacationListToDTO(vacationList);
     }
