@@ -163,8 +163,7 @@ public class DepartmentService {
             target.setLeader(null);
             target.setMemberList(null);
         }
-
-        throwIfExistsBelongMember(target);
+        else { throwIfExistsBelongMember(target); }
 
         target.setDeleted(true);
         departmentRepository.save(target);
