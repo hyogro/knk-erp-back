@@ -1,13 +1,13 @@
 package knk.erp.api.shlee.exception.component;
 
 import knk.erp.api.shlee.exception.ExceptionPayload;
-import knk.erp.api.shlee.exception.exceptions.*;
 import knk.erp.api.shlee.exception.exceptions.Account.AccountNotFoundMemberException;
 import knk.erp.api.shlee.exception.exceptions.Account.AccountOverlapIdException;
 import knk.erp.api.shlee.exception.exceptions.Account.AccountTargetIsLeaderException;
 import knk.erp.api.shlee.exception.exceptions.Account.AccountWrongPasswordException;
 import knk.erp.api.shlee.exception.exceptions.Board.BoardNotAuthorException;
 import knk.erp.api.shlee.exception.exceptions.Board.BoardNotFoundException;
+import knk.erp.api.shlee.exception.exceptions.CustomException;
 import knk.erp.api.shlee.exception.exceptions.Department.DepartmentExistsBelongMemberException;
 import knk.erp.api.shlee.exception.exceptions.Department.DepartmentNotBelongMemberException;
 import knk.erp.api.shlee.exception.exceptions.Department.DepartmentNotFoundException;
@@ -16,16 +16,14 @@ import knk.erp.api.shlee.exception.exceptions.Fixtures.FixturesFormCheckedExcept
 import knk.erp.api.shlee.exception.exceptions.Fixtures.FixturesFormNotAuthorException;
 import knk.erp.api.shlee.exception.exceptions.Fixtures.FixturesFormNotFoundException;
 import knk.erp.api.shlee.exception.exceptions.Fixtures.FixturesNotFoundException;
-import knk.erp.api.shlee.exception.exceptions.common.ErrorInputDataException;
 import knk.erp.api.shlee.exception.exceptions.attendance.*;
 import knk.erp.api.shlee.exception.exceptions.common.DataNotExistException;
+import knk.erp.api.shlee.exception.exceptions.common.ErrorInputDataException;
 import knk.erp.api.shlee.exception.exceptions.common.PermissionDeniedException;
 import knk.erp.api.shlee.exception.exceptions.file.FileIOException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
