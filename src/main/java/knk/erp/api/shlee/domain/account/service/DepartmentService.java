@@ -159,11 +159,12 @@ public class DepartmentService {
         if (target.getMemberList().size() == 1 && target.getMemberList().get(0) == target.getLeader()) {
             adjustPreviousLeaderAuthority(target.getLeader());
             target.getLeader().setDepartment(departmentRepository.findByDepartmentNameAndDeletedFalse("부서미지정"));
+            memberRepository.save(target.getLeader());
+            target.setLeader(null);
         }
 
         throwIfExistsBelongMember(target);
 
-        target.setLeader(null);
         target.setDeleted(true);
         departmentRepository.save(target);
     }
