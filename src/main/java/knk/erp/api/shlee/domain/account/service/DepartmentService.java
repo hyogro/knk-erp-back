@@ -161,6 +161,7 @@ public class DepartmentService {
             target.getLeader().setDepartment(departmentRepository.findByDepartmentNameAndDeletedFalse("부서미지정"));
             memberRepository.save(target.getLeader());
             target.setLeader(null);
+            target.setMemberList(null);
         }
 
         throwIfExistsBelongMember(target);
