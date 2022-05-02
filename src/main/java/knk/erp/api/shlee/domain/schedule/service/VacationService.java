@@ -264,20 +264,8 @@ public class VacationService {
             vacation.setReject(true);
             vacation.setRejectMemo(member.getMemberName() + ") " + reject.getRejectMemo());
 
-            if (vacation.isApproval1() && vacation.isApproval2()) {
-                //TODO: 1, 2차 승인된경우 예외처리
-            }
-
-            if (authorityUtil.checkLevel() == 2) {
-                Long departmentId = member.getDepartment().getId();
-                if (!vacation.getAuthor().getDepartment().getId().equals(departmentId)) {
-                    //TODO: 부서 다를경우 예외처리
-                }
-            }
-
             vacationRepository.save(vacation);
         }
-        //TODO: 레벨 1이하 예외처리
     }
 
     //권한 체크 및 승인여부 변경
@@ -296,24 +284,6 @@ public class VacationService {
             return true;
         }
         return false;
-    }
-
-    //맴버 아이디로 부서 아이디 가져오기
-    private Department getDepartment(String memberId) {
-        try {
-            return memberRepository.findAllByMemberIdAndDeletedIsFalse(memberId).getDepartment();
-        } catch (Exception e) {
-            return null;
-        }
-    }
-
-    //맴버 아이디로 맴어 이름 가져오기
-    private String getMemberName(String memberId) {
-        try {
-            return memberRepository.findAllByMemberIdAndDeletedIsFalse(memberId).getMemberName();
-        } catch (Exception e) {
-            return "UnFoundMember";
-        }
     }
 }
 
