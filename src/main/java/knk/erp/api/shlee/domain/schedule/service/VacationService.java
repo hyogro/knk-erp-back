@@ -266,6 +266,8 @@ public class VacationService {
             if (authorityUtil.checkLevel() == 2) {
                 vacation.setApproval1(false);
                 vacation.setApprover1(null);
+                vacation.setApproval2(false);
+                vacation.setApprover2(null);
             }
             else if(authorityUtil.checkLevel() >= 3) {
                 vacation.setApproval2(false);
