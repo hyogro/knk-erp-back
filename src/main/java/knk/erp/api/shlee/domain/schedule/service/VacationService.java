@@ -273,10 +273,6 @@ public class VacationService {
             vacation.setReject(true);
             vacation.setRejectMemo(member.getMemberName() + ") " + reject.getRejectMemo());
 
-            if (vacation.isApproval1() && vacation.isApproval2()) {
-                //TODO: 1, 2차 승인된경우 예외처리
-            }
-
             if (authorityUtil.checkLevel() == 2) {
                 Long departmentId = member.getDepartment().getId();
                 if (!vacation.getAuthor().getDepartment().getId().equals(departmentId)) {
