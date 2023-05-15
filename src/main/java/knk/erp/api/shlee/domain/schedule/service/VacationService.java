@@ -280,6 +280,7 @@ public class VacationService {
                 }
             }
 
+
             vacationRepository.save(vacation);
         }
         //TODO: 레벨 1이하 예외처리
