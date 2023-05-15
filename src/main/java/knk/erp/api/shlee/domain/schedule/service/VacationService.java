@@ -264,14 +264,6 @@ public class VacationService {
             vacation.setReject(true);
             vacation.setRejectMemo(member.getMemberName() + ") " + reject.getRejectMemo());
 
-            if (authorityUtil.checkLevel() == 2) {
-                Long departmentId = member.getDepartment().getId();
-                if (!vacation.getAuthor().getDepartment().getId().equals(departmentId)) {
-                    //TODO: 부서 다를경우 예외처리
-                }
-            }
-
-
             vacationRepository.save(vacation);
         }
         //TODO: 레벨 1이하 예외처리
