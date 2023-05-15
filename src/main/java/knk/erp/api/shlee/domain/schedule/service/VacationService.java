@@ -261,6 +261,15 @@ public class VacationService {
             assert member != null;
 
             Vacation vacation = vacationRepository.getOne(vid);
+
+            if ( authorityUtil.checkLevel() == 2 ) {
+                vacation.setApproval1(false);
+                vacation.setApprover1(null);
+            }
+            else if ( authorityUtil.checkLevel() >=3 ) {
+                vacation.setApproval2(false);
+                vacation.setApprover2(null);
+            }
             vacation.setReject(true);
             vacation.setRejectMemo(member.getMemberName() + ") " + reject.getRejectMemo());
 
