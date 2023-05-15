@@ -262,6 +262,15 @@ public class VacationService {
 
             Vacation vacation = vacationRepository.getOne(vid);
             vacation.setReject(true);
+
+            if (authorityUtil.checkLevel() == 2) {
+                vacation.setApproval1(false);
+                vacation.setApprover1(null);
+            }
+            else if(authorityUtil.checkLevel() >= 3) {
+                vacation.setApproval2(false);
+                vacation.setApprover2(null);
+            }
             vacation.setRejectMemo(member.getMemberName() + ") " + reject.getRejectMemo());
 
             vacationRepository.save(vacation);
