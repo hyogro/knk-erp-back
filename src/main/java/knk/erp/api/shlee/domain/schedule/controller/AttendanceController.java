@@ -24,6 +24,8 @@ public class AttendanceController {
 
     /**
      * 출근 기록
+     * request: uuid
+     * response: code
      **/
     @PostMapping("/onWork")
     public ResponseEntity<ResponseData> onWork(@RequestBody String uuid) {
@@ -39,6 +41,7 @@ public class AttendanceController {
 
     /**
      * 퇴근 기록
+     * response: code
      **/
     @PostMapping("/offWork")
     public ResponseEntity<ResponseData> offWork() {
@@ -55,6 +58,8 @@ public class AttendanceController {
     /**
      * 날짜 범위로 본인의
      * 출,퇴근 기록목록 조회
+     * request: 시작, 종료일
+     * response: 출근정보 목록
      **/
     @GetMapping("/list")
     public ResponseEntity<ResponseData> readAttendanceList(@RequestParam("startDate") String startDate,

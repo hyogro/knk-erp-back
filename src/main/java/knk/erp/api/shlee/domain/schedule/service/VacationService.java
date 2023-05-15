@@ -261,17 +261,12 @@ public class VacationService {
             assert member != null;
 
             Vacation vacation = vacationRepository.getOne(vid);
-
-            if ( authorityUtil.checkLevel() == 2 ) {
-                vacation.setApproval1(false);
-                vacation.setApprover1(null);
-            }
-            else if ( authorityUtil.checkLevel() >=3 ) {
-                vacation.setApproval2(false);
-                vacation.setApprover2(null);
-            }
             vacation.setReject(true);
             vacation.setRejectMemo(member.getMemberName() + ") " + reject.getRejectMemo());
+
+            if (vacation.isApproval1() && vacation.isApproval2()) {
+                //TODO: 1, 2차 승인된경우 예외처리
+            }
 
             if (authorityUtil.checkLevel() == 2) {
                 Long departmentId = member.getDepartment().getId();
@@ -279,7 +274,6 @@ public class VacationService {
                     //TODO: 부서 다를경우 예외처리
                 }
             }
-
 
             vacationRepository.save(vacation);
         }
