@@ -10,7 +10,7 @@ spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     password: ehlfk88123
-    url: jdbc:mysql://knkerp.cjy41n0zhkdg.ap-northeast-2.rds.amazonaws.com:3306
+    url: jdbc:mysql://knkerp.cjy41n0zhkdg.ap-northeast-2.rds.amazonaws.com:3306/real
     username: kjg9563
   jpa:
     database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
